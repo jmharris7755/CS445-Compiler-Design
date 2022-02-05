@@ -1,0 +1,219 @@
+Grammar
+
+    0 $accept: tokenList $end
+
+    1 tokenList: tokenList token
+    2          | token
+
+    3 token: ID
+    4      | NUMCONST
+    5      | CHARCONST
+    6      | STRINGCONST
+    7      | BOOLCONST
+    8      | KEYWORD
+    9      | INC
+   10      | DEC
+   11      | NEQ
+   12      | LEQ
+   13      | GEQ
+   14      | ASGN
+   15      | ADDASGN
+   16      | SPEC
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    ID <tokenData> (258) 3
+    NUMCONST <tokenData> (259) 4
+    CHARCONST <tokenData> (260) 5
+    STRINGCONST <tokenData> (261) 6
+    BOOLCONST <tokenData> (262) 7
+    SPEC <tokenData> (263) 16
+    KEYWORD <tokenData> (264) 8
+    INC <tokenData> (265) 9
+    DEC <tokenData> (266) 10
+    NEQ <tokenData> (267) 11
+    LEQ <tokenData> (268) 12
+    GEQ <tokenData> (269) 13
+    ASGN <tokenData> (270) 14
+    ADDASGN <tokenData> (271) 15
+
+
+Nonterminals, with rules where they appear
+
+    $accept (17)
+        on left: 0
+    tokenList (18)
+        on left: 1 2
+        on right: 0 1
+    token (19)
+        on left: 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+        on right: 1 2
+
+
+State 0
+
+    0 $accept: • tokenList $end
+
+    ID           shift, and go to state 1
+    NUMCONST     shift, and go to state 2
+    CHARCONST    shift, and go to state 3
+    STRINGCONST  shift, and go to state 4
+    BOOLCONST    shift, and go to state 5
+    SPEC         shift, and go to state 6
+    KEYWORD      shift, and go to state 7
+    INC          shift, and go to state 8
+    DEC          shift, and go to state 9
+    NEQ          shift, and go to state 10
+    LEQ          shift, and go to state 11
+    GEQ          shift, and go to state 12
+    ASGN         shift, and go to state 13
+    ADDASGN      shift, and go to state 14
+
+    tokenList  go to state 15
+    token      go to state 16
+
+
+State 1
+
+    3 token: ID •
+
+    $default  reduce using rule 3 (token)
+
+
+State 2
+
+    4 token: NUMCONST •
+
+    $default  reduce using rule 4 (token)
+
+
+State 3
+
+    5 token: CHARCONST •
+
+    $default  reduce using rule 5 (token)
+
+
+State 4
+
+    6 token: STRINGCONST •
+
+    $default  reduce using rule 6 (token)
+
+
+State 5
+
+    7 token: BOOLCONST •
+
+    $default  reduce using rule 7 (token)
+
+
+State 6
+
+   16 token: SPEC •
+
+    $default  reduce using rule 16 (token)
+
+
+State 7
+
+    8 token: KEYWORD •
+
+    $default  reduce using rule 8 (token)
+
+
+State 8
+
+    9 token: INC •
+
+    $default  reduce using rule 9 (token)
+
+
+State 9
+
+   10 token: DEC •
+
+    $default  reduce using rule 10 (token)
+
+
+State 10
+
+   11 token: NEQ •
+
+    $default  reduce using rule 11 (token)
+
+
+State 11
+
+   12 token: LEQ •
+
+    $default  reduce using rule 12 (token)
+
+
+State 12
+
+   13 token: GEQ •
+
+    $default  reduce using rule 13 (token)
+
+
+State 13
+
+   14 token: ASGN •
+
+    $default  reduce using rule 14 (token)
+
+
+State 14
+
+   15 token: ADDASGN •
+
+    $default  reduce using rule 15 (token)
+
+
+State 15
+
+    0 $accept: tokenList • $end
+    1 tokenList: tokenList • token
+
+    $end         shift, and go to state 17
+    ID           shift, and go to state 1
+    NUMCONST     shift, and go to state 2
+    CHARCONST    shift, and go to state 3
+    STRINGCONST  shift, and go to state 4
+    BOOLCONST    shift, and go to state 5
+    SPEC         shift, and go to state 6
+    KEYWORD      shift, and go to state 7
+    INC          shift, and go to state 8
+    DEC          shift, and go to state 9
+    NEQ          shift, and go to state 10
+    LEQ          shift, and go to state 11
+    GEQ          shift, and go to state 12
+    ASGN         shift, and go to state 13
+    ADDASGN      shift, and go to state 14
+
+    token  go to state 18
+
+
+State 16
+
+    2 tokenList: token •
+
+    $default  reduce using rule 2 (tokenList)
+
+
+State 17
+
+    0 $accept: tokenList $end •
+
+    $default  accept
+
+
+State 18
+
+    1 tokenList: tokenList token •
+
+    $default  reduce using rule 1 (tokenList)
