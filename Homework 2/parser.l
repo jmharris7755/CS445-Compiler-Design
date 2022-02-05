@@ -173,7 +173,7 @@ static int setValue(int linenum, int tokenClass, char *svalue)
     }
     else if (tokenClass == KEYWORD){
 
-        lowToUpper(svalue);
+        //lowToUpper(svalue);
         yylval.tokenData->tokenID = strdup(svalue);
 
     }
@@ -223,7 +223,6 @@ DIGIT	[0-9]
 "false"                         { return setValue(line, BOOLCONST, yytext); }
 
 "int"                           { return setValue(line, KEYWORD, yytext); }
-"addasgn"                       { return setValue(line, KEYWORD, yytext); }
 "begin"                         { return setValue(line, KEYWORD, yytext); }
 "if"                            { return setValue(line, KEYWORD, yytext); }
 "then"                          { return setValue(line, KEYWORD, yytext); }
@@ -251,14 +250,31 @@ DIGIT	[0-9]
 "++"                            { return setValue(line, INC, yytext); }
 "--"                            { return setValue(line, DEC, yytext); }
 "+="                            { return setValue(line, ADDASGN, yytext); }
+"-="                            { return setValue(line, MINUSASGN, yytext); }
+"*="                            { return setValue(line, MULTASGN, yytext); }
+"/*"                            { return setValue(line, DIVASGN, yytext); }
 "!="                            { return setValue(line, NEQ, yytext); }
 "<="                            { return setValue(line, LEQ, yytext); }
 ">="                            { return setValue(line, GEQ, yytext); }
 "<-"                            { return setValue(line, ASGN, yytext); }
 
-";"|"="|","|"("|")"             { return setValue(line, SPEC, yytext); }
-"["|"]"|"*"|"+"|"-"             { return setValue(line, SPEC, yytext); }
-":"|"%"|"<"|">"|"/"|"?"         { return setValue(line, SPEC, yytext); }
+
+";"                             { return setValue(line, SEMICOLON, yytext); }
+"="                             { return setValue(line, EQUALS, yytext); }
+","                             { return setValue(line, COMMA, yytext); }
+"("                             { return setValue(line, LPAREN, yytext); }
+")"                             { return setValue(line, RPAREN, yytext); }         
+"["                             { return setValue(line, LBRACKET, yytext); }
+"]"                             { return setValue(line, RBRACKET, yytext); }
+"*"                             { return setValue(line, MULT, yytext); }
+"+"                             { return setValue(line, PLUS, yytext); }
+"-"                             { return setValue(line, MINUS, yytext); }             
+":"                             { return setValue(line, COLON, yytext); }
+"%"                             { return setValue(line, PERCENT, yytext); }
+"<"                             { return setValue(line, LESSTHAN, yytext); }
+">"                             { return setValue(line, GREATERTHAN, yytext); }
+"/"                             { return setValue(line, DIVIDE, yytext); }
+"?"                             { return setValue(line, QMARK, yytext); }        
 
 .                               { printf("ERROR(%d): Invalid or misplaced input character: \'%c\'. Character Ignored.\n", line, yytext[0]); numErrors++;}
 %%
