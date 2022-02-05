@@ -47,7 +47,7 @@ void yyerror(const char *msg)
 
 %%
 
-program             :       declList
+program             :       declList                                         //Add rules and operations over here
                     ;
 
 declList            :       declList decl
