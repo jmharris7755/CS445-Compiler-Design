@@ -11,6 +11,7 @@
 #include "parser.tab.h" // token definitions from Bison
 #include <ctype.h>
 #include <string.h>
+#include "syntaxTree.h"
 
 int line=1;
 int numErrors;  //ERR err count

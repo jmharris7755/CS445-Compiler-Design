@@ -7,6 +7,7 @@
 
 #include "scanType.h" //TokenData type 
 #include <stdio.h>
+#include "syntaxTree.h"
 
 double vars[26];
 
@@ -28,7 +29,9 @@ void yyerror(const char *msg)
 //so scanType.h must be included before the tab.h file
 
 %union {
-    TokenData *tokenData;
+    ExpType type;               //For passing types (i.e pass a type in a decl like int or bool)
+    TokenData *tokenData;       //For terminals. Token data comes from yylex() in the $ vars
+    TreeNode *tree;             //For nonterminals. Add these nodes as you build the tree. 
 }
 
 %token <tokenData> ID NUMCONST CHARCONST STRINGCONST BOOLCONST SPEC KEYWORD
