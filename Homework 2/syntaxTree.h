@@ -1,8 +1,9 @@
+#ifndef _SYNTAXTREE_H_
+#define _SYNTAXTREE_H_
 
-#IFNDEF _SYNTAXTREE_H_
-#DEFINE _SYNTAXTREE_H_
+#include "scanType.h"
 
-#DEFINE MAXCHILDREN 3
+#define MAXCHILDREN 3
 
 //Kinds of operators
 //these are the token numbers for the operators same as in flex
@@ -34,8 +35,9 @@ typedef struct treeNode
     struct treeNode *sibling; // siblings for the node
 
     // what kind of node
-    int lineno; // linenum relevant to this node
+    int linenum; // linenum relevant to this node
     NodeKind nodekind; // type of this node
+    TokenData *thisTokenData;
 
     union // subtype of type
     {
@@ -49,7 +51,7 @@ typedef struct treeNode
     {
         OpKind op; // type of token (same as in bison)
         int value; // used when an integer constant or boolean
-        unsigned char cvalue // used when a character
+        unsigned char cvalue; // used when a character
         char *string; // used when a string constant
         char *name; // used when IdK
     } attr;
@@ -60,18 +62,12 @@ typedef struct treeNode
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
 
-TreeNode *newDeclNode(DeclKind kind, ExpType type, TreeNode* c0=NULL,
-                                                    TreeNode* c1=NULL,
-                                                    TreeNode* c2=Null );
+TreeNode *newDeclNode(DeclKind kind, TokenData *token);
 
-TreeNode *newStmtNode(StmtKind kind, TokenData* token, TreeNode* c0=NULL,
-                                                        TreeNode* c1=NULL,
-                                                        TreeNode* c2=NULL);
+TreeNode *newStmtNode(StmtKind kind, TokenData* token);
 
-TreeNode *newExpNode(ExpKind kind, TokenData* token, TreeNode* c0=NULL,
-                                                      TreeNode* c1=NULL,
-                                                      TreeNode* c2=NULL);
+TreeNode *newExpNode(ExpKind kind, TokenData* token);
 
-void printTree();
+void printTree(TreeNode, int);
 
-#ENDIF
+#endif
