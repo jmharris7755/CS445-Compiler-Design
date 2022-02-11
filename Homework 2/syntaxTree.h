@@ -1,8 +1,9 @@
 #ifndef _SYNTAXTREE_H_
 #define _SYNTAXTREE_H_
 
-#include <stdbool.h>
 #include "scanType.h"
+#include <stdbool.h>
+
 
 #define MAXCHILDREN 3
 
@@ -73,7 +74,7 @@ TreeNode *addaSibling(TreeNode *, TreeNode *);
 
 void printTree(TreeNode *, int);
 
-void isaSiblingType(TreeNode *, ExpType);
+void convertSiblingType(TreeNode *, ExpType);
 
 void printSpaces(int);
 

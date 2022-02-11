@@ -21,7 +21,7 @@ TreeNode *newDeclNode(DeclKind kind, TokenData *tokenData){
             t->sibling = NULL;
             t->nodekind = DeclK;
             t->subkind.decl = kind;
-            t->attr.name = strdup(tokenData->tokenstr);
+            t->attr.name = strdup(tokenData->tokenStrInput);
             t->linenum = tokenData->linenum;
             t->expType = Void;
         }
@@ -42,7 +42,7 @@ TreeNode *newStmtNode(StmtKind kind, TokenData *tokenData){
             t->sibling = NULL;
             t->nodekind = StmtK;
             t->subkind.stmt = kind;
-            t->attr.name = strdup(tokenData->tokenstr);
+            t->attr.name = strdup(tokenData->tokenStrInput);
             t->linenum = tokenData->linenum;
             t->expType = Void;
         }
@@ -71,7 +71,7 @@ TreeNode *newExpNode(ExpKind kind, TokenData *tokenData){
 }
 
 //convert node to sibling and all sibling nodes to same type
-void isaSiblingType(TreeNode *t, ExpType currentExp){
+void convertSiblingType(TreeNode *t, ExpType currentExp){
     TreeNode *curNode = t;
 
     while(curNode != NULL){
@@ -118,31 +118,39 @@ void printTree(TreeNode *t, int siblingCounter){
     while(t != NULL){
 
             //convert exp type to proper print out and save for later
-            char *convertExpType;
+            char *convertExpType = NULL;
 
             if(t->expType == Void){
-                convertExpType = "void";
+                //*convertExpType = "";
+                strcpy(convertExpType, "void");
             }
             else if(t->expType == Integer){
-                convertExpType = "int";
+                //convertExpType = "";
+                strcpy(convertExpType, "int");
             }
             else if(t->expType == Boolean){
-                convertExpType = "bool";
+                //convertExpType = "";
+                strcpy(convertExpType, "bool");
             }
             else if (t->expType == Char){
-                convertExpType = "char";
+                //convertExpType = "";
+                strcpy(convertExpType, "char");
             }
             else if(t->expType == CharInt){
-                convertExpType = "CharInt";
+                //convertExpType = "";
+                strcpy(convertExpType, "CharInt");
             }
             else if(t->expType == Equal){
-                convertExpType = "Equal";
+                //convertExpType = "";
+                strcpy(convertExpType, "Equal");
             }
             else if(t->expType == UndefinedType){
-                convertExpType = "undefined type";
+                //convertExpType = "";
+                strcpy(convertExpType, "undefined type");
             }
             else{
-                convertExpType = "exprType not found\n";
+                //convertExpType = "";
+                strcpy(convertExpType, "exprType not found\n");
             }
             
         //Check in order declared in syntaxTree.h
@@ -269,7 +277,7 @@ void printTree(TreeNode *t, int siblingCounter){
                 break;
 
                 case CallK:
-                    printf("Call: %s [line: %d]\n", t->linenum);
+                    printf("Call: %s [line: %d]\n", t->attr.name, t->linenum);
                 break;
 
                 default:

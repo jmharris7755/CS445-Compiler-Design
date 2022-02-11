@@ -48,8 +48,10 @@ void yyerror(const char *msg)
 %token <tokenData> STATIC BOOL CHAR INT 
 %token <tokenData> LBRACKET RBRACKET LPAREN RPAREN OR AND LESSTHAN GREATERTHAN
 
+%type <type>    typeSpec
+
 %type <tree>    declList decl varDecl scopedVarDecl varDeclList varDeclInit varDeclId
-%type <tree>    typeSpec funDecl parms parmList parmTypeList parmIdList parmId
+%type <tree>    funDecl parms parmList parmTypeList parmIdList parmId
 %type <tree>    stmt expStmt compoundStmt localDecls stmtList selectStmt iterStmt returnStmt
 %type <tree>    iterRange breakStmt exp assignop simpleExp andExp unaryRelExp
 %type <tree>    relExp relop sumExp sumop mulExp mulop unaryExp unaryop
@@ -68,11 +70,15 @@ decl                :       varDecl                                             
                     |       funDecl                                             { $$ = $1; }
                     ;
 
-varDecl             :       typeSpec varDeclList SEMICOLON                      { $$ = $2; isaSiblingType($$, $1); }
+varDecl             :       typeSpec varDeclList SEMICOLON                      { $$ = $2; 
+                                                                                  convertSiblingType($$, $1); }
                     ;
 
-scopedVarDecl       :       STATIC typeSpec varDeclList SEMICOLON               { $$ = $3; $$->isStatic = true; isaSiblingType($$, $1);}
-                    |       typeSpec varDeclList SEMICOLON                      { $$ = $2; isaSiblingType($$, $1); }
+scopedVarDecl       :       STATIC typeSpec varDeclList SEMICOLON               { $$ = $3; $$->isStatic = true; 
+                                                                                  convertSiblingType($$, $2);}
+
+                    |       typeSpec varDeclList SEMICOLON                      { $$ = $2; 
+                                                                                  convertSiblingType($$, $1); }
                     ;
 
 varDeclList         :       varDeclList COMMA varDeclInit                       { $$ = addaSibling($1, $3);}
@@ -118,7 +124,7 @@ parmList            :       parmList SEMICOLON parmTypeList                     
                     |       parmTypeList                                        { $$ = $1 ; }
                     ;
 
-parmTypeList        :       typeSpec parmIdList                                 { $$ = $2; isaSiblingType($$, $1); }
+parmTypeList        :       typeSpec parmIdList                                 { $$ = $2; convertSiblingType($$, $1); }
                     ;
 
 parmIdList          :       parmIdList COMMA parmId                             { $$ = addaSibling($1, $3); }
@@ -205,7 +211,7 @@ breakStmt           :       BREAK SEMICOLON                                     
                                                                                    $$->attr.name = $1->tokenStrInput; }
                     ;
 
-exp                 :       mutable assignop exp                                { $$ = newExpNode(AssignK, $2);
+exp                 :       mutable assignop exp                                { $$ = $2;
                                                                                    $$->child[0] = $1;
                                                                                    $$->child[1] = $3; }
 
@@ -222,11 +228,11 @@ exp                 :       mutable assignop exp                                
                     |       simpleExp                                           {$$ = $1; }
                     ;
 
-assignop            :       ASGN                                                { $$ = $1; $$->attr.name = $1->tokenStrInput;}
-                    |       ADDASGN                                             { $$ = $1; $$->attr.name = $1->tokenStrInput;}
-                    |       MINUSASGN                                           { $$ = $1; $$->attr.name = $1->tokenStrInput;}
-                    |       MULTASGN                                            { $$ = $1; $$->attr.name = $1->tokenStrInput;}
-                    |       DIVASGN                                             { $$ = $1; $$->attr.name = $1->tokenStrInput;}
+assignop            :       ASGN                                                { $$ = newExpNode(AssignK, $1); $$->attr.name = $1->tokenStrInput;}
+                    |       ADDASGN                                             { $$ = newExpNode(AssignK, $1); $$->attr.name = $1->tokenStrInput;}
+                    |       MINUSASGN                                           { $$ = newExpNode(AssignK, $1); $$->attr.name = $1->tokenStrInput;}
+                    |       MULTASGN                                            { $$ = newExpNode(AssignK, $1); $$->attr.name = $1->tokenStrInput;}
+                    |       DIVASGN                                             { $$ = newExpNode(AssignK, $1); $$->attr.name = $1->tokenStrInput;}
                     ;
 
 simpleExp           :       simpleExp OR andExp                                 { $$ = newExpNode(OpK, $2);
@@ -349,7 +355,7 @@ factor              :       mutable                                             
 mutable             :       ID                                                  { $$ = newDeclNode(ParamK, $1);
                                                                                   $$->attr.name = strdup($1->tokenStrInput); }
 
-                    |       ID LBRACKET exp RBRACKET                            { $$ = newDeclNode(OpK, $2); 
+                    |       ID LBRACKET exp RBRACKET                            { $$ = newExpNode(OpK, $2); 
                                                                                   $$->attr.name = $2->tokenStrInput;
                                                                                   $$->child[0] = newExpNode(IdK, $1);
                                                                                   $$->child[0]->attr.name = $1->tokenStrInput;
@@ -416,7 +422,7 @@ int main(int argc, char *argv[])
 
     yyparse();
 
-    if(argv > 2){
+    if(argc > 2){
         if(!strcmp(argv[1], "-d")){
             yydebug = 1;
         }

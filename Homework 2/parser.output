@@ -300,7 +300,7 @@ Nonterminals, with rules where they appear
     varDeclId <tree> (63)
         on left: 12 13
         on right: 11
-    typeSpec <tree> (64)
+    typeSpec <type> (64)
         on left: 14 15 16
         on right: 6 7 8 17 23
     funDecl <tree> (65)
