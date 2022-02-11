@@ -5,9 +5,12 @@
 //parser.y
 //This file contains Bison Code
 
-#include "scanType.h" //TokenData type 
 #include <stdio.h>
+#include <string.h>
 #include "syntaxTree.h"
+#include "scanType.h" //TokenData type 
+
+
 
 double vars[26];
 
@@ -15,6 +18,7 @@ extern int yylex();
 extern FILE *yyin;
 extern int line;    //ERR line number from scanner
 extern int numErrors;  // ERR err count
+static TreeNode *ast;
 
 #define YYERROR_VERBOSE
 void yyerror(const char *msg)
@@ -50,85 +54,104 @@ void yyerror(const char *msg)
 
 %%
 
-program             :       declList                                         //Add rules and operations over here
+program             :       declList                                            { ast = $1}
+
+declList            :       declList decl                                       { $$ = addaSibling($1, $2); }
+                    |       decl                                                { $$ = $1; }
                     ;
 
-declList            :       declList decl
-                    |       decl
+decl                :       varDecl                                             { $$ = 1; }       
+                    |       funDecl                                             { $$ = 1; }
                     ;
 
-decl                :       varDecl
-                    |       funDecl
+varDecl             :       typeSpec varDeclList SEMICOLON                      { $$ = $2; isaSiblingType($$, $1); }
                     ;
 
-varDecl             :       typeSpec varDeclList SEMICOLON
+scopedVarDecl       :       STATIC typeSpec varDeclList SEMICOLON               { $$ = $3; $$->isStatic = true; isaSiblingType($$, $1);}
+                    |       typeSpec varDeclList SEMICOLON                      { $$ = 2; isaSiblingType($$, $1); }
                     ;
 
-scopedVarDecl       :       STATIC typSpec varDeclList SEMICOLON
-                    |       typeSpec varDeclList SEMICOLON
+varDeclList         :       varDeclList COMMA varDeclInit                       { $$ = addaSibling($1, $3);}
+                    |       varDeclInit                                         { $$ = $1; }
                     ;
 
-varDeclList         :       varDeclList COMMA varDeclInit
-                    |       varDeclInit
-                    ;
-
-varDeclInit         :       varDeclId
-                    |       varDeclId COLON simpleExp
+varDeclInit         :       varDeclId                                           { $$ = $1; }
+                    |       varDeclId COLON simpleExp                           { $$ = 1; $$->child[0] = $3; }
                     ;
                 
-varDeclId           :       ID 
-                    |       ID LBRACKET NUMCONST RBRACKET
+varDeclId           :       ID                                                  { $$ = newDeclNode(VarK, $1); $$->attr.name = $1->tokenStrInput; } 
+                    |       ID LBRACKET NUMCONST RBRACKET                       { $$ = newDeclNode(VarK, $1); 
+                                                                                  $$->attr.name = $1->tokenStrInput;
+                                                                                  $$->isArray = true;
+                                                                                  $$->thisTokenData = $1; $$->expType = UndefinedType; }
                     ;
 
-typeSpec            :       BOOL
-                    |       CHAR
-                    |       INT
+typeSpec            :       BOOL                                                { $$ = Boolean; }
+                    |       CHAR                                                { $$ = Char; }
+                    |       INT                                                 { $$ = Integer; }
                     ;
 
-funDecl             :       typeSpec ID LPAREN parms RPAREN compoundStmt
-                    |       ID LPAREN parms RPAREN compoundStmt
+funDecl             :       typeSpec ID LPAREN parms RPAREN compoundStmt        { $$ = newDeclNode(FuncK, $2);
+                                                                                  $$->attr.name = strdup($2->tokenStrInput);
+                                                                                  $$->expType = $1;
+                                                                                  $$->thisTokenData = $2;
+                                                                                  $$->child[0] = $4;
+                                                                                  $$->child[1] = $6; }
+
+                    |       ID LPAREN parms RPAREN compoundStmt                 { $$ = newDeclNode(FuncK, $1);
+                                                                                  $$->attr.name = strdup($1->tokenStrInput);
+                                                                                  //$$->expType = $1;
+                                                                                  $$->thisTokenData = $1;
+                                                                                  $$->child[0] = $3;
+                                                                                  $$->child[1] = $5; }  
                     ;
 
-parms               :       parmList
-                    |       %empty
+parms               :       parmList                                            { $$ = $1 ; }
+                    |       %empty                                              { $$ = NULL ; } //epsilon
                     ;
 
-parmList            :       parmList SEMICOLON parmTypeList
-                    |       parmTypeList
+parmList            :       parmList SEMICOLON parmTypeList                     { $$ = addaSibling($1, $3);}  //declaring multiple arguments in a function decl
+                    |       parmTypeList                                        { $$ = $ 1; }
                     ;
 
-parmTypeList        :       typeSpec parmIdList
+parmTypeList        :       typeSpec parmIdList                                 { $$ = 2; isaSiblingType($$, $1); }
                     ;
 
-parmIdList          :       parmIdList COMMA parmId
-                    |       parmId
+parmIdList          :       parmIdList COMMA parmId                             { $$ = addaSibling($1, $3); }
+                    |       parmId                                              { $$ = 1; }
                     ;
 
-parmId              :       ID
-                    |       ID LBRACKET RBRACKET
+parmId              :       ID                                                  { $$ = newDeclNode(ParamK, $1);
+                                                                                  $$->attr.name = strdup($1->tokenStrInput); }
+
+                    |       ID LBRACKET RBRACKET                                { $$ = newDeclNode(ParamK, $1); 
+                                                                                  $$->attr.name = strdup($1->tokenStrInput); 
+                                                                                  isArray = true;}
                     ;
 
-stmt                :       expStmt
-                    |       compoundStmt
-                    |       selectStmt
-                    |       iterStmt
-                    |       returnStmt
-                    |       breakStmt
+stmt                :       expStmt                                             { $$ = 1; }                                    
+                    |       compoundStmt                                        { $$ = 1; }
+                    |       selectStmt                                          { $$ = 1; }
+                    |       iterStmt                                            { $$ = 1; }
+                    |       returnStmt                                          { $$ = 1; }
+                    |       breakStmt                                           { $$ = 1; }
                     ;
 
-expStmt             :       exp SEMICOLON
-                    |       SEMICOLON
+expStmt             :       exp SEMICOLON                                       { $$ = 1; }
+                    |       SEMICOLON                                           { $$ = NULL; }
                     ;
 
-compoundStmt        :       BEGIN localDecls stmtList END
+compoundStmt        :       BEGIN localDecls stmtList END                       { $$ newStmtNode(CompoundK, $1);
+                                                                                  $$->child[0] = $2;
+                                                                                  $$->child[1] = $3;}
                     ;
 
 localDecls          :       localDecls scopedVarDecl
-                    |       %empty
+                    |       %empty                                              { $$ = NULL; }
                     ;
 
 stmtList            :       stmtList stmt
-                    |       %empty
+                    |       %empty                                              { $$ = NULL; }
                     ;
 
 selectStmt          :       IF simpleExp THEN stmt 
@@ -167,8 +190,12 @@ simpleExp           :       simpleExp OR andExp
                     |       andExp
                     ;
 
+andExp              :       andExp AND unaryRelExp
+                    |       relExp
+                    ;
+
 unaryRelExp         :       NOT unaryRelExp
-                    |       unaryRelExp
+                    |       relExp
                     ;
 
 relExp              :       sumExp relop sumExp

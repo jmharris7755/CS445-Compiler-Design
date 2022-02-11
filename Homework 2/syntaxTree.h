@@ -68,6 +68,10 @@ TreeNode *newStmtNode(StmtKind kind, TokenData* token);
 
 TreeNode *newExpNode(ExpKind kind, TokenData* token);
 
-void printTree(TreeNode, int);
+TreeNode *addaSibling(TreeNode *, TreeNode *);
+
+void printTree(TreeNode *, int);
+
+void isSibling(TreeNode *, ExpType);
 
 #endif
