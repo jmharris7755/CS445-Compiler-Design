@@ -1,0 +1,1087 @@
+Nonterminals useless in grammar
+
+    selectStmt
+    iterStmt
+    iterRange
+    simpleExp
+    andExp
+    unaryRelExp
+    relExp
+    relop
+    sumExp
+    sumop
+    mulExp
+    mulop
+    unaryExp
+    unaryop
+    factor
+    immutable
+    call
+    args
+    argList
+    constant
+
+
+Terminals unused in grammar
+
+    CHARCONST
+    STRINGCONST
+    BOOLCONST
+    SPEC
+    KEYWORD
+    NEQ
+    LEQ
+    GEQ
+    PLUS
+    MINUS
+    DIVIDE
+    MULT
+    EQUALS
+    PERCENT
+    COLON
+    QMARK
+    IF
+    THEN
+    ELSE
+    FOR
+    WHILE
+    TO
+    DO
+    BY
+    NOT
+    OR
+    AND
+    LESSTHAN
+    GREATERTHAN
+
+
+Rules useless in grammar
+
+   52 varDeclInit: varDeclId COLON simpleExp
+
+   53 stmt: selectStmt
+   54     | iterStmt
+
+   55 selectStmt: IF simpleExp THEN stmt
+   56           | IF simpleExp THEN stmt ELSE stmt
+
+   57 iterStmt: WHILE simpleExp DO stmt
+   58         | FOR ID ASGN iterRange DO stmt
+
+   59 iterRange: simpleExp TO simpleExp
+   60          | simpleExp TO simpleExp BY simpleExp
+
+   61 exp: simpleExp
+
+   62 simpleExp: simpleExp OR andExp
+   63          | andExp
+
+   64 andExp: andExp AND unaryRelExp
+   65       | unaryRelExp
+
+   66 unaryRelExp: NOT unaryRelExp
+   67            | relExp
+
+   68 relExp: sumExp relop sumExp
+   69       | sumExp
+
+   70 relop: LESSTHAN
+   71      | LEQ
+   72      | GREATERTHAN
+   73      | GEQ
+   74      | EQUALS
+   75      | NEQ
+
+   76 sumExp: sumExp sumop mulExp
+   77       | mulExp
+
+   78 sumop: PLUS
+   79      | MINUS
+
+   80 mulExp: mulExp mulop unaryExp
+   81       | unaryExp
+
+   82 mulop: MULT
+   83      | DIVIDE
+   84      | PERCENT
+
+   85 unaryExp: unaryop unaryExp
+   86         | unaryExp
+
+   87 unaryop: MINUS
+   88        | MULT
+   89        | QMARK
+
+   90 factor: mutable
+   91       | immutable
+
+   92 immutable: LPAREN exp RPAREN
+   93          | call
+   94          | constant
+
+   95 call: ID LPAREN args RPAREN
+
+   96 args: argList
+   97     | %empty
+
+   98 argList: argList COMMA exp
+   99        | exp
+
+  100 constant: NUMCONST
+  101         | CHARCONST
+  102         | STRINGCONST
+  103         | BOOLCONST
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: declList
+
+    2 declList: declList decl
+    3         | decl
+
+    4 decl: varDecl
+    5     | funDecl
+
+    6 varDecl: typeSpec varDeclList SEMICOLON
+
+    7 scopedVarDecl: STATIC typeSpec varDeclList SEMICOLON
+    8              | typeSpec varDeclList SEMICOLON
+
+    9 varDeclList: varDeclList COMMA varDeclInit
+   10            | varDeclInit
+
+   11 varDeclInit: varDeclId
+
+   12 varDeclId: ID
+   13          | ID LBRACKET NUMCONST RBRACKET
+
+   14 typeSpec: BOOL
+   15         | CHAR
+   16         | INT
+
+   17 funDecl: typeSpec ID LPAREN parms RPAREN compoundStmt
+   18        | ID LPAREN parms RPAREN compoundStmt
+
+   19 parms: parmList
+   20      | %empty
+
+   21 parmList: parmList SEMICOLON parmTypeList
+   22         | parmTypeList
+
+   23 parmTypeList: typeSpec parmIdList
+
+   24 parmIdList: parmIdList COMMA parmId
+   25           | parmId
+
+   26 parmId: ID
+   27       | ID LBRACKET RBRACKET
+
+   28 stmt: expStmt
+   29     | compoundStmt
+   30     | returnStmt
+   31     | breakStmt
+
+   32 expStmt: exp SEMICOLON
+   33        | SEMICOLON
+
+   34 compoundStmt: START localDecls stmtList END
+
+   35 localDecls: localDecls scopedVarDecl
+   36           | %empty
+
+   37 stmtList: stmtList stmt
+   38         | %empty
+
+   39 returnStmt: RETURN SEMICOLON
+   40           | RETURN exp SEMICOLON
+
+   41 breakStmt: BREAK SEMICOLON
+
+   42 exp: mutable assignop exp
+   43    | mutable INC
+   44    | mutable DEC
+
+   45 assignop: ASGN
+   46         | ADDASGN
+   47         | MINUSASGN
+   48         | MULTASGN
+   49         | DIVASGN
+
+   50 mutable: ID
+   51        | ID LBRACKET exp RBRACKET
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    ID <tokenData> (258) 12 13 17 18 26 27 50 51
+    NUMCONST <tokenData> (259) 13
+    CHARCONST <tokenData> (260)
+    STRINGCONST <tokenData> (261)
+    BOOLCONST <tokenData> (262)
+    SPEC <tokenData> (263)
+    KEYWORD <tokenData> (264)
+    INC <tokenData> (265) 43
+    DEC <tokenData> (266) 44
+    NEQ <tokenData> (267)
+    LEQ <tokenData> (268)
+    GEQ <tokenData> (269)
+    ASGN <tokenData> (270) 45
+    ADDASGN <tokenData> (271) 46
+    MINUSASGN <tokenData> (272) 47
+    MULTASGN <tokenData> (273) 48
+    DIVASGN <tokenData> (274) 49
+    PLUS <tokenData> (275)
+    MINUS <tokenData> (276)
+    DIVIDE <tokenData> (277)
+    MULT <tokenData> (278)
+    EQUALS <tokenData> (279)
+    PERCENT <tokenData> (280)
+    COLON <tokenData> (281)
+    SEMICOLON <tokenData> (282) 6 7 8 21 32 33 39 40 41
+    COMMA <tokenData> (283) 9 24
+    QMARK <tokenData> (284)
+    IF <tokenData> (285)
+    THEN <tokenData> (286)
+    ELSE <tokenData> (287)
+    FOR <tokenData> (288)
+    BREAK <tokenData> (289) 41
+    RETURN <tokenData> (290) 39 40
+    START <tokenData> (291) 34
+    END <tokenData> (292) 34
+    WHILE <tokenData> (293)
+    TO <tokenData> (294)
+    DO <tokenData> (295)
+    BY <tokenData> (296)
+    NOT <tokenData> (297)
+    STATIC <tokenData> (298) 7
+    BOOL <tokenData> (299) 14
+    CHAR <tokenData> (300) 15
+    INT <tokenData> (301) 16
+    LBRACKET <tokenData> (302) 13 27 51
+    RBRACKET <tokenData> (303) 13 27 51
+    LPAREN <tokenData> (304) 17 18
+    RPAREN <tokenData> (305) 17 18
+    OR <tokenData> (306)
+    AND <tokenData> (307)
+    LESSTHAN <tokenData> (308)
+    GREATERTHAN <tokenData> (309)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (55)
+        on left: 0
+    program (56)
+        on left: 1
+        on right: 0
+    declList <tree> (57)
+        on left: 2 3
+        on right: 1 2
+    decl <tree> (58)
+        on left: 4 5
+        on right: 2 3
+    varDecl <tree> (59)
+        on left: 6
+        on right: 4
+    scopedVarDecl <tree> (60)
+        on left: 7 8
+        on right: 35
+    varDeclList <tree> (61)
+        on left: 9 10
+        on right: 6 7 8 9
+    varDeclInit <tree> (62)
+        on left: 11
+        on right: 9 10
+    varDeclId <tree> (63)
+        on left: 12 13
+        on right: 11
+    typeSpec <tree> (64)
+        on left: 14 15 16
+        on right: 6 7 8 17 23
+    funDecl <tree> (65)
+        on left: 17 18
+        on right: 5
+    parms <tree> (66)
+        on left: 19 20
+        on right: 17 18
+    parmList <tree> (67)
+        on left: 21 22
+        on right: 19 21
+    parmTypeList <tree> (68)
+        on left: 23
+        on right: 21 22
+    parmIdList <tree> (69)
+        on left: 24 25
+        on right: 23 24
+    parmId <tree> (70)
+        on left: 26 27
+        on right: 24 25
+    stmt <tree> (71)
+        on left: 28 29 30 31
+        on right: 37
+    expStmt <tree> (72)
+        on left: 32 33
+        on right: 28
+    compoundStmt <tree> (73)
+        on left: 34
+        on right: 17 18 29
+    localDecls <tree> (74)
+        on left: 35 36
+        on right: 34 35
+    stmtList <tree> (75)
+        on left: 37 38
+        on right: 34 37
+    returnStmt <tree> (76)
+        on left: 39 40
+        on right: 30
+    breakStmt <tree> (77)
+        on left: 41
+        on right: 31
+    exp <tree> (78)
+        on left: 42 43 44
+        on right: 32 40 42 51
+    assignop <tree> (79)
+        on left: 45 46 47 48 49
+        on right: 42
+    mutable <tree> (80)
+        on left: 50 51
+        on right: 42 43 44
+
+
+State 0
+
+    0 $accept: • program $end
+
+    ID    shift, and go to state 1
+    BOOL  shift, and go to state 2
+    CHAR  shift, and go to state 3
+    INT   shift, and go to state 4
+
+    program   go to state 5
+    declList  go to state 6
+    decl      go to state 7
+    varDecl   go to state 8
+    typeSpec  go to state 9
+    funDecl   go to state 10
+
+
+State 1
+
+   18 funDecl: ID • LPAREN parms RPAREN compoundStmt
+
+    LPAREN  shift, and go to state 11
+
+
+State 2
+
+   14 typeSpec: BOOL •
+
+    $default  reduce using rule 14 (typeSpec)
+
+
+State 3
+
+   15 typeSpec: CHAR •
+
+    $default  reduce using rule 15 (typeSpec)
+
+
+State 4
+
+   16 typeSpec: INT •
+
+    $default  reduce using rule 16 (typeSpec)
+
+
+State 5
+
+    0 $accept: program • $end
+
+    $end  shift, and go to state 12
+
+
+State 6
+
+    1 program: declList •
+    2 declList: declList • decl
+
+    ID    shift, and go to state 1
+    BOOL  shift, and go to state 2
+    CHAR  shift, and go to state 3
+    INT   shift, and go to state 4
+
+    $default  reduce using rule 1 (program)
+
+    decl      go to state 13
+    varDecl   go to state 8
+    typeSpec  go to state 9
+    funDecl   go to state 10
+
+
+State 7
+
+    3 declList: decl •
+
+    $default  reduce using rule 3 (declList)
+
+
+State 8
+
+    4 decl: varDecl •
+
+    $default  reduce using rule 4 (decl)
+
+
+State 9
+
+    6 varDecl: typeSpec • varDeclList SEMICOLON
+   17 funDecl: typeSpec • ID LPAREN parms RPAREN compoundStmt
+
+    ID  shift, and go to state 14
+
+    varDeclList  go to state 15
+    varDeclInit  go to state 16
+    varDeclId    go to state 17
+
+
+State 10
+
+    5 decl: funDecl •
+
+    $default  reduce using rule 5 (decl)
+
+
+State 11
+
+   18 funDecl: ID LPAREN • parms RPAREN compoundStmt
+
+    BOOL  shift, and go to state 2
+    CHAR  shift, and go to state 3
+    INT   shift, and go to state 4
+
+    $default  reduce using rule 20 (parms)
+
+    typeSpec      go to state 18
+    parms         go to state 19
+    parmList      go to state 20
+    parmTypeList  go to state 21
+
+
+State 12
+
+    0 $accept: program $end •
+
+    $default  accept
+
+
+State 13
+
+    2 declList: declList decl •
+
+    $default  reduce using rule 2 (declList)
+
+
+State 14
+
+   12 varDeclId: ID •
+   13          | ID • LBRACKET NUMCONST RBRACKET
+   17 funDecl: typeSpec ID • LPAREN parms RPAREN compoundStmt
+
+    LBRACKET  shift, and go to state 22
+    LPAREN    shift, and go to state 23
+
+    $default  reduce using rule 12 (varDeclId)
+
+
+State 15
+
+    6 varDecl: typeSpec varDeclList • SEMICOLON
+    9 varDeclList: varDeclList • COMMA varDeclInit
+
+    SEMICOLON  shift, and go to state 24
+    COMMA      shift, and go to state 25
+
+
+State 16
+
+   10 varDeclList: varDeclInit •
+
+    $default  reduce using rule 10 (varDeclList)
+
+
+State 17
+
+   11 varDeclInit: varDeclId •
+
+    $default  reduce using rule 11 (varDeclInit)
+
+
+State 18
+
+   23 parmTypeList: typeSpec • parmIdList
+
+    ID  shift, and go to state 26
+
+    parmIdList  go to state 27
+    parmId      go to state 28
+
+
+State 19
+
+   18 funDecl: ID LPAREN parms • RPAREN compoundStmt
+
+    RPAREN  shift, and go to state 29
+
+
+State 20
+
+   19 parms: parmList •
+   21 parmList: parmList • SEMICOLON parmTypeList
+
+    SEMICOLON  shift, and go to state 30
+
+    $default  reduce using rule 19 (parms)
+
+
+State 21
+
+   22 parmList: parmTypeList •
+
+    $default  reduce using rule 22 (parmList)
+
+
+State 22
+
+   13 varDeclId: ID LBRACKET • NUMCONST RBRACKET
+
+    NUMCONST  shift, and go to state 31
+
+
+State 23
+
+   17 funDecl: typeSpec ID LPAREN • parms RPAREN compoundStmt
+
+    BOOL  shift, and go to state 2
+    CHAR  shift, and go to state 3
+    INT   shift, and go to state 4
+
+    $default  reduce using rule 20 (parms)
+
+    typeSpec      go to state 18
+    parms         go to state 32
+    parmList      go to state 20
+    parmTypeList  go to state 21
+
+
+State 24
+
+    6 varDecl: typeSpec varDeclList SEMICOLON •
+
+    $default  reduce using rule 6 (varDecl)
+
+
+State 25
+
+    9 varDeclList: varDeclList COMMA • varDeclInit
+
+    ID  shift, and go to state 33
+
+    varDeclInit  go to state 34
+    varDeclId    go to state 17
+
+
+State 26
+
+   26 parmId: ID •
+   27       | ID • LBRACKET RBRACKET
+
+    LBRACKET  shift, and go to state 35
+
+    $default  reduce using rule 26 (parmId)
+
+
+State 27
+
+   23 parmTypeList: typeSpec parmIdList •
+   24 parmIdList: parmIdList • COMMA parmId
+
+    COMMA  shift, and go to state 36
+
+    $default  reduce using rule 23 (parmTypeList)
+
+
+State 28
+
+   25 parmIdList: parmId •
+
+    $default  reduce using rule 25 (parmIdList)
+
+
+State 29
+
+   18 funDecl: ID LPAREN parms RPAREN • compoundStmt
+
+    START  shift, and go to state 37
+
+    compoundStmt  go to state 38
+
+
+State 30
+
+   21 parmList: parmList SEMICOLON • parmTypeList
+
+    BOOL  shift, and go to state 2
+    CHAR  shift, and go to state 3
+    INT   shift, and go to state 4
+
+    typeSpec      go to state 18
+    parmTypeList  go to state 39
+
+
+State 31
+
+   13 varDeclId: ID LBRACKET NUMCONST • RBRACKET
+
+    RBRACKET  shift, and go to state 40
+
+
+State 32
+
+   17 funDecl: typeSpec ID LPAREN parms • RPAREN compoundStmt
+
+    RPAREN  shift, and go to state 41
+
+
+State 33
+
+   12 varDeclId: ID •
+   13          | ID • LBRACKET NUMCONST RBRACKET
+
+    LBRACKET  shift, and go to state 22
+
+    $default  reduce using rule 12 (varDeclId)
+
+
+State 34
+
+    9 varDeclList: varDeclList COMMA varDeclInit •
+
+    $default  reduce using rule 9 (varDeclList)
+
+
+State 35
+
+   27 parmId: ID LBRACKET • RBRACKET
+
+    RBRACKET  shift, and go to state 42
+
+
+State 36
+
+   24 parmIdList: parmIdList COMMA • parmId
+
+    ID  shift, and go to state 26
+
+    parmId  go to state 43
+
+
+State 37
+
+   34 compoundStmt: START • localDecls stmtList END
+
+    $default  reduce using rule 36 (localDecls)
+
+    localDecls  go to state 44
+
+
+State 38
+
+   18 funDecl: ID LPAREN parms RPAREN compoundStmt •
+
+    $default  reduce using rule 18 (funDecl)
+
+
+State 39
+
+   21 parmList: parmList SEMICOLON parmTypeList •
+
+    $default  reduce using rule 21 (parmList)
+
+
+State 40
+
+   13 varDeclId: ID LBRACKET NUMCONST RBRACKET •
+
+    $default  reduce using rule 13 (varDeclId)
+
+
+State 41
+
+   17 funDecl: typeSpec ID LPAREN parms RPAREN • compoundStmt
+
+    START  shift, and go to state 37
+
+    compoundStmt  go to state 45
+
+
+State 42
+
+   27 parmId: ID LBRACKET RBRACKET •
+
+    $default  reduce using rule 27 (parmId)
+
+
+State 43
+
+   24 parmIdList: parmIdList COMMA parmId •
+
+    $default  reduce using rule 24 (parmIdList)
+
+
+State 44
+
+   34 compoundStmt: START localDecls • stmtList END
+   35 localDecls: localDecls • scopedVarDecl
+
+    STATIC  shift, and go to state 46
+    BOOL    shift, and go to state 2
+    CHAR    shift, and go to state 3
+    INT     shift, and go to state 4
+
+    $default  reduce using rule 38 (stmtList)
+
+    scopedVarDecl  go to state 47
+    typeSpec       go to state 48
+    stmtList       go to state 49
+
+
+State 45
+
+   17 funDecl: typeSpec ID LPAREN parms RPAREN compoundStmt •
+
+    $default  reduce using rule 17 (funDecl)
+
+
+State 46
+
+    7 scopedVarDecl: STATIC • typeSpec varDeclList SEMICOLON
+
+    BOOL  shift, and go to state 2
+    CHAR  shift, and go to state 3
+    INT   shift, and go to state 4
+
+    typeSpec  go to state 50
+
+
+State 47
+
+   35 localDecls: localDecls scopedVarDecl •
+
+    $default  reduce using rule 35 (localDecls)
+
+
+State 48
+
+    8 scopedVarDecl: typeSpec • varDeclList SEMICOLON
+
+    ID  shift, and go to state 33
+
+    varDeclList  go to state 51
+    varDeclInit  go to state 16
+    varDeclId    go to state 17
+
+
+State 49
+
+   34 compoundStmt: START localDecls stmtList • END
+   37 stmtList: stmtList • stmt
+
+    ID         shift, and go to state 52
+    SEMICOLON  shift, and go to state 53
+    BREAK      shift, and go to state 54
+    RETURN     shift, and go to state 55
+    START      shift, and go to state 37
+    END        shift, and go to state 56
+
+    stmt          go to state 57
+    expStmt       go to state 58
+    compoundStmt  go to state 59
+    returnStmt    go to state 60
+    breakStmt     go to state 61
+    exp           go to state 62
+    mutable       go to state 63
+
+
+State 50
+
+    7 scopedVarDecl: STATIC typeSpec • varDeclList SEMICOLON
+
+    ID  shift, and go to state 33
+
+    varDeclList  go to state 64
+    varDeclInit  go to state 16
+    varDeclId    go to state 17
+
+
+State 51
+
+    8 scopedVarDecl: typeSpec varDeclList • SEMICOLON
+    9 varDeclList: varDeclList • COMMA varDeclInit
+
+    SEMICOLON  shift, and go to state 65
+    COMMA      shift, and go to state 25
+
+
+State 52
+
+   50 mutable: ID •
+   51        | ID • LBRACKET exp RBRACKET
+
+    LBRACKET  shift, and go to state 66
+
+    $default  reduce using rule 50 (mutable)
+
+
+State 53
+
+   33 expStmt: SEMICOLON •
+
+    $default  reduce using rule 33 (expStmt)
+
+
+State 54
+
+   41 breakStmt: BREAK • SEMICOLON
+
+    SEMICOLON  shift, and go to state 67
+
+
+State 55
+
+   39 returnStmt: RETURN • SEMICOLON
+   40           | RETURN • exp SEMICOLON
+
+    ID         shift, and go to state 52
+    SEMICOLON  shift, and go to state 68
+
+    exp      go to state 69
+    mutable  go to state 63
+
+
+State 56
+
+   34 compoundStmt: START localDecls stmtList END •
+
+    $default  reduce using rule 34 (compoundStmt)
+
+
+State 57
+
+   37 stmtList: stmtList stmt •
+
+    $default  reduce using rule 37 (stmtList)
+
+
+State 58
+
+   28 stmt: expStmt •
+
+    $default  reduce using rule 28 (stmt)
+
+
+State 59
+
+   29 stmt: compoundStmt •
+
+    $default  reduce using rule 29 (stmt)
+
+
+State 60
+
+   30 stmt: returnStmt •
+
+    $default  reduce using rule 30 (stmt)
+
+
+State 61
+
+   31 stmt: breakStmt •
+
+    $default  reduce using rule 31 (stmt)
+
+
+State 62
+
+   32 expStmt: exp • SEMICOLON
+
+    SEMICOLON  shift, and go to state 70
+
+
+State 63
+
+   42 exp: mutable • assignop exp
+   43    | mutable • INC
+   44    | mutable • DEC
+
+    INC        shift, and go to state 71
+    DEC        shift, and go to state 72
+    ASGN       shift, and go to state 73
+    ADDASGN    shift, and go to state 74
+    MINUSASGN  shift, and go to state 75
+    MULTASGN   shift, and go to state 76
+    DIVASGN    shift, and go to state 77
+
+    assignop  go to state 78
+
+
+State 64
+
+    7 scopedVarDecl: STATIC typeSpec varDeclList • SEMICOLON
+    9 varDeclList: varDeclList • COMMA varDeclInit
+
+    SEMICOLON  shift, and go to state 79
+    COMMA      shift, and go to state 25
+
+
+State 65
+
+    8 scopedVarDecl: typeSpec varDeclList SEMICOLON •
+
+    $default  reduce using rule 8 (scopedVarDecl)
+
+
+State 66
+
+   51 mutable: ID LBRACKET • exp RBRACKET
+
+    ID  shift, and go to state 52
+
+    exp      go to state 80
+    mutable  go to state 63
+
+
+State 67
+
+   41 breakStmt: BREAK SEMICOLON •
+
+    $default  reduce using rule 41 (breakStmt)
+
+
+State 68
+
+   39 returnStmt: RETURN SEMICOLON •
+
+    $default  reduce using rule 39 (returnStmt)
+
+
+State 69
+
+   40 returnStmt: RETURN exp • SEMICOLON
+
+    SEMICOLON  shift, and go to state 81
+
+
+State 70
+
+   32 expStmt: exp SEMICOLON •
+
+    $default  reduce using rule 32 (expStmt)
+
+
+State 71
+
+   43 exp: mutable INC •
+
+    $default  reduce using rule 43 (exp)
+
+
+State 72
+
+   44 exp: mutable DEC •
+
+    $default  reduce using rule 44 (exp)
+
+
+State 73
+
+   45 assignop: ASGN •
+
+    $default  reduce using rule 45 (assignop)
+
+
+State 74
+
+   46 assignop: ADDASGN •
+
+    $default  reduce using rule 46 (assignop)
+
+
+State 75
+
+   47 assignop: MINUSASGN •
+
+    $default  reduce using rule 47 (assignop)
+
+
+State 76
+
+   48 assignop: MULTASGN •
+
+    $default  reduce using rule 48 (assignop)
+
+
+State 77
+
+   49 assignop: DIVASGN •
+
+    $default  reduce using rule 49 (assignop)
+
+
+State 78
+
+   42 exp: mutable assignop • exp
+
+    ID  shift, and go to state 52
+
+    exp      go to state 82
+    mutable  go to state 63
+
+
+State 79
+
+    7 scopedVarDecl: STATIC typeSpec varDeclList SEMICOLON •
+
+    $default  reduce using rule 7 (scopedVarDecl)
+
+
+State 80
+
+   51 mutable: ID LBRACKET exp • RBRACKET
+
+    RBRACKET  shift, and go to state 83
+
+
+State 81
+
+   40 returnStmt: RETURN exp SEMICOLON •
+
+    $default  reduce using rule 40 (returnStmt)
+
+
+State 82
+
+   42 exp: mutable assignop exp •
+
+    $default  reduce using rule 42 (exp)
+
+
+State 83
+
+   51 mutable: ID LBRACKET exp RBRACKET •
+
+    $default  reduce using rule 51 (mutable)

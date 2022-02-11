@@ -8,10 +8,10 @@
 
 //order of includes is mandatory
 #include "scanType.h" //TokenData Type
+#include "syntaxTree.h"
 #include "parser.tab.h" // token definitions from Bison
 #include <ctype.h>
 #include <string.h>
-#include "syntaxTree.h"
 
 int line=1;
 int numErrors;  //ERR err count
@@ -224,7 +224,7 @@ DIGIT	[0-9]
 "false"                         { return setValue(line, BOOLCONST, yytext); }
 
 "int"                           { return setValue(line, INT, yytext); }
-"begin"                         { return setValue(line, BEGIN, yytext); }
+"begin"                         { return setValue(line, START, yytext); }
 "if"                            { return setValue(line, IF, yytext); }
 "then"                          { return setValue(line, THEN, yytext); }
 "return"                        { return setValue(line, RETURN, yytext); }

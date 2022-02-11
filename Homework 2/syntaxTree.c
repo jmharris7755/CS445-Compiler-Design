@@ -152,7 +152,7 @@ void printTree(TreeNode *t, int siblingCounter){
 
                 case VarK:
                     if(t->isArray == true){
-                        printf("Var: %s is array of type %s [line: %d]\n", t->tokenData->tokenStrInput, convertExpType, t->linenum);
+                        printf("Var: %s is array of type %s [line: %d]\n", t->thisTokenData->tokenStrInput, convertExpType, t->linenum);
                     }
                     else{
                         printf("Var: %s of type %s [line: %d]\n", t->attr.name, convertExpType, t->linenum);
@@ -249,7 +249,7 @@ void printTree(TreeNode *t, int siblingCounter){
                 }
 
                 else if(!strcmp(convertExpType, "Char")){
-                    printf("Const \'%c\' of type char [line: %d]\n", t->tokenData->cvalue, t->linenum);
+                    printf("Const \'%c\' of type char [line: %d]\n", t->thisTokenData->cvalue, t->linenum);
                 }
 
                 else{
@@ -274,7 +274,7 @@ void printTree(TreeNode *t, int siblingCounter){
 
                 default:
                     printf("ERROR %i ", CallK);
-                    printf("Unknown ExpNode subkind Line: %d\n" t->linenum);
+                    printf("Unknown ExpNode subkind Line: %d\n", t->linenum);
                 break;
             }
         }

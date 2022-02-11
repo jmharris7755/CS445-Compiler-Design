@@ -1,0 +1,8 @@
+In file included from parser.l:11:
+parser.y:37:5: error: ‘ExpType’ does not name a type
+   37 |     ExpType type;               //For passing types (i.e pass a type in a decl like int or bool)
+      |     ^~~~~~~
+parser.y:39:5: error: ‘TreeNode’ does not name a type
+   39 |     TreeNode *tree;             //For nonterminals. Add these nodes as you build the tree.
+      |     ^~~~~~~~
+make: *** [<builtin>: lex.yy.o] Error 1

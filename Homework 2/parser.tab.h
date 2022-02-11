@@ -67,7 +67,45 @@ extern int yydebug;
     LEQ = 268,                     /* LEQ  */
     GEQ = 269,                     /* GEQ  */
     ASGN = 270,                    /* ASGN  */
-    ADDASGN = 271                  /* ADDASGN  */
+    ADDASGN = 271,                 /* ADDASGN  */
+    MINUSASGN = 272,               /* MINUSASGN  */
+    MULTASGN = 273,                /* MULTASGN  */
+    DIVASGN = 274,                 /* DIVASGN  */
+    PLUS = 275,                    /* PLUS  */
+    MINUS = 276,                   /* MINUS  */
+    DIVIDE = 277,                  /* DIVIDE  */
+    MULT = 278,                    /* MULT  */
+    EQUALS = 279,                  /* EQUALS  */
+    PERCENT = 280,                 /* PERCENT  */
+    COLON = 281,                   /* COLON  */
+    SEMICOLON = 282,               /* SEMICOLON  */
+    COMMA = 283,                   /* COMMA  */
+    QMARK = 284,                   /* QMARK  */
+    IF = 285,                      /* IF  */
+    THEN = 286,                    /* THEN  */
+    ELSE = 287,                    /* ELSE  */
+    FOR = 288,                     /* FOR  */
+    BREAK = 289,                   /* BREAK  */
+    RETURN = 290,                  /* RETURN  */
+    START = 291,                   /* START  */
+    END = 292,                     /* END  */
+    WHILE = 293,                   /* WHILE  */
+    TO = 294,                      /* TO  */
+    DO = 295,                      /* DO  */
+    BY = 296,                      /* BY  */
+    NOT = 297,                     /* NOT  */
+    STATIC = 298,                  /* STATIC  */
+    BOOL = 299,                    /* BOOL  */
+    CHAR = 300,                    /* CHAR  */
+    INT = 301,                     /* INT  */
+    LBRACKET = 302,                /* LBRACKET  */
+    RBRACKET = 303,                /* RBRACKET  */
+    LPAREN = 304,                  /* LPAREN  */
+    RPAREN = 305,                  /* RPAREN  */
+    OR = 306,                      /* OR  */
+    AND = 307,                     /* AND  */
+    LESSTHAN = 308,                /* LESSTHAN  */
+    GREATERTHAN = 309              /* GREATERTHAN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -76,11 +114,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 30 "parser.y"
+#line 37 "parser.y"
 
-    TokenData *tokenData;
+    ExpType type;               //For passing types (i.e pass a type in a decl like int or bool)
+    TokenData *tokenData;       //For terminals. Token data comes from yylex() in the $ vars
+    TreeNode *tree;             //For nonterminals. Add these nodes as you build the tree. 
 
-#line 84 "parser.tab.h"
+#line 124 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

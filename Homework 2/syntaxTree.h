@@ -1,6 +1,7 @@
 #ifndef _SYNTAXTREE_H_
 #define _SYNTAXTREE_H_
 
+#include <stdbool.h>
 #include "scanType.h"
 
 #define MAXCHILDREN 3
@@ -62,16 +63,18 @@ typedef struct treeNode
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
 
-TreeNode *newDeclNode(DeclKind kind, TokenData *token);
+TreeNode *newDeclNode(DeclKind kind, TokenData *tokenData);
 
-TreeNode *newStmtNode(StmtKind kind, TokenData* token);
+TreeNode *newStmtNode(StmtKind kind, TokenData *tokenData);
 
-TreeNode *newExpNode(ExpKind kind, TokenData* token);
+TreeNode *newExpNode(ExpKind kind, TokenData *tokenData);
 
 TreeNode *addaSibling(TreeNode *, TreeNode *);
 
 void printTree(TreeNode *, int);
 
-void isSibling(TreeNode *, ExpType);
+void isaSiblingType(TreeNode *, ExpType);
+
+void printSpaces(int);
 
 #endif
