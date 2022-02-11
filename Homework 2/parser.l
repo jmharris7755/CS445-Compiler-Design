@@ -203,8 +203,12 @@ static int setValue(int linenum, int tokenClass, char *svalue)
 
         yylval.tokenData->tokenID = strdup(svalue);
     }
+    else{
+        yylval.tokenData->tokenStrInput = strdup(svalue);
+    }
 
     //return the tokenClass
+    yylval.tokenData->tokenStrInput = strdup(svalue);
     return tokenClass;
 }
 

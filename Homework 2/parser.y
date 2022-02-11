@@ -172,7 +172,7 @@ selectStmt          :       IF simpleExp THEN stmt                              
                                                                                   $$->child[0] = $2;
                                                                                   $$->child[1] = $4; }
 
-                    |       IF simpleExp THEN stmt ELSE stmt                    { $$ = newStmtNode(IFK, $1);
+                    |       IF simpleExp THEN stmt ELSE stmt                    { $$ = newStmtNode(IfK, $1);
                                                                                   $$->child[0] = $2;
                                                                                   $$->child[1] = $4;
                                                                                   $$->child[2] = $6;}
@@ -211,12 +211,12 @@ returnStmt          :       RETURN SEMICOLON                                    
                     ;
 
 breakStmt           :       BREAK SEMICOLON                                     { $$ = newStmtNode(BreakK, $1);
-                                                                                   $$->attr.name = $1->tokenStrInput; }
+                                                                                  $$->attr.name = $1->tokenStrInput; }
                     ;
 
 exp                 :       mutable assignop exp                                { $$ = $2;
-                                                                                   $$->child[0] = $1;
-                                                                                   $$->child[1] = $3; }
+                                                                                  $$->child[0] = $1;
+                                                                                  $$->child[1] = $3; }
 
                     |       mutable INC                                         { $$ = newExpNode(AssignK, $2);
                                                                                   $$->attr.name = $2->tokenStrInput;
@@ -228,7 +228,7 @@ exp                 :       mutable assignop exp                                
                                                                                   $$->expType = Integer;
                                                                                   $$->child[0] = $1; }
 
-                    |       simpleExp                                           {$$ = $1; }
+                    |       simpleExp                                           { $$ = $1; }
                     ;
 
 assignop            :       ASGN                                                { $$ = newExpNode(AssignK, $1); $$->attr.name = $1->tokenStrInput;}
@@ -242,7 +242,7 @@ simpleExp           :       simpleExp OR andExp                                 
                                                                                   $$->attr.name = $2->tokenStrInput;
                                                                                   $$->expType = Boolean;
                                                                                   $$->child[0] = $1;
-                                                                                  $$->child[1] = #3;}
+                                                                                  $$->child[1] = $3;}
 
                     |       andExp                                              { $$ = $1; }
                     ;
@@ -251,17 +251,17 @@ andExp              :       andExp AND unaryRelExp                              
                                                                                   $$->attr.name = $2->tokenStrInput;
                                                                                   $$->expType = Boolean;
                                                                                   $$->child[0] = $1;
-                                                                                  $$->child[1] = #3;}
+                                                                                  $$->child[1] = $3;}
 
                     |       unaryRelExp                                         { $$ = $1; }
                     ;
 
 unaryRelExp         :       NOT unaryRelExp                                     { $$ = newExpNode(OpK, $1);
-                                                                                  $$->attr.name = $1->tokenStrInput
+                                                                                  $$->attr.name = $1->tokenStrInput;
                                                                                   $$->expType = Boolean;
                                                                                   $$->child[0] = $2;}
 
-                    |       relExp                                              { $$ = #1; }
+                    |       relExp                                              { $$ = $1; }
                     ;
 
 relExp              :       sumExp relop sumExp                                 { $$  = $2;
@@ -335,7 +335,7 @@ mulop               :       MULT                                                
 unaryExp            :       unaryop unaryExp                                    { $$  = $1;
                                                                                   $$->child[0] = $2; }
 
-                    |       unaryExp                                            { $$ = $1; }
+                    |       factor                                            { $$ = $1; }
                     ;
 
 unaryop             :       MINUS                                               { $$ = newExpNode(OpK, $1) ;
@@ -417,6 +417,10 @@ int main(int argc, char *argv[])
 
         switch(selOption){
 
+            case'c':
+                //do nothing
+                break;
+
             case 'd':
                 yydebug = 1;
                 break;
@@ -425,14 +429,14 @@ int main(int argc, char *argv[])
                 printAST = true;
                 break;
 
-            defalut:
+            default:
                 exit(1);
         }
     }
 
 
     if(argc >1){
-        if((yyin = fopen(argv[1], "r"))) {
+        if((yyin = fopen(argv[argc-1], "r"))) {
             // file open successful
         }
         else {
