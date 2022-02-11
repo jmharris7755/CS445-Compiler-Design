@@ -8,7 +8,10 @@
 #include "syntaxTree.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <getopt.h>
 
 
 
@@ -407,6 +410,25 @@ extern int yydebug;
 int main(int argc, char *argv[])
 {
 
+    int selOption = 0;
+    bool printAST = 0;
+
+    while((selOption = getopt(argc, argv, "dp")) != -1){
+
+        switch(selOption){
+
+            case 'd':
+                yydebug = 1;
+                break;
+            
+            case 'p':
+                printAST = true;
+                break;
+
+            defalut:
+                exit(1);
+        }
+    }
 
 
     if(argc >1){
@@ -422,13 +444,8 @@ int main(int argc, char *argv[])
 
     yyparse();
 
-    if(argc > 2){
-        if(!strcmp(argv[1], "-d")){
-            yydebug = 1;
-        }
-        else if(!strcmp(argv[1], "-p")){
-            printTree(ast, 0);
-        }
+    if(printAST){
+        printTree(ast, 0);
     }
 
     //do the parsing
