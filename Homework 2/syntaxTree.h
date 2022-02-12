@@ -1,3 +1,9 @@
+//Justin Harris 
+//CS445
+//Last Updated: 2-11-22
+//syntaxTree.h
+//File containing types and function defs for building AST
+
 #ifndef _SYNTAXTREE_H_
 #define _SYNTAXTREE_H_
 
@@ -77,5 +83,7 @@ void printTree(TreeNode *, int);
 void convertSiblingType(TreeNode *, ExpType);
 
 void printSpaces(int);
+
+void printExp(ExpType t);
 
 #endif

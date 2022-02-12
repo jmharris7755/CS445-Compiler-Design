@@ -1,3 +1,10 @@
+//Justin Harris 
+//CS445
+//Last Updated: 2-11-22
+//syntaxTree.c
+//File containing function logic from syntaxTree.h
+//builds the AST
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
