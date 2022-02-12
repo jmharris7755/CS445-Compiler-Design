@@ -104,8 +104,46 @@ TreeNode *addaSibling(TreeNode *t, TreeNode *s){
 void printSpaces(int whiteSpaces){
   int i = 0;
   for(i=0; i < whiteSpaces; i++){
-      printf(". ");
+      printf(".   ");
   }  
+}
+
+void printExp(ExpType t){
+
+    switch(t){
+
+        case Void:
+            printf("void");
+            break;
+
+        case Integer:
+            printf("int");
+            break;
+        
+        case Boolean:
+            printf("bool");
+            break;
+
+        case Char:
+            printf("char");
+            break;
+
+        case CharInt:
+            printf("CharInt");
+            break;
+
+        case Equal:
+            printf("Equal");
+            break;
+
+        case UndefinedType:
+            printf("undefined type");
+            break;
+
+        default:
+            printf("exprType not found\n");
+            break;
+    }
 }
 
 void printTree(TreeNode *t, int siblingCounter){
@@ -116,42 +154,6 @@ void printTree(TreeNode *t, int siblingCounter){
         printf("Unable to print tree\n");
     }
     while(t != NULL){
-
-            //convert exp type to proper print out and save for later
-            char *convertExpType = NULL;
-
-            if(t->expType == Void){
-                //*convertExpType = "";
-                strcpy(convertExpType, "void");
-            }
-            else if(t->expType == Integer){
-                //convertExpType = "";
-                strcpy(convertExpType, "int");
-            }
-            else if(t->expType == Boolean){
-                //convertExpType = "";
-                strcpy(convertExpType, "bool");
-            }
-            else if (t->expType == Char){
-                //convertExpType = "";
-                strcpy(convertExpType, "char");
-            }
-            else if(t->expType == CharInt){
-                //convertExpType = "";
-                strcpy(convertExpType, "CharInt");
-            }
-            else if(t->expType == Equal){
-                //convertExpType = "";
-                strcpy(convertExpType, "Equal");
-            }
-            else if(t->expType == UndefinedType){
-                //convertExpType = "";
-                strcpy(convertExpType, "undefined type");
-            }
-            else{
-                //convertExpType = "";
-                strcpy(convertExpType, "exprType not found\n");
-            }
             
         //Check in order declared in syntaxTree.h
         if(t->nodekind == DeclK){
@@ -160,23 +162,33 @@ void printTree(TreeNode *t, int siblingCounter){
 
                 case VarK:
                     if(t->isArray == true){
-                        printf("Var: %s is array of type %s [line: %d]\n", t->thisTokenData->tokenStrInput, convertExpType, t->linenum);
+                        printf("Var: %s of array of type ", t->attr.name);
+                        printExp(t->expType);
+                        printf(" [line: %d]\n", t->linenum);
                     }
                     else{
-                        printf("Var: %s of type %s [line: %d]\n", t->attr.name, convertExpType, t->linenum);
+                        printf("Var: %s of type ", t->attr.name);
+                        printExp(t->expType);
+                        printf(" [line: %d]\n", t->linenum);
                     }
                     break;
 
                 case FuncK:
-                    printf("Func: %s returns type %s, [line: %d]\n", t->attr.name, convertExpType, t->linenum);
+                    printf("Func: %s returns type ", t->attr.name);
+                    printExp(t->expType);
+                        printf(" [line: %d]\n", t->linenum);
                     break;
 
                 case ParamK:
                     if(t->isArray){
-                        printf("Parm: %s is array of type %s [line: %d]\n", t->attr.name, convertExpType, t->linenum);
+                        printf("Parm: %s of array of type ", t->attr.name);
+                        printExp(t->expType);
+                        printf(" [line: %d]\n", t->linenum);
                     }
                     else{
-                        printf("Parm: %s of type %s [line: %d]\n", t->attr.name, convertExpType, t->linenum);
+                        printf("Parm: %s of type ", t->attr.name);
+                        printExp(t->expType);
+                        printf(" [line: %d]\n", t->linenum);
                     }
                     break;
                 
@@ -233,47 +245,53 @@ void printTree(TreeNode *t, int siblingCounter){
 
                 if(t->child[1] == NULL && !strcmp(t->attr.name, "-")){
                     
-                    printf("Op: CHSIGN of type %s [line: %d]\n", convertExpType, t->linenum);
+                    printf("Op: chsign");
+                    //printExp(t->expType);
+                    printf(" [line: %d]\n", t->linenum);
                     
                 }
 
                 else if(t->child[1] == NULL && !strcmp(t->attr.name, "*")){
-                    printf("Op: sizeof of type %s [line: %d]\n", convertExpType, t->linenum);
+                    printf("Op: sizeof");
+                    //printExp(t->expType);
+                    printf(" [line: %d]\n", t->linenum);
                 }
 
                 else{
-                    printf("Op: %s of type %s [line: %d]\n", t->attr.name, convertExpType, t->linenum);
+                    printf("Op: %s", t->attr.name);
+                    //printExp(t->expType);
+                    printf(" [line: %d]\n", t->linenum);
                 }
                 break;
 
                 case ConstantK:
-                if(!strcmp(convertExpType, "bool")){
+                if(t->expType == Boolean){
                     printf("Const %s [line: %d]\n", t->attr.name, t->linenum);
                 }
 
-                else if(!strcmp(convertExpType, "CharInt")){
+                else if(t->expType == CharInt){
                     printf("Const is array \"");
                     printf("%s [line: %d]\n", t->attr.name, t->linenum);
                 }
 
-                else if(!strcmp(convertExpType, "Char")){
+                else if(t->expType == Char){
                     printf("Const \'%c\' of type char [line: %d]\n", t->thisTokenData->cvalue, t->linenum);
                 }
 
                 else{
-                    printf("Const %d  [line: %d]\n", t->attr.value, t->linenum);
+                    printf("Const %d [line: %d]\n", t->attr.value, t->linenum);
                 }
                 break;
 
                 case IdK:
-                    printf("Id: %s [line: %d\n", t->attr.name, t->linenum);
+                    printf("Id: %s [line: %d]\n", t->attr.name, t->linenum);
                 break;
 
                 case AssignK:
-                    printf("Assign %s [line: %d]\n", t->attr.name, t->linenum);
+                    printf("Assign: %s [line: %d]\n", t->attr.name, t->linenum);
 
                 case InitK:
-                    printf("Init: [line: %d]\n", t->linenum);
+                    //printf("Init: [line: %d]\n", t->linenum);
                 break;
 
                 case CallK:
@@ -295,7 +313,7 @@ void printTree(TreeNode *t, int siblingCounter){
             if(t->child[i] != NULL){
                 blankSpaces++;
                 printSpaces(blankSpaces);
-                printf("Child: %d ", i);
+                printf("Child: %d  ", i);
                 printTree(t->child[i], 0);
                 blankSpaces--;
             }
@@ -304,7 +322,7 @@ void printTree(TreeNode *t, int siblingCounter){
         if(t->sibling != NULL){
             thisSibling++;
             printSpaces(blankSpaces);
-            printf("Sibling: %d ", thisSibling);
+            printf("Sibling: %d  ", thisSibling);
         }
         t = t->sibling;
     }

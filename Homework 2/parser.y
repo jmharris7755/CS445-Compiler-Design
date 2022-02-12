@@ -14,11 +14,6 @@
 #include <getopt.h>
 
 
-
-
-
-double vars[26];
-
 extern int yylex();
 extern FILE *yyin;
 extern int line;    //ERR line number from scanner
