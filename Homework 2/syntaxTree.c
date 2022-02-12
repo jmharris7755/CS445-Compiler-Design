@@ -166,6 +166,11 @@ void printTree(TreeNode *t, int siblingCounter){
                         printExp(t->expType);
                         printf(" [line: %d]\n", t->linenum);
                     }
+                    else if(t->isStatic == true){
+                        printf("Var: %s of static type ", t->attr.name);
+                        printExp(t->expType);
+                        printf(" [line: %d]\n", t->linenum);
+                    }
                     else{
                         printf("Var: %s of type ", t->attr.name);
                         printExp(t->expType);
@@ -270,12 +275,12 @@ void printTree(TreeNode *t, int siblingCounter){
                 }
 
                 else if(t->expType == CharInt){
-                    printf("Const is array \"");
-                    printf("%s [line: %d]\n", t->attr.name, t->linenum);
+                    printf("Const \"");
+                    printf("%s\" [line: %d]\n", t->attr.name, t->linenum);
                 }
 
                 else if(t->expType == Char){
-                    printf("Const \'%c\' of type char [line: %d]\n", t->thisTokenData->cvalue, t->linenum);
+                    printf("Const \'%c\' [line: %d]\n", t->thisTokenData->cvalue, t->linenum);
                 }
 
                 else{

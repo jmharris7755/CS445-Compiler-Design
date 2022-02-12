@@ -1439,7 +1439,7 @@ yyreduce:
                                                                                 { (yyval.tree) = newDeclNode(FuncK, (yyvsp[-4].tokenData));
                                                                                   (yyval.tree)->attr.name = strdup((yyvsp[-4].tokenData)->tokenStrInput);
                                                                                   (yyval.tree)->expType = (yyvsp[-5].type);
-                                                                                  (yyval.tree)->thisTokenData = (yyvsp[-4].tokenData);
+                                                                                  //$$->thisTokenData = $2;
                                                                                   (yyval.tree)->child[0] = (yyvsp[-2].tree);
                                                                                   (yyval.tree)->child[1] = (yyvsp[0].tree); }
 #line 1446 "parser.tab.c"
@@ -1995,7 +1995,7 @@ yyreduce:
 
   case 95: /* mutable: ID  */
 #line 373 "parser.y"
-                                                                                { (yyval.tree) = newDeclNode(ParamK, (yyvsp[0].tokenData));
+                                                                                { (yyval.tree) = newExpNode(IdK, (yyvsp[0].tokenData));
                                                                                   (yyval.tree)->attr.name = strdup((yyvsp[0].tokenData)->tokenStrInput); }
 #line 2001 "parser.tab.c"
     break;

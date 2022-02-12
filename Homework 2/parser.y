@@ -102,7 +102,7 @@ typeSpec            :       BOOL                                                
 funDecl             :       typeSpec ID LPAREN parms RPAREN compoundStmt        { $$ = newDeclNode(FuncK, $2);
                                                                                   $$->attr.name = strdup($2->tokenStrInput);
                                                                                   $$->expType = $1;
-                                                                                  $$->thisTokenData = $2;
+                                                                                  //$$->thisTokenData = $2;
                                                                                   $$->child[0] = $4;
                                                                                   $$->child[1] = $6; }
 
@@ -370,7 +370,7 @@ factor              :       mutable                                             
                     |       immutable                                           { $$ = $1; }
                     ;
 
-mutable             :       ID                                                  { $$ = newDeclNode(ParamK, $1);
+mutable             :       ID                                                  { $$ = newExpNode(IdK, $1);
                                                                                   $$->attr.name = strdup($1->tokenStrInput); }
 
                     |       ID LBRACKET exp RBRACKET                            { $$ = newExpNode(OpK, $2); 
