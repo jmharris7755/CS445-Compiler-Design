@@ -6,7 +6,7 @@
 #include "syntaxTree.h"
 #include "parser.tab.h"
 
-int whiteSpaces = 0;
+int blankSpaces = 0;
 
 TreeNode *newDeclNode(DeclKind kind, TokenData *tokenData){
     TreeNode *t = (TreeNode *)malloc(sizeof(TreeNode));
@@ -293,17 +293,17 @@ void printTree(TreeNode *t, int siblingCounter){
         //Continue from here
         for(i=0; i< MAXCHILDREN; i++){
             if(t->child[i] != NULL){
-                whiteSpaces++;
-                printSpaces(whiteSpaces);
+                blankSpaces++;
+                printSpaces(blankSpaces);
                 printf("Child: %d ", i);
                 printTree(t->child[i], 0);
-                whiteSpaces--;
+                blankSpaces--;
             }
         }
 
         if(t->sibling != NULL){
             thisSibling++;
-            printSpaces(whiteSpaces);
+            printSpaces(blankSpaces);
             printf("Sibling: %d ", thisSibling);
         }
         t = t->sibling;

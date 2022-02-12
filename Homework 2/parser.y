@@ -55,10 +55,10 @@ void yyerror(const char *msg)
 
 %type <tree>    declList decl varDecl scopedVarDecl varDeclList varDeclInit varDeclId
 %type <tree>    funDecl parms parmList parmTypeList parmIdList parmId
-%type <tree>    stmt expStmt compoundStmt localDecls stmtList selectStmt iterStmt returnStmt
+%type <tree>    stmt expStmt compoundStmt localDecls stmtList returnStmt endStmt
 %type <tree>    iterRange breakStmt exp assignop simpleExp andExp unaryRelExp
 %type <tree>    relExp relop sumExp sumop mulExp mulop unaryExp unaryop
-%type <tree>    factor mutable immutable call args argList constant
+%type <tree>    factor mutable immutable call args argList constant matched unmatched
 
 %%
 
@@ -142,12 +142,8 @@ parmId              :       ID                                                  
                                                                                   $$->isArray = true;}
                     ;
 
-stmt                :       expStmt                                             { $$ = $1; }                                    
-                    |       compoundStmt                                        { $$ = $1; }
-                    |       selectStmt                                          { $$ = $1; }
-                    |       iterStmt                                            { $$ = $1; }
-                    |       returnStmt                                          { $$ = $1; }
-                    |       breakStmt                                           { $$ = $1; }
+stmt                :       matched                                             { $$ = $1; }                                    
+                    |       unmatched                                           { $$ = $1; }
                     ;
 
 expStmt             :       exp SEMICOLON                                       { $$ = $1; }
@@ -168,27 +164,51 @@ stmtList            :       stmtList stmt                                       
                     ;
 
 
-selectStmt          :       IF simpleExp THEN stmt                              { $$ = newStmtNode(IfK, $1);
-                                                                                  $$->child[0] = $2;
-                                                                                  $$->child[1] = $4; }
-
-                    |       IF simpleExp THEN stmt ELSE stmt                    { $$ = newStmtNode(IfK, $1);
+matched             :       endStmt                                             { $$ = $1; }
+                    |       IF simpleExp THEN matched ELSE matched              { $$ = newStmtNode(IfK, $1);
                                                                                   $$->child[0] = $2;
                                                                                   $$->child[1] = $4;
                                                                                   $$->child[2] = $6;}
-                    ;
 
-iterStmt            :       WHILE simpleExp DO stmt                             { $$ = newStmtNode(WhileK, $1);
+                    |       WHILE simpleExp DO matched                          { $$ = newStmtNode(WhileK, $1);
                                                                                   $$->attr.name = $1->tokenStrInput;
                                                                                   $$->child[0] = $2;
                                                                                   $$->child[1] = $4;}
 
-                    |       FOR ID ASGN iterRange DO stmt                       { $$ = newStmtNode(ForK, $1);
+                    |       FOR ID ASGN iterRange DO matched                    { $$ = newStmtNode(ForK, $1);
                                                                                   $$->child[0] = newDeclNode(VarK, $2);
                                                                                   $$->child[0]->expType = Integer;
                                                                                   $$->attr.name = $3->tokenStrInput;
                                                                                   $$->child[1] = $4;
-                                                                                  $$->child[2] = $6; }
+                                                                                  $$->child[2] = $6;}
+                    ;
+
+unmatched           :       IF simpleExp THEN matched ELSE unmatched          { $$ = newStmtNode(IfK, $1);
+                                                                                  $$->child[0] = $2;
+                                                                                  $$->child[1] = $4;
+                                                                                  $$->child[2] = $6;}
+
+                    |       WHILE simpleExp DO unmatched                        { $$ = newStmtNode(WhileK, $1);
+                                                                                  $$->attr.name = $1->tokenStrInput;
+                                                                                  $$->child[0] = $2;
+                                                                                  $$->child[1] = $4;}
+
+                    |       FOR ID ASGN iterRange DO unmatched                  { $$ = newStmtNode(ForK, $1);
+                                                                                  $$->child[0] = newDeclNode(VarK, $2);
+                                                                                  $$->child[0]->expType = Integer;
+                                                                                  $$->attr.name = $3->tokenStrInput;
+                                                                                  $$->child[1] = $4;
+                                                                                  $$->child[2] = $6;}
+
+                    |       IF simpleExp THEN stmt                              { $$ = newStmtNode(IfK, $1);
+                                                                                  $$->child[0] = $2;
+                                                                                  $$->child[1] = $4;}
+                    ;
+
+endStmt             :       expStmt                                             { $$ = $1; }
+                    |       compoundStmt                                        { $$ = $1; }
+                    |       returnStmt                                          { $$ = $1; }
+                    |       breakStmt                                           { $$ = $1; }
                     ;
 
 iterRange           :       simpleExp TO simpleExp                              { $$ = newStmtNode(RangeK, $2);
