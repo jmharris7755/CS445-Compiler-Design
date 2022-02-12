@@ -207,8 +207,8 @@ enum yysymbol_kind_t
   YYSYMBOL_compoundStmt = 73,              /* compoundStmt  */
   YYSYMBOL_localDecls = 74,                /* localDecls  */
   YYSYMBOL_stmtList = 75,                  /* stmtList  */
-  YYSYMBOL_matched = 76,                   /* matched  */
-  YYSYMBOL_unmatched = 77,                 /* unmatched  */
+  YYSYMBOL_matchedif = 76,                 /* matchedif  */
+  YYSYMBOL_unmatchedif = 77,               /* unmatchedif  */
   YYSYMBOL_endStmt = 78,                   /* endStmt  */
   YYSYMBOL_iterRange = 79,                 /* iterRange  */
   YYSYMBOL_returnStmt = 80,                /* returnStmt  */
@@ -654,7 +654,7 @@ static const char *const yytname[] =
   "declList", "decl", "varDecl", "scopedVarDecl", "varDeclList",
   "varDeclInit", "varDeclId", "typeSpec", "funDecl", "parms", "parmList",
   "parmTypeList", "parmIdList", "parmId", "stmt", "expStmt",
-  "compoundStmt", "localDecls", "stmtList", "matched", "unmatched",
+  "compoundStmt", "localDecls", "stmtList", "matchedif", "unmatchedif",
   "endStmt", "iterRange", "returnStmt", "breakStmt", "exp", "assignop",
   "simpleExp", "andExp", "unaryRelExp", "relExp", "relop", "sumExp",
   "sumop", "mulExp", "mulop", "unaryExp", "unaryop", "factor", "mutable",
@@ -1518,13 +1518,13 @@ yyreduce:
 #line 1519 "parser.tab.c"
     break;
 
-  case 30: /* stmt: matched  */
+  case 30: /* stmt: matchedif  */
 #line 145 "parser.y"
                                                                                 { (yyval.tree) = (yyvsp[0].tree); }
 #line 1525 "parser.tab.c"
     break;
 
-  case 31: /* stmt: unmatched  */
+  case 31: /* stmt: unmatchedif  */
 #line 146 "parser.y"
                                                                                 { (yyval.tree) = (yyvsp[0].tree); }
 #line 1531 "parser.tab.c"
@@ -1574,13 +1574,13 @@ yyreduce:
 #line 1575 "parser.tab.c"
     break;
 
-  case 39: /* matched: endStmt  */
+  case 39: /* matchedif: endStmt  */
 #line 167 "parser.y"
                                                                                 { (yyval.tree) = (yyvsp[0].tree); }
 #line 1581 "parser.tab.c"
     break;
 
-  case 40: /* matched: IF simpleExp THEN matched ELSE matched  */
+  case 40: /* matchedif: IF simpleExp THEN matchedif ELSE matchedif  */
 #line 168 "parser.y"
                                                                                 { (yyval.tree) = newStmtNode(IfK, (yyvsp[-5].tokenData));
                                                                                   (yyval.tree)->child[0] = (yyvsp[-4].tree);
@@ -1589,7 +1589,7 @@ yyreduce:
 #line 1590 "parser.tab.c"
     break;
 
-  case 41: /* matched: WHILE simpleExp DO matched  */
+  case 41: /* matchedif: WHILE simpleExp DO matchedif  */
 #line 173 "parser.y"
                                                                                 { (yyval.tree) = newStmtNode(WhileK, (yyvsp[-3].tokenData));
                                                                                   (yyval.tree)->attr.name = (yyvsp[-3].tokenData)->tokenStrInput;
@@ -1598,7 +1598,7 @@ yyreduce:
 #line 1599 "parser.tab.c"
     break;
 
-  case 42: /* matched: FOR ID ASGN iterRange DO matched  */
+  case 42: /* matchedif: FOR ID ASGN iterRange DO matchedif  */
 #line 178 "parser.y"
                                                                                 { (yyval.tree) = newStmtNode(ForK, (yyvsp[-5].tokenData));
                                                                                   (yyval.tree)->child[0] = newDeclNode(VarK, (yyvsp[-4].tokenData));
@@ -1609,16 +1609,16 @@ yyreduce:
 #line 1610 "parser.tab.c"
     break;
 
-  case 43: /* unmatched: IF simpleExp THEN matched ELSE unmatched  */
+  case 43: /* unmatchedif: IF simpleExp THEN matchedif ELSE unmatchedif  */
 #line 186 "parser.y"
-                                                                              { (yyval.tree) = newStmtNode(IfK, (yyvsp[-5].tokenData));
+                                                                                { (yyval.tree) = newStmtNode(IfK, (yyvsp[-5].tokenData));
                                                                                   (yyval.tree)->child[0] = (yyvsp[-4].tree);
                                                                                   (yyval.tree)->child[1] = (yyvsp[-2].tree);
                                                                                   (yyval.tree)->child[2] = (yyvsp[0].tree);}
 #line 1619 "parser.tab.c"
     break;
 
-  case 44: /* unmatched: WHILE simpleExp DO unmatched  */
+  case 44: /* unmatchedif: WHILE simpleExp DO unmatchedif  */
 #line 191 "parser.y"
                                                                                 { (yyval.tree) = newStmtNode(WhileK, (yyvsp[-3].tokenData));
                                                                                   (yyval.tree)->attr.name = (yyvsp[-3].tokenData)->tokenStrInput;
@@ -1627,7 +1627,7 @@ yyreduce:
 #line 1628 "parser.tab.c"
     break;
 
-  case 45: /* unmatched: FOR ID ASGN iterRange DO unmatched  */
+  case 45: /* unmatchedif: FOR ID ASGN iterRange DO unmatchedif  */
 #line 196 "parser.y"
                                                                                 { (yyval.tree) = newStmtNode(ForK, (yyvsp[-5].tokenData));
                                                                                   (yyval.tree)->child[0] = newDeclNode(VarK, (yyvsp[-4].tokenData));
@@ -1638,7 +1638,7 @@ yyreduce:
 #line 1639 "parser.tab.c"
     break;
 
-  case 46: /* unmatched: IF simpleExp THEN stmt  */
+  case 46: /* unmatchedif: IF simpleExp THEN stmt  */
 #line 203 "parser.y"
                                                                                 { (yyval.tree) = newStmtNode(IfK, (yyvsp[-3].tokenData));
                                                                                   (yyval.tree)->child[0] = (yyvsp[-2].tree);
