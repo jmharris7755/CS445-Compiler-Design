@@ -88,7 +88,7 @@ extern int yydebug;
     BREAK = 289,                   /* BREAK  */
     RETURN = 290,                  /* RETURN  */
     START = 291,                   /* START  */
-    END = 292,                     /* END  */
+    STOP = 292,                    /* STOP  */
     WHILE = 293,                   /* WHILE  */
     TO = 294,                      /* TO  */
     DO = 295,                      /* DO  */

@@ -233,7 +233,7 @@ DIGIT	[0-9]
 "then"                          { return setValue(line, THEN, yytext); }
 "return"                        { return setValue(line, RETURN, yytext); }
 "else"                          { return setValue(line, ELSE, yytext); }
-"end"                           { return setValue(line, END, yytext); }
+"end"                           { return setValue(line, STOP, yytext); }
 "bool"                          { return setValue(line, BOOL, yytext); }
 "char"                          { return setValue(line, CHAR, yytext); }
 "static"                        { return setValue(line, STATIC, yytext); }
@@ -245,6 +245,7 @@ DIGIT	[0-9]
 "by"                            { return setValue(line, BY, yytext); }
 "break"                         { return setValue(line, BREAK, yytext); }
 "while"                         { return setValue(line, WHILE, yytext); }
+"do"                            { return setValue(line, DO, yytext); }
 
 {DIGIT}+                        { return setValue(line, NUMCONST, yytext); }
 {LETTER}+({LETTER}|{DIGIT})*    { return setValue(line, ID, yytext); }
@@ -257,7 +258,7 @@ DIGIT	[0-9]
 "+="                            { return setValue(line, ADDASGN, yytext); }
 "-="                            { return setValue(line, MINUSASGN, yytext); }
 "*="                            { return setValue(line, MULTASGN, yytext); }
-"/*"                            { return setValue(line, DIVASGN, yytext); }
+"/="                            { return setValue(line, DIVASGN, yytext); }
 "!="                            { return setValue(line, NEQ, yytext); }
 "<="                            { return setValue(line, LEQ, yytext); }
 ">="                            { return setValue(line, GEQ, yytext); }

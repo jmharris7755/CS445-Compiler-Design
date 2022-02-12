@@ -47,7 +47,7 @@ void yyerror(const char *msg)
 %token <tokenData> INC DEC NEQ LEQ GEQ ASGN ADDASGN MINUSASGN MULTASGN DIVASGN
 %token <tokenData> PLUS MINUS DIVIDE MULT EQUALS PERCENT
 %token <tokenData> COLON SEMICOLON COMMA QMARK 
-%token <tokenData> IF THEN ELSE FOR BREAK RETURN START END WHILE TO DO BY NOT
+%token <tokenData> IF THEN ELSE FOR BREAK RETURN START STOP WHILE TO DO BY NOT
 %token <tokenData> STATIC BOOL CHAR INT 
 %token <tokenData> LBRACKET RBRACKET LPAREN RPAREN OR AND LESSTHAN GREATERTHAN
 
@@ -150,7 +150,7 @@ expStmt             :       exp SEMICOLON                                       
                     |       SEMICOLON                                           { $$ = NULL; }
                     ;
 
-compoundStmt        :       START localDecls stmtList END                       { $$ = newStmtNode(CompoundK, $1);
+compoundStmt        :       START localDecls stmtList STOP                      { $$ = newStmtNode(CompoundK, $1);
                                                                                   $$->child[0] = $2;
                                                                                   $$->child[1] = $3; }
                     ;

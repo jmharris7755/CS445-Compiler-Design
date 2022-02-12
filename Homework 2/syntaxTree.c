@@ -197,27 +197,27 @@ void printTree(TreeNode *t, int siblingCounter){
                 break;
 
                 case WhileK:
-                    printf("NULL [line: %d]\n", t->linenum);
+                    printf("While [line: %d]\n", t->linenum);
                 break;
 
                 case ForK:
-                    printf("NULL [line: %d]\n", t->linenum);
+                    printf("For [line: %d]\n", t->linenum);
                 break;
 
                 case CompoundK:
-                    printf("NULL [line: %d]\n", t->linenum);
+                    printf("Compound [line: %d]\n", t->linenum);
                 break;
 
                 case ReturnK:
-                    printf("NULL [line: %d]\n", t->linenum);
+                    printf("Return [line: %d]\n", t->linenum);
                 break;
 
                 case BreakK:
-                    printf("NULL [line: %d]\n", t->linenum);
+                    printf("Break [line: %d]\n", t->linenum);
                 break;
 
                 case RangeK:
-                    printf("NULL [line: %d]\n", t->linenum);
+                    printf("Range [line: %d]\n", t->linenum);
                 break;
 
                 default:

@@ -57,7 +57,7 @@ Grammar
    31 expStmt: exp SEMICOLON
    32        | SEMICOLON
 
-   33 compoundStmt: START localDecls stmtList END
+   33 compoundStmt: START localDecls stmtList STOP
 
    34 localDecls: localDecls scopedVarDecl
    35           | %empty
@@ -200,7 +200,7 @@ Terminals, with rules where they appear
     BREAK <tokenData> (289) 54
     RETURN <tokenData> (290) 52 53
     START <tokenData> (291) 33
-    END <tokenData> (292) 33
+    STOP <tokenData> (292) 33
     WHILE <tokenData> (293) 40 43
     TO <tokenData> (294) 50 51
     DO <tokenData> (295) 40 41 43 44
@@ -990,7 +990,7 @@ State 60
 
 State 61
 
-   33 compoundStmt: START • localDecls stmtList END
+   33 compoundStmt: START • localDecls stmtList STOP
 
     $default  reduce using rule 35 (localDecls)
 
@@ -1366,7 +1366,7 @@ State 90
 
 State 91
 
-   33 compoundStmt: START localDecls • stmtList END
+   33 compoundStmt: START localDecls • stmtList STOP
    34 localDecls: localDecls • scopedVarDecl
 
     STATIC  shift, and go to state 111
@@ -1588,7 +1588,7 @@ State 113
 
 State 114
 
-   33 compoundStmt: START localDecls stmtList • END
+   33 compoundStmt: START localDecls stmtList • STOP
    36 stmtList: stmtList • stmt
 
     ID           shift, and go to state 36
@@ -1605,7 +1605,7 @@ State 114
     BREAK        shift, and go to state 124
     RETURN       shift, and go to state 125
     START        shift, and go to state 61
-    END          shift, and go to state 126
+    STOP         shift, and go to state 126
     WHILE        shift, and go to state 127
     NOT          shift, and go to state 44
     LPAREN       shift, and go to state 45
@@ -1795,7 +1795,7 @@ State 125
 
 State 126
 
-   33 compoundStmt: START localDecls stmtList END •
+   33 compoundStmt: START localDecls stmtList STOP •
 
     $default  reduce using rule 33 (compoundStmt)
 

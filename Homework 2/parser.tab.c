@@ -168,7 +168,7 @@ enum yysymbol_kind_t
   YYSYMBOL_BREAK = 34,                     /* BREAK  */
   YYSYMBOL_RETURN = 35,                    /* RETURN  */
   YYSYMBOL_START = 36,                     /* START  */
-  YYSYMBOL_END = 37,                       /* END  */
+  YYSYMBOL_STOP = 37,                      /* STOP  */
   YYSYMBOL_WHILE = 38,                     /* WHILE  */
   YYSYMBOL_TO = 39,                        /* TO  */
   YYSYMBOL_DO = 40,                        /* DO  */
@@ -648,7 +648,7 @@ static const char *const yytname[] =
   "NEQ", "LEQ", "GEQ", "ASGN", "ADDASGN", "MINUSASGN", "MULTASGN",
   "DIVASGN", "PLUS", "MINUS", "DIVIDE", "MULT", "EQUALS", "PERCENT",
   "COLON", "SEMICOLON", "COMMA", "QMARK", "IF", "THEN", "ELSE", "FOR",
-  "BREAK", "RETURN", "START", "END", "WHILE", "TO", "DO", "BY", "NOT",
+  "BREAK", "RETURN", "START", "STOP", "WHILE", "TO", "DO", "BY", "NOT",
   "STATIC", "BOOL", "CHAR", "INT", "LBRACKET", "RBRACKET", "LPAREN",
   "RPAREN", "OR", "AND", "LESSTHAN", "GREATERTHAN", "$accept", "program",
   "declList", "decl", "varDecl", "scopedVarDecl", "varDeclList",
@@ -1542,7 +1542,7 @@ yyreduce:
 #line 1543 "parser.tab.c"
     break;
 
-  case 34: /* compoundStmt: START localDecls stmtList END  */
+  case 34: /* compoundStmt: START localDecls stmtList STOP  */
 #line 153 "parser.y"
                                                                                 { (yyval.tree) = newStmtNode(CompoundK, (yyvsp[-3].tokenData));
                                                                                   (yyval.tree)->child[0] = (yyvsp[-2].tree);
