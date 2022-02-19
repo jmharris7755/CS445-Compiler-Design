@@ -258,7 +258,7 @@ void analyze(TreeNode *syntaxTree){
 
                         //was syntaxTree->... != NULL
                         if(syntaxTree->child[0]){
-                            analyze(tree->child[i]);
+                            analyze(syntaxTree->child[i]);
                         }
                     }
 
@@ -293,10 +293,10 @@ void analyze(TreeNode *syntaxTree){
 
                     for(int i=0; i < 3; i++){
 
-                        analyze(tree->child[i]);
+                        analyze(syntaxTree->child[i]);
                     }
 
-                    tTree = symTab.lookup(tree->attr.name);
+                    tTree = symTab.lookup(syntaxTree->attr.name);
 
                     if(tTree->subkind.decl == VarK || tTree->subkind.decl == ParamK){
 
