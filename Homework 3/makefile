@@ -5,9 +5,9 @@
 BIN = parser
 CC = g++
 
-FLES = syntaxTree.c
+FLES = syntaxTree.c symbolTable.cpp semantic.cpp
 SRCS = $(BIN).y  $(BIN).l
-HDRS = scanType.h syntaxTree.h
+HDRS = scanType.h syntaxTree.h symbolTable.h semantic.h
 OBJS = lex.yy.o $(BIN).tab.o 
 
 $(BIN) : $(OBJS)

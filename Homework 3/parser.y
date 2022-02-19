@@ -18,7 +18,8 @@
 extern int yylex();
 extern FILE *yyin;
 extern int line;    //ERR line number from scanner
-extern int numErrors;  // ERR err count
+int numErrors;  // ERR err count
+int numWarnings; //warning count
 static TreeNode *ast;
 
 #define YYERROR_VERBOSE
@@ -428,6 +429,8 @@ int main(int argc, char *argv[])
 
     int selOption = 0;
     bool printAST = 0;
+    numErrors = 0;
+    numWarnings = 0;
 
     while((selOption = getopt(argc, argv, "dDpPh")) != -1){
 
@@ -486,9 +489,7 @@ int main(int argc, char *argv[])
         printTree(ast, 0);
     }
 
-    //do the parsing
-    //numErrors = 0;
-
+    //printf("Number of warnings: %d\n", numWarnings);
     //printf("Number of errors: %d\n", numErrors);
 
     return 0;
