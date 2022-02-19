@@ -78,7 +78,7 @@ TreeNode *newExpNode(ExpKind kind, TokenData *tokenData);
 
 TreeNode *addaSibling(TreeNode *, TreeNode *);
 
-void printTree(TreeNode *, int);
+void printTree(TreeNode *, int, bool);
 
 void convertSiblingType(TreeNode *, ExpType);
 

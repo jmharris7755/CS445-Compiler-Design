@@ -14,6 +14,7 @@
 #include "parser.tab.h"
 
 int blankSpaces = 0;
+bool TYPES;
 
 TreeNode *newDeclNode(DeclKind kind, TokenData *tokenData){
     TreeNode *t = (TreeNode *)malloc(sizeof(TreeNode));
@@ -153,7 +154,7 @@ void printExp(ExpType t){
     }
 }
 
-void printTree(TreeNode *t, int siblingCounter){
+void printTree(TreeNode *t, int siblingCounter, bool TYPES){
     int i;
     int thisSibling = siblingCounter;
 
@@ -258,56 +259,148 @@ void printTree(TreeNode *t, int siblingCounter){
                 if(t->child[1] == NULL && !strcmp(t->attr.name, "-")){
                     
                     printf("Op: chsign");
-                    //printExp(t->expType);
+                    if(t->expType == UndefinedType){
+                        //if 'P' option
+                        if(TYPES){
+                            printf(" of undefined type");
+                        }
+                    }
+                    else
+                    {
+                        //if 'P' option
+                        if(TYPES){
+                            printf(" of type ");
+                            printExp(t->expType);
+                        }
+                    }
                     printf(" [line: %d]\n", t->linenum);
                     
                 }
 
                 else if(t->child[1] == NULL && !strcmp(t->attr.name, "*")){
                     printf("Op: sizeof");
-                    //printExp(t->expType);
+                    if(t->expType == UndefinedType){
+                        //if 'P' option
+                        if(TYPES){
+                            printf(" of undefined type");
+                        }
+                    }
+                    else
+                    {
+                        //if 'P' option
+                        if(TYPES){
+                            printf(" of type ");
+                            printExp(t->expType);
+                        }
+                    }
                     printf(" [line: %d]\n", t->linenum);
                 }
 
                 else{
                     printf("Op: %s", t->attr.name);
-                    //printExp(t->expType);
+                    if(t->expType == UndefinedType){
+                        //if 'P' option
+                        if(TYPES){
+                            printf(" of undefined type");
+                        }
+                    }
+                    else
+                    {
+                        //if 'P' option
+                        if(TYPES){
+                            printf(" of type ");
+                            printExp(t->expType);
+                        }
+                    }
                     printf(" [line: %d]\n", t->linenum);
                 }
                 break;
 
                 case ConstantK:
                 if(t->expType == Boolean){
-                    printf("Const %s [line: %d]\n", t->attr.name, t->linenum);
+                    printf("Const %s ", t->attr.name);
+
+                    //if 'P' option
+                    if(TYPES){
+                        printf(" of type bool");
+                    }
+
+                    printf("[line: %d]\n", t->linenum);
                 }
 
                 else if(t->expType == CharInt){
                     printf("Const \"");
-                    printf("%s\" [line: %d]\n", t->attr.name, t->linenum);
+                    printf("%s\"", t->attr.name);
+
+                    //if 'P' option
+                    if(TYPES){
+                        printf(" of type char");
+                    }
+
+                    printf(" [line: %d]\n", t->linenum);
                 }
 
                 else if(t->expType == Char){
-                    printf("Const \'%c\' [line: %d]\n", t->thisTokenData->cvalue, t->linenum);
+                    printf("Const \'%c\'", t->thisTokenData->cvalue);
+
+                    //if 'P' option
+                    if(TYPES){
+                        printf(" of type char");
+                    }
+
+                    printf(" [line: %d]\n", t->linenum);
                 }
 
                 else{
-                    printf("Const %d [line: %d]\n", t->attr.value, t->linenum);
+                    printf("Const %d", t->attr.value);
+
+                    //if 'P' option
+                    if(TYPES){
+                        printf(" of type int");
+                    }
+
+                    printf(" [line: %d]\n", t->linenum);
                 }
                 break;
 
                 case IdK:
-                    printf("Id: %s [line: %d]\n", t->attr.name, t->linenum);
+                    printf("Id: %s", t->attr.name);
+
+                    //if 'P' option
+                    if(TYPES){
+                        printf(" of type ");
+                        printExp(t->expType);
+                    }
+
+                    printf(" [line: %d]\n", t->linenum);
                 break;
 
                 case AssignK:
-                    printf("Assign: %s [line: %d]\n", t->attr.name, t->linenum);
+                    printf("Assign: %s", t->attr.name);
+                    
+                    //if 'P' option
+                    if(TYPES){
+                        printf(" of type ");
+                        printExp(t->expType);
+                    }
+
+                    printf(" [line: %d]\n", t->linenum);
+                break;
 
                 case InitK:
                     //printf("Init: [line: %d]\n", t->linenum);
                 break;
 
                 case CallK:
-                    printf("Call: %s [line: %d]\n", t->attr.name, t->linenum);
+                     printf("Call: %s", t->attr.name);
+                    
+                    //if 'P' option
+                    if(TYPES){
+                        printf(" of type ");
+                        printExp(t->expType);
+                    }
+
+                    printf(" [line: %d]\n", t->linenum);
                 break;
 
                 default:

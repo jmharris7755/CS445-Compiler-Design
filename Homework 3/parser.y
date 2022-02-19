@@ -18,9 +18,10 @@
 extern int yylex();
 extern FILE *yyin;
 extern int line;    //ERR line number from scanner
-int numErrors;  // ERR err count
+extern int numErrors;  // ERR err count
 int numWarnings; //warning count
 static TreeNode *ast;
+bool TYPES = false;
 
 #define YYERROR_VERBOSE
 void yyerror(const char *msg)
@@ -454,6 +455,8 @@ int main(int argc, char *argv[])
 
             case 'P':
                 //print AST with type information
+                printAST = true;
+                TYPES = true;
                 break;
 
             case 'h':
@@ -485,8 +488,11 @@ int main(int argc, char *argv[])
 
     yyparse();
 
-    if(printAST){
-        printTree(ast, 0);
+    if(printAST && !TYPES){
+        printTree(ast, 0, TYPES);
+    }
+    else if(printAST && TYPES){
+        printTree(ast, 0, TYPES);
     }
 
     //printf("Number of warnings: %d\n", numWarnings);
