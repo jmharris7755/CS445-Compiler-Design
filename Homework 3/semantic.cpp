@@ -317,3 +317,412 @@ void analyze(TreeNode *syntaxTree){
 
     }
 }
+
+void erChkUOP(TreeNode *syntaxTree){
+
+    //left child to check against
+    TreeNode *leftChild, tTree;
+
+    //check leftChild, if not null assign
+    if(syntaxTree->child[0]){
+        leftChild = syntaxTree->child[0];
+    }
+
+    //check for unary '-' (chsign)
+    if(!strcmp(syntaxTree->attr.name, "-")){
+
+        //check on IdK expType
+        if(leftChild->subkind.exp == IdK){
+
+            tTree = symTab.lookup(leftChild->attr.name);
+            if(tTree && tTree->expType != Integer){
+
+                printUError(syntaxTree, (char *) "int");
+            }
+        }
+
+        //check on ConstantK expType
+        else if(leftChild->subkind.exp == ConstantK){
+
+            if(leftChild->child[0] && leftChild->child[0]->subkind.exp != ConstantK){
+                printUError(syntaxTree, (char *) "int");
+            }
+            else if(leftChild->expType != Integer){
+                printUError(syntaxTree, (char *) "int");
+            }
+        }
+        notArrays(syntaxTree);
+    }
+
+    //check * unary operator (sizeof)
+    else if(!strcmp(syntaxTree->attr.name, "*")){
+
+        syntaxTree->expType = Integer;
+
+        if(leftChild->isArray != true){
+
+            if(leftChild->expType != UndefinedType){
+
+                printf("ERROR(%d): The operation 'sizeof' only works with arrays.\n", tree->lineno);
+                numErrors++;
+            }
+        }
+    }
+
+    //Check for "not" 
+    else if(!strcmp(syntaxTree->attr.name, "not")){
+
+        if(leftChild->subkind.exp == ConstantK && syntaxTree->exp != leftChild->expType){
+
+            if(leftChild->child[0] && leftChild->child[0]->subkind.exp != ConstantK){
+                printUError(syntaxTree, (char*) "bool");
+            }
+            else if(leftChild->expType != Boolean){
+                printUError(syntaxTree, (char*) "bool");
+            }
+        }
+
+        //check exp IdK
+        if(leftChild->subkind.exp == IdK){
+
+            tTree = symTab.lookup(leftChild->attr.name);
+            if(tTree && tTree->expType != Boolean){
+                printUError(syntaxTree, (char*) "bool");
+            }
+        }
+
+        if(leftChild->child[0]){
+
+            if(leftChild->child[0]->expType != Boolean && leftChild->child[0]->subkind.exp != OpK && syntaxTree->expType != leftChild->expType){
+
+                printUError(syntaxTree, (char*) "bool");
+            }
+        }
+        notArrays(syntaxTree);
+    }
+
+    else if(!strcmp(syntaxTree->attr.name, "?")){
+
+        if(leftChild->subkind.exp == IdK)
+      {
+         tTree = symTab.lookup(leftChild->attr.name);
+         if(tTree != NULL && tTree->expType != Integer)
+         {
+            printUError(syntaxTree, (char *) "int");
+         }
+      }
+      else if(leftChild->subkind.exp != IdK)
+      {
+         if(left->expType != Integer)
+         {
+            printUError(syntaxTree, (char *) "int");
+         }
+      }
+      notArrays(syntaxTree);
+    }
+    else{
+        notArrays(syntaxTree);
+    }
+}
+
+void erChkUASGN(TreeNode *tree){
+
+    //set left and temp treeNodes
+    TreeNode *leftChild, tTree;
+    
+    //check leftChild, if not null assign
+    if(syntaxTree->child[0]){
+        leftChild = syntaxTree->child[0];
+    }
+
+    //check chsign
+     if(!strcmp(syntaxTree->attr.name, "-"))
+   {
+      notArrays(syntaxTree);
+      if(leftChild->expType != Integer && leftChild->expType != UndefinedType)
+      {
+         printUError(syntaxTree, (char *) "int");
+      }
+   }
+   else if(!strcmp(syntaxTree->attr.name, "*"))
+   {
+      if(leftChild->isArray != true)
+      {
+         erChkUOP(syntaxTree);
+      }
+   }
+
+   else if(!strcmp(syntaxTree->attr.name, "not"))
+   {
+      //printf("left->expType: %s right->expType %s LINE %i\n", convertExpTypeEnum(left->expType), convertExpTypeEnum(right->expType), tree->lineno);
+      notArrays(tree);
+      if(leftChild->expType != Boolean && leftChild->expType != UndefinedType /*&& left->expType != right->expType*/)
+      {
+         //printf("HERE\n");
+         printUError(syntaxTree, (char *) "bool");
+      }
+      /*if(left->expType == Boolean && right->expType != Boolean)
+      {
+         unaryError(tree, (char *) "bool");
+      }*/
+   }
+   else if(!strcmp(syntaxTree->attr.name, "?"))
+   {
+      notArrays(tree);
+      if(left->expType != Integer && leftChild->expType != UndefinedType)
+      {
+         printUError(syntaxTree, (char *) "int");
+      }
+   }
+ 
+   else if(!strcmp(syntaxTree->attr.name, "++") || !strcmp(syntaxTree->attr.name, "--"))
+   {
+      notArrays(tree);
+      if(leftChild->expType != Integer && leftChild->expType != UndefinedType)
+      {
+         printUError(syntaxTree, (char *) "int");
+      }
+   }
+}
+
+void erChkBOP(TreeNode *syntaxTree){
+
+    TreeNode *leftChild, rightChild, tTree;
+
+    if(syntaxTree->child[0]){
+        leftChild = syntaxTree->child[0];
+    }
+    if(syntaxTree->child[1]){
+        rightChild = syntaxTree->child[1];
+    }
+
+    if(!strcmp(syntaxTree->attr.name, "or") || !strcmp(syntaxTree->attr.name, "and")){
+
+        if(leftChild->subkin.exp = CallK){
+
+
+            if(leftChild->expType != Boolean && leftChild->expType != UndefinedType && leftChild->expType != Void ){
+
+                printf("ERROR(%d): '%s' requires operans of bool but lhs is of type %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(leftChild->expType));
+
+            }
+            if(rightChild->expType != Boolean && rightChild->expType != UndefinedType && rightChild->expType != Void ){
+
+                printf("ERROR(%d): '%s' requires operans of bool but rhs is of type %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(rightChild->expType));
+
+            }
+        }
+        else{ //IdK
+
+            if(leftChild->expType != Boolean && leftChild->expType != UndefinedType && leftChild->expType != Void)
+            {
+                printf("ERROR(%d): '%s' requires operands of bool but lhs is of type %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(leftChild->expType));
+                numErrors++;
+            }
+            if(rightChild->expType != Boolean && rightChild->expType != UndefinedType && rightChild->expType != Void)
+            {
+                printf("ERROR(%d): '%s' requires operands of bool but rhs is of type %s.\n", syntaxTree->lineno, syntaxTree->attr.name, printExpType(rightChild->expType));
+                numErrors++;
+            }
+            if(leftChild->isArray == true || rightChild->isArray == true)
+            {
+                printf("ERROR(%d): The operation '%s' does not work with arrays.\n", syntaxTree->linenum, syntaxTree->attr.name);
+                numErrors++;
+            }
+
+        }
+    }
+
+    else if(!strcmp(syntaxTree->attr.name, "<") || !strcmp(syntaxTree->attr.name, ">") || !strcmp(syntaxTree->attr.name, "=") || !strcmp(syntaxTree->attr.name, ">=") || !strcmp(syntaxTree->attr.name, "<=") || !strcmp(syntaxTree->attr.name, "><")){
+              //if(tree->isErr == false)
+      //{
+         if(leftChild->expType != rightChild->expType && (leftChild->expType != UndefinedType && rightChild->expType != UndefinedType) && (leftChild->expType != Void && rightChild->expType != Void))
+         {
+            printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(leftChild->expType), printExpType(rightChild->expType));
+            numErrors++;
+         }
+         if(leftChild->isArray == true && rightChild->isArray != true)
+         {
+            printf("ERROR(%d): '%s' requires both operands be arrays or not but lhs is an array and rhs is not an array.\n", syntaxTree->linenum, syntaxTree->attr.name);
+            numErrors++;
+         }
+         if(leftChild->isArray != true && rightChild->isArray == true)
+         {
+            printf("ERROR(%d): '%s' requires both operands be arrays or not but lhs is not an array and rhs is an array.\n", syntaxTree->linenum, syntaxTree->attr.name);
+            numErrors++;
+         }    
+      //}
+    }
+
+   else if(!strcmp(syntaxTree->attr.name, "+") || !strcmp(syntaxTree->attr.name, "-") || !strcmp(syntaxTree->attr.name, "*") || !strcmp(syntaxTree->attr.name, "/") || !strcmp(syntaxTree->attr.name, "%")){
+      if(syntaxTree->isArray == false)
+      {
+         //printf("HERE LINE %i\n", tree->lineno);
+         if(leftChild->expType != Integer && leftChild->expType != UndefinedType && leftChild->expType != Void)
+         {
+            printf("ERROR(%d): '%s' requires operands of int but lhs is of type %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(leftChild->expType));
+            numErrors++;
+         }
+         if(rightChild->expType != Integer && rightChild->expType != UndefinedType && rightChild->expType != Void)
+         {
+            printf("ERROR(%d): '%s' requires operands of int but rhs is of type %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(rightChild->expType));
+            numErrors++;
+         }
+      }
+
+      if(leftChild->subkind.exp == CallK && rightChild->subkind.exp == CallK)
+      {
+         if(leftChild->expType != Integer && leftChild->expType != UndefinedType)
+         {
+            printf("ERROR(%d): '%s' requires operands of int but lhs is of type %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(leftChild->expType));
+            numErrors++;
+         }
+         if(rightChild->expType != Integer && rightChild->expType != UndefinedType)
+         {
+            printf("ERROR(%d): '%s' requires operands of type int but rhs is of type %s.\n", syntaxTree->lineno, syntaxTree->attr.name, printExpType(rightChild->expType));
+            numErrors++;
+         }
+      }
+      notArrays(tree);
+
+   }
+   else if(!strcmp(syntaxTree->attr.name, "["))
+   {
+      syntaxTree->expType = leftChild->expType;
+      //printf("squarebracket %s %d %s left %s %d %s\n", tree->attr.name, tree->lineno, convertExpTypeEnum(tree->expType), left->attr.name, left->lineno, convertExpTypeEnum(left->expType));
+      checkArrays(syntaxTree);
+   }
+}
+
+void erChkBASGN(TreeNode *syntaxTree)
+{
+   TreeNode *leftChild, *rightChild, *tTree;
+   if(syntaxTree->child[0]){
+      leftChild = tree->child[0];
+   }
+
+   if(syntaxTree->child[1]){
+      rightChild = tree->child[1];
+   }
+   
+   if(!strcmp(syntaxTree->attr.name, "+=") || !strcmp(syntaxTree->attr.name, "-=") || !strcmp(syntaxTree->attr.name, "*=") || !strcmp(syntaxTree->attr.name, "/="))
+   {
+      //printf("left->expType: %s LINE %i\n", convertExpTypeEnum(left->expType), tree->lineno);
+      //printf("right->expType: %s LINE %i\n", convertExpTypeEnum(right->expType), tree->lineno);
+      if(leftChild->expType != Integer && leftChild->expType != UndefinedType)
+      {
+         //printf("HERE LINE %i\n", tree->lineno);
+         printf("ERROR(%d): '%s' requires operands of int but lhs is of type %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(leftChild->expType));
+         numErrors++;
+      }
+      if(rightChild->expType != Integer && rightChild->expType != UndefinedType)
+      {
+         printf("ERROR(%d): '%s' requires operands of int but rhs is of type %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(rightChild->expType));
+         numErrors++;
+      }
+   }
+   else if(!strcmp(syntaxTree->attr.name, ":="))
+   {
+      if(syntaxTree->subkind.decl == ParamK)
+      {
+         if(leftChild->expType != rightChild->expType && (leftChild->expType != UndefinedType && rightChild->expType != UndefinedType))
+         {
+            printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(leftChild->expType), printExpType(rightChild->expType));
+            numErrors++;
+         }
+      }
+      if(leftChild->subkind.exp == IdK)
+      {
+         syntaxTree->expType = leftChild->expType;
+         if(leftChild->expType != rightChild->expType && (leftChild->expType != UndefinedType && rightChild->expType != UndefinedType))
+         {
+            printf("ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(leftChild->expType), printExpType(right->expType));
+            numErrors++;
+         }
+
+         tTree = symTab.lookup(leftChild->attr.name);
+         //if(tTree != NULL)
+            //tTree->isInit = true;
+         
+         //leftChild->isInit = true;
+         syntaxTree->expType = leftChild->expType;
+      }
+      if(leftChild->isArray == true && rightChild->isArray != true)
+      {
+         printf("ERROR(%d): '%s' requires both operands be arrays or not but lhs is an array and rhs is not an array.\n", syntaxTree->linenum, syntaxTree->attr.name);
+         numErrors++;
+      }
+      if(leftChild->isArray != true && rightChild->isArray == true)
+      {
+         printf("ERROR(%d): '%s' requires both operands be arrays or not but lhs is not an array and rhs is an array.\n", syntaxTree->linenum, syntaxTree->attr.name);
+         numErrors++;
+      }
+      if(leftChild->subkind.exp != IdK && (leftChild->expType != rightChild->expType) && (leftChild->expType != UndefinedType && rightChild->expType != UndefinedType))
+      {
+         printf("ERROR(%d): '%s' requires operands of the same type but lhs is type %s and rhs is type %s.\n", syntaxTree->linenum, syntaxTree->attr.name, printExpType(leftChild->expType), printExpType(rightChild->expType));
+         numErrors++;
+      }
+   }
+   else
+   {
+      printf("NOT IN BINARY ASGNS\n");
+   }
+}
+
+const char* printExpType(ExpType exp){
+
+    switch(exp){
+
+        case 0:
+            return("void");
+            break;
+
+        case 1:
+            return("int");
+            break;
+
+        case 2:
+            return("bool");
+            break;
+
+        case 3:
+            return("char");
+            break;
+
+        case 4:
+            return("char");
+            break;
+
+        case 5:
+            return("equal");
+            break;
+
+        case 6:
+            return("undefined type");
+            break;
+
+        default:
+            break;
+    }
+}
+
+void printUError(TreeNode *syntaxTree, char* expected){
+
+    TreeNode *leftChild;
+   if(syntaxTree->child[0]){
+      leftChild = syntaxTree->child[0];
+   }
+
+   if(!strcmp(syntaxTree->attr.name, "-")){
+
+      printf("ERROR(%d): Unary 'chsign' requires an operand of %s but was given type %s\n", syntaxTree->linenum, expected, printExpType(leftChild->expType));
+      numErrors++;
+   }
+   else{
+
+      printf("ERROR(%d): Unary %s requires an operand of %s but was given type %s\n", syntaxTree->linenum, syntaxTree->attr.name, expected, printExpType(leftChild->expType));
+      numErrors++;
+
+   }
+}
+
