@@ -19,7 +19,7 @@ struct symErrors {
 vector<symErrors> errBuffer;
 
 //store strings on each sprintf call
-char sprintfBuffer[256]; 
+char sprintBuffer[256]; 
 
 int nErrors; 
 int nWarnings;
@@ -561,82 +561,88 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
 
         //Declaration Errors
         case 0: 
-            sprintf(sprintfBuffer, "ERROR(%d): Symbol '%s' is already declared at line %d.\n", linenum, s1, explaineno);
+            sprintf(sprintBuffer, "ERROR(%d): Symbol '%s' is already declared at line %d.\n", linenum, s1, explaineno);
             break;
 
         case 1:
-            sprintf(sprintfBuffer, "ERROR(%d): Symbol '%s' is not declared.\n", linenum, s1);
+            sprintf(sprintBuffer, "ERROR(%d): Symbol '%s' is not declared.\n", linenum, s1);
             break;
 
         //Expression Errors
         case 2: 
-            sprintf(sprintfBuffer, "ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", linenum, s1, s2, s3);
             break;
 
         case 3:
-            sprintf(sprintfBuffer, "ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", linenum, s1, s2, s3);
             break;
 
         case 4:
-            sprintf(sprintfBuffer, "ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", linenum, s1, s2, s3);
             break;
 
         case 5: 
-            sprintf(sprintfBuffer, "ERROR(%d): '%s' requires both operands be arrays or not but lhs is %s an array and rhs is %s an array.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires both operands be arrays or not but lhs is %s an array and rhs is %s an array.\n", linenum, s1, s2, s3);
             break;
 
         case 6: 
-            sprintf(sprintfBuffer, "ERROR(%d): The operation '%s' does not work with arrays.\n", linenum, s1);
+            sprintf(sprintBuffer, "ERROR(%d): The operation '%s' does not work with arrays.\n", linenum, s1);
             break;
 
         case 7: 
-            sprintf(sprintfBuffer, "ERROR(%d): The operation '%s' only works with arrays.\n", linenum, s1);
+            sprintf(sprintBuffer, "ERROR(%d): The operation '%s' only works with arrays.\n", linenum, s1);
             break;
 
         case 8:
-            sprintf(sprintfBuffer, "ERROR(%d): Unary '%s' requires an operand of %s but was given %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): Unary '%s' requires an operand of %s but was given %s.\n", linenum, s1, s2, s3);
             break;
 
 
         //Return Errors
         case 9: 
-            sprintf(sprintfBuffer, "ERROR(%d): Cannot return an array.\n", linenum);
+            sprintf(sprintBuffer, "ERROR(%d): Cannot return an array.\n", linenum);
             break;
 
         //Function Errors
         case 10: 
-            sprintf(sprintfBuffer, "ERROR(%d): '%s' is a simple variable and cannot be called.\n", linenum, s1);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' is a simple variable and cannot be called.\n", linenum, s1);
             break;
 
         case 11:
-            sprintf(sprintfBuffer, "ERROR(%d): Cannot use function '%s' as a variable.\n", linenum, s1);
+            sprintf(sprintBuffer, "ERROR(%d): Cannot use function '%s' as a variable.\n", linenum, s1);
             break;
 
         //Array Index Errors
         case 12:
-            sprintf(sprintfBuffer, "ERROR(%d): Array index is the unindexed array '%s'.\n", linenum, s1);
+            sprintf(sprintBuffer, "ERROR(%d): Array index is the unindexed array '%s'.\n", linenum, s1);
             break;
 
         case 13: 
-            sprintf(sprintfBuffer, "ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", linenum, s1, s2);
+            sprintf(sprintBuffer, "ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", linenum, s1, s2);
             break;
 
         case 14: 
-            sprintf(sprintfBuffer, "ERROR(%d): Cannot index nonarray '%s'.\n", linenum, s1);
+            sprintf(sprintBuffer, "ERROR(%d): Cannot index nonarray '%s'.\n", linenum, s1);
             break;
 
         // 'Main' Error
         case 15: 
-            sprintf(sprintfBuffer, "ERROR(LINKER): A function named 'main()' must be defined.\n");
+            sprintf(sprintBuffer, "ERROR(LINKER): A function named 'main()' must be defined.\n");
             break;
 
         //Warnings -- initialized but not used, uninitialized
         case 16: 
-            sprintf(sprintfBuffer, "WARNING(%d): The variable '%s' seems not to be used.\n", linenum, s1);
+            sprintf(sprintBuffer, "WARNING(%d): The variable '%s' seems not to be used.\n", linenum, s1);
             break;
 
         case 17:
-            sprintf(sprintfBuffer, "WARNING(%d): Variable '%s' may be uninitialized when used here.\n", linenum, s1);
+            sprintf(sprintBuffer, "WARNING(%d): Variable '%s' may be uninitialized when used here.\n", linenum, s1);
             break;
     }
+
+    //put the error message into the error vector!!!!
+    err e;
+    e.linenum = linenum;
+    e.errorMsg = strdup(sprintBuffer);
+    errBuffer.push_back(e);
 }
