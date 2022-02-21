@@ -424,7 +424,7 @@ void checkExp(TreeNode *t, int& numErrors, int& numWarnings){
                         //unidentified error
                         break;
                     }
-                    if(!t->Array){
+                    if(!t->isArray){
                         //do nothing
                         break;
                     }
