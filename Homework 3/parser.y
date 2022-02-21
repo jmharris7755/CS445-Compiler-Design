@@ -23,6 +23,8 @@ extern int numWarnings; //warning count
 static TreeNode *ast;
 bool TYPES = false;
 
+SymbolTable symTab;
+
 #define YYERROR_VERBOSE
 void yyerror(const char *msg)
 {
@@ -451,7 +453,7 @@ int main(int argc, char *argv[])
                 break;
 
             case 'D':
-                st.debug(1);
+                symTab.debug(1);
                 break;
 
             case 'P':
