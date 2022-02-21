@@ -339,6 +339,10 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 if(leftSide != leftExpected && leftExpected != UndefinedType){
                     printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                 }
+                //check for Unary 'not' -- not working from getExpTypes?
+                else if(!strcmp(t->attr.name, "not")){
+                    printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
+                }
 
                 //Error: Does not work with Array and Only works with Array
                 if(leftArr){
