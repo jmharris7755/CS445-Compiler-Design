@@ -367,13 +367,15 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 else{
                     //Error: expected matching types on both sides
                     if(!unaryErrors){
-
-                        //if(!strcmp(t->attr.name, "and") || !strcmp(t->attr.name, "or")){
-
-                       // }
                 
-                        //'and' and 'or' are currently erroring here***
-                        if(leftSide != rightSide && !leftErr && !rightErr){
+                        //'and' and 'or' are currently erroring here*** -- fixed.
+                        //now '[' is triggering here
+                        //check for '[' first, attempt to solve issue
+                        if(!strcmp(t->attr.name, "[")){
+                            t->expType = leftSide;
+                            
+                        }
+                        else if(leftSide != rightSide && !leftErr && !rightErr){
                             printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
                         }
                     }
