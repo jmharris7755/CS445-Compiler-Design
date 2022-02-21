@@ -371,12 +371,10 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         //'and' and 'or' are currently erroring here*** -- fixed.
                         //now '[' is triggering here
                         //check for '[' first, attempt to solve issue
-                        if(!strcmp(t->attr.name, "[")){
-                            //switch to IdK case
-                            t->subkind.exp = IdK;
-                            break;
+                        //if(!strcmp(t->attr.name, "[")){
+                            //3rd attempt to fix...
                             
-                        }
+                        //}
                         else if(leftSide != rightSide && !leftErr && !rightErr){
                             printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
                         }
