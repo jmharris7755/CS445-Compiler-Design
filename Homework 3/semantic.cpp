@@ -337,7 +337,14 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
             if(!isBinary && !leftErr){
                 //Error: Unary '%s' requires an operand of %s but was given %s
                 if(leftSide != leftExpected && leftExpected != UndefinedType){
-                    printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
+
+                    //check for Unary '-' to convert to chsign
+                    if(!strcmp(t->attr.name, "-")){
+                        printError(8, t->linenum, 0, "chsign", conExpType(leftExpected), conExpType(leftSide), 0);
+                    }
+                    else{
+                        printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
+                    }
                 }
                 //check for Unary 'not' -- not working from getExpTypes? 
                 //this does catch it though
@@ -613,7 +620,7 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
             break;
 
         case 8:
-            sprintf(sprintBuffer, "ERROR(%d): Unary '%s' requires an operand of %s but was given %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): Unary '%s' requires an operand of type %s but was given type %s.\n", linenum, s1, s2, s3);
             break;
 
 
