@@ -41,9 +41,9 @@ SymbolTable returnSymbolTable() {
     return symbolTable;
 }
 
-/*bool compare(const err& f, const err& s){
+bool compare(const symErrors& f, const symErrors& s){
     return f.linenum < s.linenum;
-}*/
+}
 
 void printErrors(){
     for(int i = 0; i < errBuffer.size(); i++){
@@ -641,7 +641,7 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
     }
 
     //put the error message into the error vector!!!!
-    err e;
+    symErrors e;
     e.linenum = linenum;
     e.errorMsg = strdup(sprintBuffer);
     errBuffer.push_back(e);
