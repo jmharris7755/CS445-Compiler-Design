@@ -280,7 +280,7 @@ void SymbolTable::applyToAllGlobal(void (*action)(std::string , void *))
 //
 
 
-std::string words[] = {"alfa", "bravo", "charlie", "dog", "echo", "foxtrot", "golf"};
+/*std::string words[] = {"alfa", "bravo", "charlie", "dog", "echo", "foxtrot", "golf"};
 int wordsLen = 7;
 
 
@@ -370,5 +370,6 @@ bool SymbolTable::test()
 
     return true;
 }
+*/
 
 
