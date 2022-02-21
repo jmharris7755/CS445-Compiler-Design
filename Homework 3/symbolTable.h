@@ -36,34 +36,6 @@ void pointerPrintStr(void *data);
 //
 
 
-// // // // // // // // // // // // // // // // // // // //
-//
-// Class: Scope
-//
-// Helper class for SymbolTable
-//
-
-class SymbolTable::Scope {
-private:
-    static bool debugFlg;                      // turn on tedious debugging
-    std::string name;                          // name of scope
-    std::map<std::string , void *> symbols;    // use an ordered map (not as fast as unordered)
-
-public:
-    Scope(std::string newname);
-    ~Scope();
-    std::string scopeName();                   // returns name of scope
-    void debug(bool state);                    // sets the debug flag to state
-    void print(void (*printData)(void *));     // prints the table using the supplied function to print the void *
-    void applyToAll(void (*action)(std::string , void *));  // applies func to all symbol/data pairs
-    bool insert(std::string sym, void *ptr);   // inserts a new ptr associated with symbol sym
-                                               // returns false if already defined
-    void *lookup(std::string sym);             // returns the ptr associated with sym
-                                               // returns NULL if symbol not found
-};
-
-
-
 // // // // // // // // // // // // // // // // // // // // 
 //
 // Class: SymbolTable
@@ -75,7 +47,7 @@ public:
 
 class SymbolTable {
 private:
-    //class Scope;
+    class Scope;
     std::vector<Scope *> stack;
     bool debugFlg;
 
