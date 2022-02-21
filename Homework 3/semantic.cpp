@@ -480,7 +480,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 //Determine expected variables associated with each OpK operator
 void getExpTypes(const char* strng, bool isBinary, bool &unaryErrors, ExpType &left, ExpType &right, ExpType &rightT){
     //c++ string array to hold unary operators
-    std::string unaryOps[6] = {"!", "*", "?", "-", "--", "++"};
+    std::string unaryOps[6] = {"not", "*", "?", "-", "--", "++"};
 
     //c++ string array to hold binary operators
     std::string binaryOps[18] = {"+", "-", "*", "/", "%", "+=", "-=", "*=", "/=", ">", "<", ">=", "<=", "==", "!=", "=", "&", "|"};
