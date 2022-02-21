@@ -447,6 +447,7 @@ int main(int argc, char *argv[])
             
             case 'p':
                 printAST = true;
+                TYPES = false;
                 break;
 
             case 'D':
@@ -495,8 +496,8 @@ int main(int argc, char *argv[])
         printTree(ast, 0, TYPES);
     }
 
-    //printf("Number of warnings: %d\n", numWarnings);
-    //printf("Number of errors: %d\n", numErrors);
+    printf("Number of warnings: %d\n", numWarnings);
+    printf("Number of errors: %d\n", numErrors);
 
     return 0;
 }

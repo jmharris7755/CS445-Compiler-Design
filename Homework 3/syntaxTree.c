@@ -14,7 +14,6 @@
 #include "parser.tab.h"
 
 int blankSpaces = 0;
-bool TYPES;
 
 TreeNode *newDeclNode(DeclKind kind, TokenData *tokenData){
     TreeNode *t = (TreeNode *)malloc(sizeof(TreeNode));
@@ -154,9 +153,10 @@ void printExp(ExpType t){
     }
 }
 
-void printTree(TreeNode *t, int siblingCounter, bool TYPES){
+void printTree(TreeNode *t, int siblingCounter, bool w_typing){
     int i;
     int thisSibling = siblingCounter;
+    bool TYPES = w_typing;
 
     if(t==NULL){
         printf("Unable to print tree\n");
