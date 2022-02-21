@@ -2357,7 +2357,10 @@ int main(int argc, char *argv[])
         }
         else {
             //failed to open
-            printf("ERROR: failed to open \'%s\'\n", argv[1]);
+            printf("ERROR(ARGLIST): source file \'%s\' could not be opened.\n", argv[1]);
+            numErrors++;
+            printf("Number of warnings: %d\n", numWarnings);
+            printf("Number of errors: %d\n", numErrors);
             exit(1);
         }
     }
