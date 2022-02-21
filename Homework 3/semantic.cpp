@@ -277,6 +277,11 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
     TreeNode* leftNode = NULL;
     TreeNode* rightNode = NULL;
 
+    //4th attempt, try catching [ here and setting case
+    if(!strcmp(t->attr.name, "[")){
+        t->subkind.exp = IdK;
+    }
+
     switch(t->subkind.exp) {
         case AssignK:
         case OpK:
