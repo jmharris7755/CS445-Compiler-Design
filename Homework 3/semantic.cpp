@@ -351,7 +351,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 }
             }
                 else{
-                    //expected matching types
+                    //Error: expected matching types on both sides
                     if(!unaryErrors){
                 
                         if(leftSide != rightSide && !leftErr && !rightErr){
@@ -359,8 +359,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         }
                     }
 
-                    //alt error for not expected types
-                    if(leftExpected == UndefinedType || rightExpected == UndefinedType){
+                    //alt error for not expected types | left side or right side
+                    if(!(leftExpected == UndefinedType || rightExpected == UndefinedType)){
                         //left error
                         if(leftSide != leftExpected && !leftErr){
                             printError(3, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
