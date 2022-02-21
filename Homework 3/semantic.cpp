@@ -339,7 +339,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 if(leftSide != leftExpected && leftExpected != UndefinedType){
                     printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                 }
-                //check for Unary 'not' -- not working from getExpTypes?
+                //check for Unary 'not' -- not working from getExpTypes? 
+                //this does catch it though
                 else if(!strcmp(t->attr.name, "not")){
                     printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                 }
@@ -357,7 +358,12 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 else{
                     //Error: expected matching types on both sides
                     if(!unaryErrors){
+
+                        //if(!strcmp(t->attr.name, "and") || !strcmp(t->attr.name, "or")){
+
+                       // }
                 
+                        //'and' and 'or' are currently erroring here***
                         if(leftSide != rightSide && !leftErr && !rightErr){
                             printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
                         }
@@ -487,7 +493,7 @@ void getExpTypes(const char* strng, bool isBinary, bool &unaryErrors, ExpType &l
     std::string unaryOps[6] = {"not", "*", "?", "-", "--", "++"};
 
     //c++ string array to hold binary operators
-    std::string binaryOps[18] = {"+", "-", "*", "/", "%", "+=", "-=", "*=", "/=", ">", "<", ">=", "<=", "==", "!=", "=", "&", "|"};
+    std::string binaryOps[18] = {"+", "-", "*", "/", "%", "+=", "-=", "*=", "/=", ">", "<", ">=", "<=", "==", "!=", "=", "and", "or"};
     std::string op(strng);
     unaryErrors = false;
 
@@ -582,19 +588,19 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
 
         //Expression Errors
         case 2: 
-            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of the same type but lhs is %s and rhs is %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of the same type but lhs is type %s and rhs is type %s.\n", linenum, s1, s2, s3);
             break;
 
         case 3:
-            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of %s but lhs is of %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of %s but lhs is of type %s.\n", linenum, s1, s2, s3);
             break;
 
         case 4:
-            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of %s but rhs is of %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of %s but rhs is of type %s.\n", linenum, s1, s2, s3);
             break;
 
         case 5: 
-            sprintf(sprintBuffer, "ERROR(%d): '%s' requires both operands be arrays or not but lhs is %s an array and rhs is %s an array.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires both operands be arrays or not but lhs is type %s an array and rhs is type %s an array.\n", linenum, s1, s2, s3);
             break;
 
         case 6: 
