@@ -260,7 +260,7 @@ void checkStmt(TreeNode *t, int& numErrors, int& numWarnings){
 
 }
 
-void checkExp(TreeNode *t, int& numErrors, int&numWarnings){
+void checkExp(TreeNode *t, int& numErrors, int& numWarnings){
     //set up multiple bool flags for checking different array error conditions and initialize all to false
     bool leftStr, rightStr, isBinary, leftArr, rightArr, leftIndx, rightIndx, throwError;
     leftStr = rightStr = isBinary = leftArr = rightArr = leftIndx = rightIndx = throwError = false;
@@ -625,7 +625,7 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
 
         // 'Main' Error
         case 15: 
-            sprintf(sprintfBuffer, "ERROR(LINKER): A function named 'main()' must be defined.\n",);
+            sprintf(sprintfBuffer, "ERROR(LINKER): A function named 'main()' must be defined.\n");
             break;
 
         //Warnings -- initialized but not used, uninitialized
