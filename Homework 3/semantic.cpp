@@ -375,7 +375,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                             //3rd attempt to fix...
                             
                         //}
-                        else if(leftSide != rightSide && !leftErr && !rightErr){
+                        if(leftSide != rightSide && !leftErr && !rightErr){
                             printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
                         }
                     }
