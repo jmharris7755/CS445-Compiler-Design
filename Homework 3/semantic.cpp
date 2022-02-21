@@ -277,7 +277,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
     TreeNode* leftNode = NULL;
     TreeNode* rightNode = NULL;
 
-
+    
     switch(t->subkind.exp) {
         case AssignK:
         case OpK:
@@ -460,11 +460,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         break;
                     }
                     else{
-                        //Error: array should be indexed by type _ but...
                         if(t->child[0]->expType != Integer){
                             printError(13, t->linenum, 0, t->attr.name, conExpType(t->child[0]->expType), NULL, 0);
                         }
-                        //Error: array index is the unindexed array
                         if(t->child[0]->isArray && t->child[0]->child[0] == NULL){
                             printError(12, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
                         }
