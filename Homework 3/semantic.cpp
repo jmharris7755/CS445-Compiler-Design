@@ -340,7 +340,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
                     //check for Unary '-' to convert to chsign
                     if(!strcmp(t->attr.name, "-")){
-                        char* uMinus = "chsign";
+                        char uMinus[] = "chsign";
                         printError(8, t->linenum, 0, uMinus, conExpType(leftExpected), conExpType(leftSide), 0);
                     }
                     else{
