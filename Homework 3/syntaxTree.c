@@ -419,7 +419,7 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                 blankSpaces++;
                 printSpaces(blankSpaces);
                 printf("Child: %d  ", i);
-                printTree(t->child[i], 0);
+                printTree(t->child[i], 0, TYPES);
                 blankSpaces--;
             }
         }
