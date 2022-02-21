@@ -495,7 +495,7 @@ int main(int argc, char *argv[])
         printTree(ast, 0, TYPES);
     }
     else if(printAST && TYPES){
-        symanticAnalysis(ast, numErrors, numWarnings);
+        semanticAnalysis(ast, numErrors, numWarnings);
         if(numErrors == 0)
         {
             printTree(ast, 0, TYPES);
