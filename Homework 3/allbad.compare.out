@@ -2,41 +2,36 @@ ERROR(7): '<-' requires operands of the same type but lhs is  |	ERROR(7): '<-' r
 ERROR(8): '<-' requires operands of the same type but lhs is  |	ERROR(8): '<-' requires operands of the same type but lhs is 
 ERROR(9): '<-' requires operands of the same type but lhs is  |	ERROR(9): '<-' requires operands of the same type but lhs is 
 ERROR(11): '>' requires operands of the same type but lhs is  |	ERROR(11): '>' requires operands of the same type but lhs is 
-ERROR(12): '<' requires operands of the same type but lhs is  |	ERROR(11): '>' requires operands of CharInt but lhs is of boo
-ERROR(13): '<=' requires operands of the same type but lhs is |	ERROR(11): '>' requires operands of CharInt but rhs is of int
-ERROR(13): '>=' requires operands of the same type but lhs is |	ERROR(12): '<' requires operands of the same type but lhs is 
-ERROR(14): '=' requires operands of the same type but lhs is  |	ERROR(12): '<' requires operands of CharInt but lhs is of boo
-ERROR(15): Unary 'not' requires an operand of type bool but w |	ERROR(12): '<' requires operands of CharInt but rhs is of int
-ERROR(15): 'and' requires operands of type bool but lhs is of |	ERROR(13): '<=' requires operands of the same type but lhs is
-ERROR(16): Unary 'not' requires an operand of type bool but w |	ERROR(13): '<=' requires operands of CharInt but lhs is of bo
-ERROR(16): 'or' requires operands of type bool but lhs is of  |	ERROR(13): '<=' requires operands of CharInt but rhs is of in
-ERROR(17): '<-' requires operands of the same type but lhs is |	ERROR(13): '>=' requires operands of the same type but lhs is
-ERROR(21): '+' requires operands of type int but lhs is of ty |	ERROR(13): '>=' requires operands of CharInt but lhs is of bo
-ERROR(22): '-' requires operands of type int but rhs is of ty |	ERROR(13): '>=' requires operands of CharInt but rhs is of in
-ERROR(23): '*' requires operands of type int but lhs is of ty |	ERROR(14): '=' requires operands of the same type but lhs is 
-ERROR(24): '/' requires operands of type int but rhs is of ty |	ERROR(15): 'and' requires operands of the same type but lhs i
-ERROR(25): '%' requires operands of type int but lhs is of ty |	ERROR(16): 'or' requires operands of the same type but lhs is
-ERROR(27): '+=' requires operands of type int but lhs is of t |	ERROR(17): '<-' requires operands of the same type but lhs is
-ERROR(28): '-=' requires operands of type int but lhs is of t |	ERROR(21): '+' requires operands of int but lhs is of bool.
-ERROR(29): '*=' requires operands of type int but lhs is of t |	ERROR(22): '-' requires operands of int but rhs is of bool.
-ERROR(30): '/=' requires operands of type int but lhs is of t |	ERROR(23): '*' requires operands of int but lhs is of bool.
-ERROR(32): Unary 'chsign' requires an operand of type int but |	ERROR(24): '/' requires operands of int but rhs is of bool.
-ERROR(33): Unary 'not' requires an operand of type bool but w |	ERROR(25): '%' requires operands of int but lhs is of bool.
-ERROR(34): Unary '?' requires an operand of type int but was  |	ERROR(27): '+=' requires operands of int but lhs is of bool.
-WARNING(42): Variable 'aa' may be uninitialized when used her |	ERROR(28): '-=' requires operands of int but lhs is of bool.
-ERROR(43): Array 'ba' should be indexed by type int but got t |	ERROR(29): '*=' requires operands of int but lhs is of bool.
-WARNING(43): Variable 'b' may be uninitialized when used here |	ERROR(30): '/=' requires operands of int but lhs is of bool.
-ERROR(43): '<-' requires operands of the same type but lhs is |	ERROR(32): Unary '-' requires an operand of int but was given
-ERROR(44): Array 'ca' should be indexed by type int but got t |	ERROR(34): Unary '?' requires an operand of int but was given
-WARNING(44): Variable 'c' may be uninitialized when used here |	ERROR(42): '[' requires operands of the same type but lhs is 
-ERROR(44): '<-' requires operands of the same type but lhs is |	ERROR(42): '[' requires both operands be arrays or not but lh
-ERROR(45): Array 'aa' should be indexed by type int but got t |	ERROR(43): '[' requires both operands be arrays or not but lh
-ERROR(45): Array index is the unindexed array 'aa'.	      |	ERROR(43): '<-' requires operands of the same type but lhs is
-							      >	ERROR(44): '[' requires operands of the same type but lhs is 
-							      >	ERROR(44): '[' requires both operands be arrays or not but lh
-							      >	ERROR(44): '[' requires operands of the same type but lhs is 
-							      >	ERROR(44): '[' requires both operands be arrays or not but lh
-							      >	ERROR(44): '<-' requires operands of the same type but lhs is
+ERROR(12): '<' requires operands of the same type but lhs is  |	ERROR(12): '<' requires operands of the same type but lhs is 
+ERROR(13): '<=' requires operands of the same type but lhs is |	ERROR(13): '<=' requires operands of the same type but lhs is
+ERROR(13): '>=' requires operands of the same type but lhs is |	ERROR(13): '>=' requires operands of the same type but lhs is
+ERROR(14): '=' requires operands of the same type but lhs is  |	ERROR(14): '=' requires operands of the same type but lhs is 
+ERROR(15): Unary 'not' requires an operand of type bool but w |	ERROR(15): 'and' requires operands of the same type but lhs i
+ERROR(15): 'and' requires operands of type bool but lhs is of |	ERROR(16): 'or' requires operands of the same type but lhs is
+ERROR(16): Unary 'not' requires an operand of type bool but w |	ERROR(17): '<-' requires operands of the same type but lhs is
+ERROR(16): 'or' requires operands of type bool but lhs is of  |	ERROR(21): '+' requires operands of int but lhs is of bool.
+ERROR(17): '<-' requires operands of the same type but lhs is |	ERROR(22): '-' requires operands of int but rhs is of bool.
+ERROR(21): '+' requires operands of type int but lhs is of ty |	ERROR(23): '*' requires operands of int but lhs is of bool.
+ERROR(22): '-' requires operands of type int but rhs is of ty |	ERROR(24): '/' requires operands of int but rhs is of bool.
+ERROR(23): '*' requires operands of type int but lhs is of ty |	ERROR(25): '%' requires operands of int but lhs is of bool.
+ERROR(24): '/' requires operands of type int but rhs is of ty |	ERROR(27): '+=' requires operands of int but lhs is of bool.
+ERROR(25): '%' requires operands of type int but lhs is of ty |	ERROR(28): '-=' requires operands of int but lhs is of bool.
+ERROR(27): '+=' requires operands of type int but lhs is of t |	ERROR(29): '*=' requires operands of int but lhs is of bool.
+ERROR(28): '-=' requires operands of type int but lhs is of t |	ERROR(30): '/=' requires operands of int but lhs is of bool.
+ERROR(29): '*=' requires operands of type int but lhs is of t |	ERROR(32): Unary '-' requires an operand of int but was given
+ERROR(30): '/=' requires operands of type int but lhs is of t |	ERROR(34): Unary '?' requires an operand of int but was given
+ERROR(32): Unary 'chsign' requires an operand of type int but |	ERROR(42): '[' requires operands of the same type but lhs is 
+ERROR(33): Unary 'not' requires an operand of type bool but w |	ERROR(42): '[' requires both operands be arrays or not but lh
+ERROR(34): Unary '?' requires an operand of type int but was  |	ERROR(43): '[' requires both operands be arrays or not but lh
+WARNING(42): Variable 'aa' may be uninitialized when used her |	ERROR(43): '<-' requires operands of the same type but lhs is
+ERROR(43): Array 'ba' should be indexed by type int but got t |	ERROR(44): '[' requires operands of the same type but lhs is 
+WARNING(43): Variable 'b' may be uninitialized when used here |	ERROR(44): '[' requires both operands be arrays or not but lh
+ERROR(43): '<-' requires operands of the same type but lhs is |	ERROR(44): '[' requires operands of the same type but lhs is 
+ERROR(44): Array 'ca' should be indexed by type int but got t |	ERROR(44): '[' requires both operands be arrays or not but lh
+WARNING(44): Variable 'c' may be uninitialized when used here |	ERROR(44): '<-' requires operands of the same type but lhs is
+ERROR(44): '<-' requires operands of the same type but lhs is <
+ERROR(45): Array 'aa' should be indexed by type int but got t <
+ERROR(45): Array index is the unindexed array 'aa'.	      <
 ERROR(46): Cannot use function 'cat' as a variable.		ERROR(46): Cannot use function 'cat' as a variable.
 ERROR(46): Cannot index nonarray 'cat'.			      |	ERROR(46): '[' requires operands of the same type but lhs is 
 ERROR(47): Cannot use function 'cat' as a variable.		ERROR(47): Cannot use function 'cat' as a variable.
@@ -45,17 +40,9 @@ ERROR(65): '<-' requires operands of the same type but lhs is |	ERROR(49): The o
 ERROR(67): Cannot return an array.			      |	ERROR(52): Symbol 'z' is already declared at line 51.
 WARNING(73): Variable 'i' may be uninitialized when used here |	ERROR(53): Symbol 'z' is already declared at line 51.
 							      >	ERROR(54): '<-' requires operands of the same type but lhs is
-							      >	ERROR(60): '>' requires operands of CharInt but lhs is of boo
-							      >	ERROR(60): '>' requires operands of CharInt but rhs is of boo
 							      >	ERROR(60): The operation '>' does not work with arrays.
-							      >	ERROR(61): '>=' requires operands of CharInt but lhs is of ch
-							      >	ERROR(61): '>=' requires operands of CharInt but rhs is of ch
 							      >	ERROR(61): The operation '>=' does not work with arrays.
-							      >	ERROR(62): '<' requires operands of CharInt but lhs is of int
-							      >	ERROR(62): '<' requires operands of CharInt but rhs is of int
 							      >	ERROR(62): The operation '<' does not work with arrays.
-							      >	ERROR(63): '<=' requires operands of CharInt but lhs is of bo
-							      >	ERROR(63): '<=' requires operands of CharInt but rhs is of bo
 							      >	ERROR(63): The operation '<=' does not work with arrays.
 							      >	ERROR(65): '<-' requires operands of the same type but lhs is
 ERROR(79): Symbol 'a' is already declared at line 79.		ERROR(79): Symbol 'a' is already declared at line 79.
@@ -85,4 +72,4 @@ ERROR(107): '+' requires operands of type int but lhs is of t |	ERROR(104): '[' 
 ERROR(110): Symbol 'mane' is already declared at line 91.	ERROR(110): Symbol 'mane' is already declared at line 91.
 ERROR(LINKER): A function named 'main()' must be defined.	ERROR(LINKER): A function named 'main()' must be defined.
 Number of warnings: 6					      |	Number of warnings: 0
-Number of errors: 56					      |	Number of errors: 83
+Number of errors: 56					      |	Number of errors: 67
