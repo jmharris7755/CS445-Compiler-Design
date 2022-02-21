@@ -342,6 +342,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 //check for Unary 'not' -- not working from getExpTypes? 
                 //this does catch it though
                 else if(!strcmp(t->attr.name, "not")){
+                    leftExpected = Boolean;
                     printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                 }
 
@@ -592,11 +593,11 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
             break;
 
         case 3:
-            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of %s but lhs is of type %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of type %s but lhs is of type %s.\n", linenum, s1, s2, s3);
             break;
 
         case 4:
-            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of %s but rhs is of type %s.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of type %s but rhs is of type %s.\n", linenum, s1, s2, s3);
             break;
 
         case 5: 
