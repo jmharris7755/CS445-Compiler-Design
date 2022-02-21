@@ -372,7 +372,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         //now '[' is triggering here
                         //check for '[' first, attempt to solve issue
                         if(!strcmp(t->attr.name, "[")){
-                            t->expType = leftSide;
+                            //switch to IdK case
+                            t->subkind.exp = IdK;
+                            break;
                             
                         }
                         else if(leftSide != rightSide && !leftErr && !rightErr){
