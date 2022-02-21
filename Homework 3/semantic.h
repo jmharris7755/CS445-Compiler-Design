@@ -6,10 +6,8 @@
 #include "scanType.h"
 
 SymbolTable returnSymbolTable();
-bool compare(const err& f, const err& s)
-void printErrors();
 void semanticAnalysis(TreeNode *t, int& errors, int& warnings);
-void analyze(TreeNode *t, int& numErrors, int&numWarnings)
+void analyze(TreeNode *t, int& numErrors, int&numWarnings);
 void checkDecl(TreeNode *t, int& numErrors, int& numWarnings);
 void checkStmt(TreeNode *t, int& numErrors, int& numWarnings);
 void checkExp(TreeNode *t, int& numErrors, int& numWarnings);
