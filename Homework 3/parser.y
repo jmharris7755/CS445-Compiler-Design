@@ -19,7 +19,7 @@ extern int yylex();
 extern FILE *yyin;
 extern int line;    //ERR line number from scanner
 extern int numErrors;  // ERR err count
-extern int numWarnings; //warning count
+int numWarnings; //warning count
 static TreeNode *ast;
 bool TYPES = false;
 
