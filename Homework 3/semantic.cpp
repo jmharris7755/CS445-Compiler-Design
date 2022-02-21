@@ -361,12 +361,20 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
                     //alt error for not expected types | left side or right side
                     if(!(leftExpected == UndefinedType || rightExpected == UndefinedType)){
-                        //left error
-                        if(leftSide != leftExpected && !leftErr){
-                            printError(3, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
+                        
+                        if(leftExpected == CharInt || rightExpected == CharInt){
+                            //not sure what to do, but am getting multiple printouts with this
+                            ;
                         }
-                        if(rightSide != rightExpected && !rightErr){
-                            printError(4, t->linenum, 0, t->attr.name, conExpType(rightExpected), conExpType(rightSide), 0);
+                        else{
+                            //left error
+                            if(leftSide != leftExpected && !leftErr){
+                                printError(3, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
+                            }
+                            //right error
+                            if(rightSide != rightExpected && !rightErr){
+                                printError(4, t->linenum, 0, t->attr.name, conExpType(rightExpected), conExpType(rightSide), 0);
+                            }
                         }
                     }
 
