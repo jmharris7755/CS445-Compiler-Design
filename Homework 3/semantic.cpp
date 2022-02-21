@@ -40,13 +40,13 @@ SymbolTable returnSymbolTable() {
     return symbolTable;
 }
 
-bool compare(const err& f, const err& s){
+/*bool compare(const err& f, const err& s){
     return f.linenum < s.linenum;
-}
+}*/
 
 void printErrors(){
     for(int i = 0; i < errBuffer.size(); i++){
-        printf("%s", errorBuffer[i].errorMsg);
+        printf("%s", errBuffer[i].errorMsg);
     }
 }
 
@@ -62,7 +62,7 @@ void semanticAnalysis(TreeNode *t, int& errors, int& warnings){
 
     printErrors();
     errors = numErrors;
-    warning = numWarnings;
+    warnings = numWarnings;
 }
 
 void analyze(TreeNode *t, int& numErrors, int& numWarnings){
@@ -82,7 +82,7 @@ void analyze(TreeNode *t, int& numErrors, int& numWarnings){
 
         case ExpK:
             checkExp(t, numErrors, numWarnings);
-            break
+            break;
     }
 
     //keep analyzing recursively
@@ -172,7 +172,7 @@ void checkStmt(TreeNode *t, int& numErrors, int& numWarnings){
     //Keep track of if we are in a loop or not for error checking
     // before analyzing children nodes
 
-    if(t->subkind.stmt == WhileK || t->subking.stmt == ForK){
+    if(t->subkind.stmt == WhileK || t->subkind.stmt == ForK){
         if(!inLoop){
             loopDepth = symbolTable.depth();
             inLoop = true;
@@ -270,7 +270,7 @@ void checkExp(TreeNode *t, int& numErrors, int& numWarnings){
     leftSide = rightSide = returnType = leftExpected = rightExpected = UndefinedType;
 
     bool rightErr, leftErr, unaryErrors;
-    righterr = leftErr = unarErrors = false;
+    rightErr = leftErr = unaryErrors = false;
 
     TreeNode* valFound = NULL;
     TreeNode* leftNode = NULL;
@@ -305,7 +305,7 @@ void checkExp(TreeNode *t, int& numErrors, int& numWarnings){
             if(t->child[1] != NULL){
                 rightNode = t->child[1];
                 rightSide = rightNode->expType;
-                rightArr = righttNode->isArray;
+                rightArr = rightNode->isArray;
                 if(rightNode->child[0] != NULL){
                     rightArr = false; //indexed array is not an array after indexed
                     rightIndx = true; //redundancy for indexing nonarrays
@@ -420,7 +420,7 @@ void checkExp(TreeNode *t, int& numErrors, int& numWarnings){
                 //Array index errors
                 if(t->child[0] != NULL){
                     analyze(t->child[0], numErrors, numWarnings);
-                    if(t->child->expType == Void && !(t->child[0]->nodekind == ExpK && t->child[0]->subkind.exp == CallK)){
+                    if(t->child[0]->expType == Void && !(t->child[0]->nodekind == ExpK && t->child[0]->subkind.exp == CallK)){
                         //unidentified error
                         break;
                     }
