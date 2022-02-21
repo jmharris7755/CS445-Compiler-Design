@@ -21,7 +21,7 @@ vector<symErrors> errBuffer;
 //store strings on each sprintf call
 char sprintfBuffer[256]; 
 
-int numErrors, numWarnings;
+extern int numErrors, numWarnings;
 
 bool enterScope = true;
 bool returnFlag = false;

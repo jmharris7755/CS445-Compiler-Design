@@ -20,7 +20,7 @@ $(BIN).tab.h $(BIN).tab.c : $(BIN).y
 	bison -v -t -d $(BIN).y 
 
 clean :
-	rm -f *~$(OBJS) $(BIN) lex.yy.c $(BIN).tab.h $(BIN).tab.c $(BIN).output
+	rm -f *~ $(OBJS) $(BIN) lex.yy.c $(BIN).tab.h $(BIN).tab.c $(BIN).output
 
 tar:
 	tar -cvf $(BIN).tar $(HDRS) $(SRCS) $(FLES) makefile
