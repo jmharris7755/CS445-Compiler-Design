@@ -495,7 +495,11 @@ int main(int argc, char *argv[])
         printTree(ast, 0, TYPES);
     }
     else if(printAST && TYPES){
-        printTree(ast, 0, TYPES);
+        symanticAnalysis(ast, numErrors, numWarnings);
+        if(numErrors == 0)
+        {
+            printTree(ast, 0, TYPES);
+        }
     }
 
     printf("Number of warnings: %d\n", numWarnings);
