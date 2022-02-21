@@ -1,8 +1,9 @@
 //semantic.cpp
-
+#include <stdio.h>
+#include <string.h>
 #include <iostream>
 #include <vector>
-#include<algorithm>
+#include <algorithm>
 #include "semantic.h"
 
 #define MAXCHILDREN 3
