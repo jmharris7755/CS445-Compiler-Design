@@ -311,10 +311,10 @@ void checkExp(TreeNode *t, int& numErrors, int& numWarnings){
                     rightIndx = true; //redundancy for indexing nonarrays
                 }
                 if(rightNode->nodekind == ExpK){
-                    if(righttNode->subkind.exp == CallK){
+                    if(rightNode->subkind.exp == CallK){
                         rightArr = false;
                     }
-                    if(righttNode->subkind.exp == ConstantK){
+                    if(rightNode->subkind.exp == ConstantK){
                         rightStr = true;
                     }
                 }
