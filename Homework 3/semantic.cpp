@@ -174,8 +174,8 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             //leave current scope
             symbolTable.leave();
 
-            //reset current function return type
-            functionReturnType = NULL;
+            //reset current function
+            curFunc = NULL;
 
             break;
     }
