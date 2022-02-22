@@ -460,7 +460,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     if(leftArr || rightArr){
                         //Error: does not work with Arrays
                         if(leftExpected != UndefinedType){
-                            if(!strcmp(syntaxTree->attr.name, "<") || !strcmp(syntaxTree->attr.name, ">") || !strcmp(syntaxTree->attr.name, "=") || !strcmp(syntaxTree->attr.name, ">=") || !strcmp(syntaxTree->attr.name, "<=") || !strcmp(syntaxTree->attr.name, "><")){
+                            if(!strcmp(t->attr.name, "<") || !strcmp(t->attr.name, ">") || !strcmp(t->attr.name, "=") || !strcmp(t->attr.name, ">=") || !strcmp(t->attr.name, "<=") || !strcmp(t->attr.name, "><")){
                                 ;
                             }
                             else{
