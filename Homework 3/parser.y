@@ -134,8 +134,8 @@ parmIdList          :       parmIdList COMMA parmId                             
                     |       parmId                                              { $$ = $1; }
                     ;
 
-parmId              :       ID                                                  { $$ = newDeclNode(ParamK, $1);
-                                                                                  $$->attr.name = strdup($1->tokenStrInput); }
+parmId                                                                                                :       ID                                                  { $$ = newDeclNode(ParamK, $1);
+$$->attr.name = strdup($1->tokenStrInput); }
 
                     |       ID LBRACKET RBRACKET                                { $$ = newDeclNode(ParamK, $1); 
                                                                                   $$->attr.name = strdup($1->tokenStrInput); 
@@ -500,10 +500,10 @@ int main(int argc, char *argv[])
     else if(printAST && TYPES){
         semanticAnalysis(ast, numErrors, numWarnings);
         //COMMENTED OUT THIS IF STATEMENT FOR TESTING ----- CHANGE BACK***********************
-        //if(numErrors < 1)
-       // {
+        if(numErrors < 1)
+        {
             printTree(ast, 0, TYPES);
-       // }
+        }
     }
 
     printf("Number of warnings: %d\n", numWarnings);

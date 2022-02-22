@@ -1505,8 +1505,8 @@ yyreduce:
 
   case 28: /* parmId: ID  */
 #line 137 "parser.y"
-                                                                                { (yyval.tree) = newDeclNode(ParamK, (yyvsp[0].tokenData));
-                                                                                  (yyval.tree)->attr.name = strdup((yyvsp[0].tokenData)->tokenStrInput); }
+                                                                                                                                                                  { (yyval.tree) = newDeclNode(ParamK, (yyvsp[0].tokenData));
+(yyval.tree)->attr.name = strdup((yyvsp[0].tokenData)->tokenStrInput); }
 #line 1511 "parser.tab.c"
     break;
 
@@ -2372,6 +2372,7 @@ int main(int argc, char *argv[])
     }
     else if(printAST && TYPES){
         semanticAnalysis(ast, numErrors, numWarnings);
+        //COMMENTED OUT THIS IF STATEMENT FOR TESTING ----- CHANGE BACK***********************
         if(numErrors < 1)
         {
             printTree(ast, 0, TYPES);

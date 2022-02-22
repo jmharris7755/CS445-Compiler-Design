@@ -249,10 +249,10 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 analyze(t->child[i], nErrors, nWarnings);
                 }
             }
-            if(loopDepth == symbolTable.depth()){
+            //if(loopDepth == symbolTable.depth()){
                 inLoop = false;
                 symbolTable.leave();
-            }
+            //}
             break;
 
         case ForK:
@@ -263,10 +263,10 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 analyze(t->child[i], nErrors, nWarnings);
                 }
             }
-            if(loopDepth == symbolTable.depth()){
+            //if(loopDepth == symbolTable.depth()){
                 inLoop = false;
                 symbolTable.leave();
-            }
+            //}
             break;
 
         case ReturnK:
