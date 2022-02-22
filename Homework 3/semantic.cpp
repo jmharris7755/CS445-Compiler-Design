@@ -184,7 +184,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
 //Function to check statement nodes
 void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
-/*
+
     //variables to track child errors and array status
     bool c0err, c1err, c2err, c0isArr, c1isArr, c2isArr;
     c0err = c1err = c2err = false;
@@ -192,7 +192,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
     //Keep track of if we are in a loop or not for error checking
     // before analyzing children nodes
-
+    /*
     if(t->subkind.stmt == WhileK || t->subkind.stmt == ForK || t->subkind.stmt == IfK){
         
         if(!inLoop){
