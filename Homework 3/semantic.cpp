@@ -373,9 +373,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
             getExpTypes(t->attr.name, isBinary, unaryErrors, leftExpected, rightExpected, returnType);
 
             //if Void = undeclared ID :: not for Void function types
-            /*if(leftSide == Void && !(leftNode->nodekind == ExpK && leftNode->subkind.exp == CallK)){
+            if(leftSide == Void && !(leftNode->nodekind == ExpK && leftNode->subkind.exp == CallK)){
                 leftErr = true;
-            }*/
+            }
             if(rightSide == Void && !(rightNode->nodekind == ExpK && rightNode->subkind.exp == CallK)){
                 rightErr = true;
             }
@@ -412,8 +412,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         printError(6, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                     }
                     else if(strcmp(t->attr.name, "*") == 0){
-                        char uSizeof[] = "sizeof";
-                        printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
+                        //char uSizeof[] = "sizeof";
+                        //printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
+                        ;
                     }
                 }
             }
