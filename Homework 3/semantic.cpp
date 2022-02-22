@@ -192,10 +192,16 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
     //Keep track of if we are in a loop or not for error checking
     // before analyzing children nodes
 
-    if(t->subkind.stmt == WhileK || t->subkind.stmt == ForK){
+    if(t->subkind.stmt == WhileK || t->subkind.stmt == ForK || t->subkind.stmt == IfK){
+        
         if(!inLoop){
+            //enter a new scope get depth, and set flag
+            symbolTable.enter(t->attr.name);
             loopDepth = symbolTable.depth();
             inLoop = true;
+        }
+        else{
+            symbolTable.leave();
         }
     }
 
