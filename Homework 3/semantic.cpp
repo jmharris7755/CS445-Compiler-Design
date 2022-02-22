@@ -117,7 +117,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
             }
-            declared = NULL; //reset declared
+            //declared = NULL; //reset declared
   
             break;
 
@@ -648,7 +648,7 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
             break;
 
         case 13: 
-            sprintf(sprintBuffer, "ERROR(%d): Array '%s' should be indexed by type int but got %s.\n", linenum, s1, s2);
+            sprintf(sprintBuffer, "ERROR(%d): Array '%s' should be indexed by type int but got type %s.\n", linenum, s1, s2);
             break;
 
         case 14: 
