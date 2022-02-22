@@ -175,7 +175,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             symbolTable.leave();
 
             //reset current function
-           // curFunc = NULL;
+            curFunc = NULL;
 
             break;
     }
@@ -275,7 +275,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                     break;
                 }
                 else{
-                    if(t->isArray){
+                    if(t->child[0]->isArray){
                         //cannot return array error
                         printError(9, t->linenum, 0, NULL, NULL, NULL, 0);
                     }
