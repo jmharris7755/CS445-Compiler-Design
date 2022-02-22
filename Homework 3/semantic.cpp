@@ -232,7 +232,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             symbolTable.enter(t->attr.name);
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[0]){
-                analyze(t->child[i]);
+                analyze(t->child[i], nErrors, nWarnings);
                 }
             }
             inLoop = false;
@@ -244,7 +244,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             symbolTable.enter(t->attr.name);
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[0]){
-                analyze(t->child[i]);
+                analyze(t->child[i], nErrors, nWarnings);
                 }
             }
             if(loopDepth == symbolTable.depth()){
@@ -258,7 +258,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             symbolTable.enter(t->attr.name);
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[0]){
-                analyze(t->child[i]);
+                analyze(t->child[i], nErrors, nWarnings);
                 }
             }
             if(loopDepth == symbolTable.depth()){
