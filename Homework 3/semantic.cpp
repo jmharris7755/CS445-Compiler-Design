@@ -32,7 +32,7 @@ int loopDepth = 1;
 
 TreeNode *curFunc = NULL;
 
-ExpType funtionReturnType;
+ExpType functionReturnType;
 SymbolTable symbolTable;
 
 int globOffset = 0;
@@ -162,7 +162,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
             //might need this to avoid second enter() call with upcoming compound flags
             enterScope = false;
-            unctionReturnType = t->expType;
+            functionReturnType = t->expType;
 
             //loop though function parameters and statements
             for(int i = 0; i < MAXCHILDREN; i++){
