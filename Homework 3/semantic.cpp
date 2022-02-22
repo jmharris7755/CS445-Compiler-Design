@@ -201,7 +201,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
     }
 
     if(t->subkind.stmt != CompoundK){
-        symbolTable.enter(t->attr.name);
+        //symbolTable.enter(t->attr.name);
         for(int i = 0; i < MAXCHILDREN; i++){
             analyze(t->child[i], nErrors, nWarnings);
             if(t->child[i] != NULL && t->child[i]->isArray == true){
@@ -228,11 +228,25 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
     switch(t->subkind.stmt){
         case IfK:
+            inLoop = true;
+            symbolTable.enter(t->attr.name);
+            for(int i = 0; i < MAXCHILDREN; i++){
+                if(t->child[0]){
+                analyze(t->child[i]);
+                }
+            }
             inLoop = false;
             symbolTable.leave();
             break;
 
         case WhileK:
+            inLoop = true;
+            symbolTable.enter(t->attr.name);
+            for(int i = 0; i < MAXCHILDREN; i++){
+                if(t->child[0]){
+                analyze(t->child[i]);
+                }
+            }
             if(loopDepth == symbolTable.depth()){
                 inLoop = false;
                 symbolTable.leave();
@@ -240,6 +254,13 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             break;
 
         case ForK:
+            inLoop = true;
+            symbolTable.enter(t->attr.name);
+            for(int i = 0; i < MAXCHILDREN; i++){
+                if(t->child[0]){
+                analyze(t->child[i]);
+                }
+            }
             if(loopDepth == symbolTable.depth()){
                 inLoop = false;
                 symbolTable.leave();
