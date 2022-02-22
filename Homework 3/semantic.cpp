@@ -184,7 +184,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
 //Function to check statement nodes
 void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
-
+/*
     //variables to track child errors and array status
     bool c0err, c1err, c2err, c0isArr, c1isArr, c2isArr;
     c0err = c1err = c2err = false;
@@ -192,14 +192,14 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
     //Keep track of if we are in a loop or not for error checking
     // before analyzing children nodes
-    /*
+    
     if(t->subkind.stmt == WhileK || t->subkind.stmt == ForK || t->subkind.stmt == IfK){
         
         if(!inLoop){
             loopDepth = symbolTable.depth();
             inLoop = true;
         }
-    }*/
+    }
 
     if(t->subkind.stmt != CompoundK){
         //symbolTable.enter(t->attr.name);
@@ -226,6 +226,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
     if(child0 != NULL && child0->child[0] != NULL) c0isArr = false;
     if(child1 != NULL && child1->child[0] != NULL) c1isArr = false;
     if(child2 != NULL && child2->child[0] != NULL) c2isArr = false;
+    */
 
     switch(t->subkind.stmt){
         case IfK:
@@ -384,9 +385,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
             getExpTypes(t->attr.name, isBinary, unaryErrors, leftExpected, rightExpected, returnType);
 
             //if Void = undeclared ID :: not for Void function types
-            if(leftSide == Void && !(leftNode->nodekind == ExpK && leftNode->subkind.exp == CallK)){
+            /*if(leftSide == Void && !(leftNode->nodekind == ExpK && leftNode->subkind.exp == CallK)){
                 leftErr = true;
-            }
+            }*/
             if(rightSide == Void && !(rightNode->nodekind == ExpK && rightNode->subkind.exp == CallK)){
                 rightErr = true;
             }
