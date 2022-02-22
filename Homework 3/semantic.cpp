@@ -134,14 +134,16 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                     declared = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
                 }
                 else{
-                    //declared = t->child[0];
+                    declared = t->child[0];
                     //not initialized?
-                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                    //printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                 }
             }
 
             //check for initialization 
-            //if()
+            if(!declared->nodekind == ExpK){
+                /printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+            }
 
            //check for duplicate declarations
            if(!symbolTable.insert(t->attr.name, t)){
