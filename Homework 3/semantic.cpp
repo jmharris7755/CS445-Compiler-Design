@@ -1,3 +1,4 @@
+ 
 //semantic.cpp
 #include <stdio.h>
 #include <string.h>
@@ -277,7 +278,6 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
     TreeNode* leftNode = NULL;
     TreeNode* rightNode = NULL;
 
-    
     switch(t->subkind.exp) {
         case AssignK:
         case OpK:
@@ -368,14 +368,12 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 else{
                     //Error: expected matching types on both sides
                     if(!unaryErrors){
+
+                        //if(!strcmp(t->attr.name, "and") || !strcmp(t->attr.name, "or")){
+
+                       // }
                 
-                        //'and' and 'or' are currently erroring here*** -- fixed.
-                        //now '[' is triggering here
-                        //check for '[' first, attempt to solve issue
-                        //if(!strcmp(t->attr.name, "[")){
-                            //3rd attempt to fix...
-                            
-                        //}
+                        //'and' and 'or' are currently erroring here***
                         if(leftSide != rightSide && !leftErr && !rightErr){
                             printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
                         }
@@ -432,7 +430,6 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
         case IdK:
             valFound = (TreeNode*)symbolTable.lookup(t->attr.name);
-            printf("value found: %s\n", valFound->attr.name);
             //if unable to find, Error: "Symbol undeclared"
             if(valFound == NULL){
                 printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);                
