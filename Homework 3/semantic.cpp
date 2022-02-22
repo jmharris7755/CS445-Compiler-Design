@@ -427,7 +427,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                             //Error: requires both sides to be an array
                             // [ for arrays is also being caught here and printing out
                             if(!strcmp(t->attr.name, "[")){
-                            checkArrays(t);
+                                ;
                             }
                 
                             else if((leftArr && !rightArr) || (!leftArr && rightArr)){
