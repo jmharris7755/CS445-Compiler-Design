@@ -128,7 +128,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             }
 
             //If VarK is not empty
-            if(t->child[0] != NULL){
+            /*if(t->child[0] != NULL){
                 //lookup ID declaration
                 if(t->child[0]->nodekind == ExpK && (t->subkind.exp == IdK && t->child[0]->subkind.exp == CallK)){
                     declared = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
@@ -140,10 +140,10 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                 }
             }
 
-            //check for initialization  -- doing nothing
+            check for initialization  -- doing nothing
             if(declared->expType != t->expType){
-                printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-            }
+              printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+            }*/
 
            //check for duplicate declarations
            if(!symbolTable.insert(t->attr.name, t)){
