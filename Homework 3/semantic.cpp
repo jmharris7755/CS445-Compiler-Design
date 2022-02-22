@@ -396,7 +396,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
                     }
                     else if(!strcmp(t->attr.name, "*") && leftArr){
-                        ;
+                        ; //do noting * operating is being used correctly on array
                     }
                     else{
                         printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
@@ -460,7 +460,12 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     if(leftArr || rightArr){
                         //Error: does not work with Arrays
                         if(leftExpected != UndefinedType){
+                            if(!strcmp(syntaxTree->attr.name, "<") || !strcmp(syntaxTree->attr.name, ">") || !strcmp(syntaxTree->attr.name, "=") || !strcmp(syntaxTree->attr.name, ">=") || !strcmp(syntaxTree->attr.name, "<=") || !strcmp(syntaxTree->attr.name, "><")){
+                                ;
+                            }
+                            else{
                             printError(6, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                            }
                         }
                         else{
                             //Error: requires both sides to be an array
