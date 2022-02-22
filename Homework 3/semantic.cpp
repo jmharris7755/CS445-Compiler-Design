@@ -140,8 +140,8 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                 }
             }
 
-            //check for initialization 
-            if(!declared->nodekind == ExpK){
+            //check for initialization  -- doing nothing
+            if(declared->expType != t->expType){
                 printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
             }
 
