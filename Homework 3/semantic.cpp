@@ -28,6 +28,7 @@ int nWarnings;
 bool enterScope = true;
 bool returnFlag = false;
 bool inLoop = false;
+bool inRange = false;
 int loopDepth = 1;
 
 TreeNode *curFunc = NULL;
@@ -304,6 +305,16 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 symbolTable.leave();
             }
 
+            break;
+
+        case RangeK:
+            inRange = true;
+
+            for(int i = 0; i < MAXCHILDREN; i++){
+                if(t->child[i]){
+                    analyze(t->child[i]);
+                }
+            }
             break;
     }
 
