@@ -175,7 +175,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             symbolTable.leave();
 
             //reset current function return type
-            functionReturnType = NULL
+            functionReturnType = NULL;
 
             break;
     }
