@@ -2,9 +2,17 @@ ERROR(7): '<-' requires operands of the same type but lhs is type bool and rhs i
 ERROR(8): '<-' requires operands of the same type but lhs is type int and rhs is type bool.		ERROR(8): '<-' requires operands of the same type but lhs is type int and rhs is type bool.
 ERROR(9): '<-' requires operands of the same type but lhs is type int and rhs is type char.		ERROR(9): '<-' requires operands of the same type but lhs is type int and rhs is type char.
 ERROR(11): '>' requires operands of the same type but lhs is type bool and rhs is type int.		ERROR(11): '>' requires operands of the same type but lhs is type bool and rhs is type int.
+												   >	ERROR(11): '>' requires operands of type char but lhs is of type bool.
+												   >	ERROR(11): '>' requires operands of type char but rhs is of type int.
 ERROR(12): '<' requires operands of the same type but lhs is type bool and rhs is type int.		ERROR(12): '<' requires operands of the same type but lhs is type bool and rhs is type int.
+												   >	ERROR(12): '<' requires operands of type char but lhs is of type bool.
+												   >	ERROR(12): '<' requires operands of type char but rhs is of type int.
 ERROR(13): '<=' requires operands of the same type but lhs is type bool and rhs is type int.		ERROR(13): '<=' requires operands of the same type but lhs is type bool and rhs is type int.
+												   >	ERROR(13): '<=' requires operands of type char but lhs is of type bool.
+												   >	ERROR(13): '<=' requires operands of type char but rhs is of type int.
 ERROR(13): '>=' requires operands of the same type but lhs is type bool and rhs is type int.		ERROR(13): '>=' requires operands of the same type but lhs is type bool and rhs is type int.
+												   >	ERROR(13): '>=' requires operands of type char but lhs is of type bool.
+												   >	ERROR(13): '>=' requires operands of type char but rhs is of type int.
 ERROR(14): '=' requires operands of the same type but lhs is type int and rhs is type bool.		ERROR(14): '=' requires operands of the same type but lhs is type int and rhs is type bool.
 ERROR(15): Unary 'not' requires an operand of type bool but was given type int.				ERROR(15): Unary 'not' requires an operand of type bool but was given type int.
 ERROR(15): 'and' requires operands of type bool but lhs is of type int.					ERROR(15): 'and' requires operands of type bool but lhs is of type int.
@@ -36,9 +44,13 @@ ERROR(46): Cannot use function 'cat' as a variable.							ERROR(46): Cannot use 
 ERROR(46): Cannot index nonarray 'cat'.									ERROR(46): Cannot index nonarray 'cat'.
 ERROR(47): Cannot use function 'cat' as a variable.							ERROR(47): Cannot use function 'cat' as a variable.
 ERROR(54): '<-' requires operands of the same type but lhs is type char and rhs is type int.		ERROR(54): '<-' requires operands of the same type but lhs is type char and rhs is type int.
-ERROR(65): '<-' requires operands of the same type but lhs is type int and rhs is type char.	   |	ERROR(65): '<-' requires operands of the same type but lhs is type int and rhs is type CharInt.
-ERROR(67): Cannot return an array.								   <
-WARNING(73): Variable 'i' may be uninitialized when used here.					   <
+ERROR(65): '<-' requires operands of the same type but lhs is type int and rhs is type char.	   |	ERROR(60): '>' requires operands of type char but lhs is of type bool.
+ERROR(67): Cannot return an array.								   |	ERROR(60): '>' requires operands of type char but rhs is of type bool.
+WARNING(73): Variable 'i' may be uninitialized when used here.					   |	ERROR(62): '<' requires operands of type char but lhs is of type int.
+												   >	ERROR(62): '<' requires operands of type char but rhs is of type int.
+												   >	ERROR(63): '<=' requires operands of type char but lhs is of type bool.
+												   >	ERROR(63): '<=' requires operands of type char but rhs is of type bool.
+												   >	ERROR(65): '<-' requires operands of the same type but lhs is type int and rhs is type CharInt.
 ERROR(79): Symbol 'a' is already declared at line 79.							ERROR(79): Symbol 'a' is already declared at line 79.
 ERROR(81): Symbol 'a' is already declared at line 79.							ERROR(81): Symbol 'a' is already declared at line 79.
 ERROR(82): Symbol 'b' is not declared.								   |	ERROR(86): '<-' requires operands of the same type but lhs is type bool and rhs is type int.
@@ -61,4 +73,4 @@ ERROR(107): '+' requires operands of type int but lhs is of type char.					ERROR
 ERROR(110): Symbol 'mane' is already declared at line 91.						ERROR(110): Symbol 'mane' is already declared at line 91.
 ERROR(LINKER): A function named 'main()' must be defined.						ERROR(LINKER): A function named 'main()' must be defined.
 Number of warnings: 6										   |	Number of warnings: 0
-Number of errors: 56										   |	Number of errors: 52
+Number of errors: 56										   |	Number of errors: 66
