@@ -142,7 +142,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
             //check for initialization 
             if(!declared->nodekind == ExpK){
-                /printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
             }
 
            //check for duplicate declarations
