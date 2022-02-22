@@ -23,19 +23,18 @@ ERROR(30): '/=' requires operands of type int but lhs is of type bool.					ERROR
 ERROR(32): Unary 'chsign' requires an operand of type int but was given type bool.			ERROR(32): Unary 'chsign' requires an operand of type int but was given type bool.
 ERROR(33): Unary 'not' requires an operand of type bool but was given type int.				ERROR(33): Unary 'not' requires an operand of type bool but was given type int.
 ERROR(34): Unary '?' requires an operand of type int but was given type bool.				ERROR(34): Unary '?' requires an operand of type int but was given type bool.
-WARNING(42): Variable 'aa' may be uninitialized when used here.					   |	ERROR(42): '[' requires operands of the same type but lhs is type bool and rhs is type int.
-ERROR(43): Array 'ba' should be indexed by type int but got type char.				   |	ERROR(42): '[' requires both operands be arrays or not but lhs is type (null) an array and rhs i
+WARNING(42): Variable 'aa' may be uninitialized when used here.					   |	ERROR(42): '[' requires both operands be arrays or not but lhs is type (null) an array and rhs i
+ERROR(43): Array 'ba' should be indexed by type int but got type char.				   |	ERROR(43): Array 'ba' should be indexed by type int but got char.
 WARNING(43): Variable 'b' may be uninitialized when used here.					   |	ERROR(43): '[' requires both operands be arrays or not but lhs is type (null) an array and rhs i
 ERROR(43): '<-' requires operands of the same type but lhs is type char and rhs is type int.		ERROR(43): '<-' requires operands of the same type but lhs is type char and rhs is type int.
-ERROR(44): Array 'ca' should be indexed by type int but got type bool.				   |	ERROR(44): '[' requires operands of the same type but lhs is type bool and rhs is type int.
-WARNING(44): Variable 'c' may be uninitialized when used here.					   |	ERROR(44): '[' requires both operands be arrays or not but lhs is type (null) an array and rhs i
-												   >	ERROR(44): '[' requires operands of the same type but lhs is type int and rhs is type bool.
+ERROR(44): Array 'ca' should be indexed by type int but got type bool.				   |	ERROR(44): '[' requires both operands be arrays or not but lhs is type (null) an array and rhs i
+WARNING(44): Variable 'c' may be uninitialized when used here.					   |	ERROR(44): Array 'ca' should be indexed by type int but got int.
 												   >	ERROR(44): '[' requires both operands be arrays or not but lhs is type (null) an array and rhs i
 ERROR(44): '<-' requires operands of the same type but lhs is type int and rhs is type bool.		ERROR(44): '<-' requires operands of the same type but lhs is type int and rhs is type bool.
-ERROR(45): Array 'aa' should be indexed by type int but got type bool.				   <
-ERROR(45): Array index is the unindexed array 'aa'.						   <
+ERROR(45): Array 'aa' should be indexed by type int but got type bool.				   |	ERROR(45): Array 'aa' should be indexed by type int but got bool.
+ERROR(45): Array index is the unindexed array 'aa'.							ERROR(45): Array index is the unindexed array 'aa'.
 ERROR(46): Cannot use function 'cat' as a variable.							ERROR(46): Cannot use function 'cat' as a variable.
-ERROR(46): Cannot index nonarray 'cat'.								   |	ERROR(46): '[' requires operands of the same type but lhs is type bool and rhs is type int.
+ERROR(46): Cannot index nonarray 'cat'.									ERROR(46): Cannot index nonarray 'cat'.
 ERROR(47): Cannot use function 'cat' as a variable.							ERROR(47): Cannot use function 'cat' as a variable.
 												   >	ERROR(49): Unary '*' requires an operand of type int but was given type char.
 												   >	ERROR(49): The operation '*' only works with arrays.
@@ -62,10 +61,8 @@ ERROR(97): '/' requires operands of type int but rhs is of type char.					ERROR(
 ERROR(97): The operation '/' does not work with arrays.							ERROR(97): The operation '/' does not work with arrays.
 ERROR(98): The operation 'sizeof' only works with arrays.					   |	ERROR(98): Unary '*' requires an operand of type int but was given type bool.
 ERROR(99): 'bbb' is a simple variable and cannot be called.						ERROR(99): 'bbb' is a simple variable and cannot be called.
-												   >	ERROR(102): '[' requires operands of the same type but lhs is type char and rhs is type int.
 												   >	ERROR(102): '[' requires both operands be arrays or not but lhs is type (null) an array and rhs 
 ERROR(102): '<-' requires operands of the same type but lhs is type char and rhs is type bool.		ERROR(102): '<-' requires operands of the same type but lhs is type char and rhs is type bool.
-												   >	ERROR(104): '[' requires operands of the same type but lhs is type char and rhs is type int.
 												   >	ERROR(104): '[' requires both operands be arrays or not but lhs is type (null) an array and rhs 
 ERROR(105): '+' requires operands of type int but lhs is of type void.					ERROR(105): '+' requires operands of type int but lhs is of type void.
 ERROR(105): '+' requires operands of type int but rhs is of type bool.					ERROR(105): '+' requires operands of type int but rhs is of type bool.
@@ -74,4 +71,4 @@ ERROR(107): '+' requires operands of type int but lhs is of type char.					ERROR
 ERROR(110): Symbol 'mane' is already declared at line 91.						ERROR(110): Symbol 'mane' is already declared at line 91.
 ERROR(LINKER): A function named 'main()' must be defined.						ERROR(LINKER): A function named 'main()' must be defined.
 Number of warnings: 6										   |	Number of warnings: 0
-Number of errors: 56										   |	Number of errors: 70
+Number of errors: 56										   |	Number of errors: 69
