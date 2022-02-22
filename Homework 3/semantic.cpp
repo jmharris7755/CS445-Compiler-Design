@@ -461,7 +461,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         //Error: does not work with Arrays
                         if(leftExpected != UndefinedType){
                             if(!strcmp(t->attr.name, "<") || !strcmp(t->attr.name, ">") || !strcmp(t->attr.name, "=") || !strcmp(t->attr.name, ">=") || !strcmp(t->attr.name, "<=") || !strcmp(t->attr.name, "><")){
-                                ;
+                                ; //do nothing, these operators can be used with arrays
                             }
                             else{
                             printError(6, t->linenum, 0, t->attr.name, NULL, NULL, 0);
@@ -601,7 +601,7 @@ void getExpTypes(const char* strng, bool isBinary, bool &unaryErrors, ExpType &l
                 }
                 //Doesn't work with arrays error
                 if(i >= 9 && i <= 12){
-                    left = right = CharInt; 
+                    left = right = Char; 
                     rightT = Boolean;
                 }
                 if(i >= 13 && i <=14){
