@@ -499,10 +499,11 @@ int main(int argc, char *argv[])
     }
     else if(printAST && TYPES){
         semanticAnalysis(ast, numErrors, numWarnings);
-        if(numErrors < 1)
-        {
+        //COMMENTED OUT THIS IF STATEMENT FOR TESTING ----- CHANGE BACK***********************
+        //if(numErrors < 1)
+       // {
             printTree(ast, 0, TYPES);
-        }
+       // }
     }
 
     printf("Number of warnings: %d\n", numWarnings);
