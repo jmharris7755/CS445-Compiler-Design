@@ -368,12 +368,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 else{
                     //Error: expected matching types on both sides
                     if(!unaryErrors){
-
-                        //if(!strcmp(t->attr.name, "and") || !strcmp(t->attr.name, "or")){
-
-                       // }
                 
-                        //'and' and 'or' are currently erroring here***
+                        //'and' and 'or' are currently erroring here*** - fixed
                         if(leftSide != rightSide && !leftErr && !rightErr){
                             printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
                         }
@@ -444,6 +440,11 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 if(valFound->subkind.decl == FuncK){
                     printError(11, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                     break;
+                }
+
+                //check for may be uninitialized error
+                if(valFound->value == NULL){
+                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0)
                 }
 
                 //Array index errors
