@@ -161,8 +161,8 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             symbolTable.enter(t->attr.name);
 
             //might need this to avoid second enter() call with upcoming compound flags
-            //enterScope = false;
-            //functionReturnType = t->expType;
+            enterScope = false;
+            unctionReturnType = t->expType;
 
             //loop though function parameters and statements
             for(int i = 0; i < MAXCHILDREN; i++){
@@ -175,7 +175,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             symbolTable.leave();
 
             //reset current function return type
-            //functionReturnType = NULL
+            functionReturnType = NULL
 
             break;
     }
@@ -426,6 +426,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         else{
                             //Error: requires both sides to be an array
                             // [ for arrays is also being caught here and printing out
+                            //now prints out blank line
                             if(!strcmp(t->attr.name, "[")){
                                 ;
                             }
