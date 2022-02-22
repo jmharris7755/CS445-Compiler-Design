@@ -444,7 +444,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
                 //check for may be uninitialized error
                 if(valFound->value == NULL){
-                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0)
+                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                 }
 
                 //Array index errors
