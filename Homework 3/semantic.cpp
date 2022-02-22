@@ -389,7 +389,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
                         //[ on arrays is being caughter here and printing out
                         if(!strcmp(t->attr.name, "[")){
-                            checkArrays(t);
+                            //put logic into a function
+                            arrayErrors(t);
                         }
                 
                         //'and' and 'or' are currently erroring here*** - fixed
@@ -700,52 +701,49 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
     errBuffer.push_back(e);
 }
 
-void checkArrays(TreeNode *tree)
+void arrayErrors(TreeNode *t)
 {
-   TreeNode *left = NULL;
-   TreeNode *right = NULL;
+   TreeNode *leftNode = NULL;
+   TreeNode *rightNode = NULL;
 
-   left = tree->child[0];
-   right = tree->child[1];
+   leftNode = t->child[0];
+   rightNode = t->child[1];
 
-   if(tree->child[0]->subkind.exp == IdK)
+   if(t->child[0]->subkind.exp == IdK)
    {
-      left = (TreeNode*)symbolTable.lookup(tree->child[0]->attr.name);
-      if(left != NULL)
+      leftNode = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
+      if(leftNode != NULL)
       {
-         tree->child[0]->expType = left->expType;
-         tree->expType = left->expType;
+         t->child[0]->expType = leftNode->expType;
+         t->expType = leftNode->expType;
       }
 
-      if(left == NULL || !left->isArray)
+      if(leftNode == NULL || !leftNode->isArray)
       {
-         printError(14, tree->linenum, 0, tree->child[0]->attr.name, NULL, NULL, 0);
+         printError(14, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
       }
    }
    else
    {
-      printError(14, tree->linenum, 0, tree->child[0]->attr.name, NULL, NULL, 0);
+      printError(14, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
    }
-   if(tree->child[1] != NULL)
+   if(t->child[1] != NULL)
    {
-      if(tree->child[1]->expType != Integer && tree->child[1]->expType != UndefinedType /*&& tree->child[0]->subkind.exp == IdK && !tree->child[1]->isErr*/)
+      if(t->child[1]->expType != Integer && t->child[1]->expType != UndefinedType)
       {
-         printError(13, tree->linenum, 0, tree->child[0]->attr.name, conExpType(tree->child[0]->expType), NULL, 0);
+         printError(13, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[0]->expType), NULL, 0);
       }
    }
-   if(tree->child[1] != NULL && tree->child[1]->subkind.exp == IdK)
+   if(t->child[1] != NULL && t->child[1]->subkind.exp == IdK)
    {
-      //printf("here before seg\n");
-     //printf("right->isArray: %i LINE %i\n", right->isArray, tree->lineno);
-      if(right != NULL && right->isArray == true)
+      if(rightNode != NULL && rightNode->isArray == true)
       {
-         printError(12, tree->linenum, 0, right->attr.name, NULL, NULL, 0); //
+         printError(12, t->linenum, 0, rightNode->attr.name, NULL, NULL, 0); //
       }
-      if(right != NULL)
+      if(rightNode != NULL)
       {
-         //tree->expType = right->expType;
-         tree->child[1]->expType = right->expType;
+         t->child[1]->expType = rightNode->expType;
       }
    }
-   //tree->isArray = true;
+
 }
