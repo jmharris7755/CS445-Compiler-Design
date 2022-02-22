@@ -127,10 +127,26 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                 analyze(t->child[0], nErrors, nWarnings);
             }
 
+            //If VarK is not empty
+            if(t->child[0] != NULL){
+                //lookup ID declaration
+                if(t->child[0]->nodekind == ExpK && (t->subkind.exp == IdK && t->child[0]->subkind.exp == CallK)){
+                    declared = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
+                }
+                else{
+                    //declared = t->child[0];
+                    //not initialized?
+                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                }
+            }
+
+            //check for initialization 
+            //if()
+
            //check for duplicate declarations
            if(!symbolTable.insert(t->attr.name, t)){
-               TreeNode* declared = (TreeNode*)symbolTable.lookup(t->attr.name);
-               printError(0, t->linenum, declared->linenum, t->attr.name, NULL, NULL, 0);
+               TreeNode* exists = (TreeNode*)symbolTable.lookup(t->attr.name);
+               printError(0, t->linenum, exists->linenum, t->attr.name, NULL, NULL, 0);
            }
 
            break;
