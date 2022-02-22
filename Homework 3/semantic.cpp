@@ -422,7 +422,6 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 }
             }
                 else{
-                    //Error: expected matching types on both sides
                     if(!unaryErrors){
 
                         //[ on arrays is being caughter here and printing out
@@ -432,8 +431,18 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         }
                 
                         //'and' and 'or' are currently erroring here*** - fixed
+                        //Error: expected matching types on both sides
                         else if(leftSide != rightSide && !leftErr && !rightErr){
-                            printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
+                            //check for CharInt and differentiate
+                            //replace CharInt with char if leftside is int and right is charint
+                            if(!strcmp(conExpType(leftSide), "int") && !strcmp(conExpType(rightSide), "CharInt")){
+                                char diffCharInt[] = "char";
+                                 printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), diffCharInt, 0);
+                            }
+                            else{
+                                //print normally
+                                 printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
+                            }
                         }
                     }
 
