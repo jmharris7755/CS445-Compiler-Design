@@ -759,7 +759,7 @@ void arrayErrors(TreeNode *t)
    {
       if(t->child[1]->expType != Integer && t->child[1]->expType != UndefinedType)
       {
-         printError(13, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[0]->expType), NULL, 0);
+         printError(13, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[1]->expType), NULL, 0);
       }
    }
    if(t->child[1] != NULL && t->child[1]->subkind.exp == IdK)
