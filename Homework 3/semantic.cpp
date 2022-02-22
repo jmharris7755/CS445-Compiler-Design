@@ -368,9 +368,14 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 else{
                     //Error: expected matching types on both sides
                     if(!unaryErrors){
+
+                        //[ on arrays is being caughter here and printing out
+                        if(!strcmp(t->attr.name, "[")){
+                            checkArrays(t);
+                        }
                 
                         //'and' and 'or' are currently erroring here*** - fixed
-                        if(leftSide != rightSide && !leftErr && !rightErr){
+                        else if(leftSide != rightSide && !leftErr && !rightErr){
                             printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
                         }
                     }
@@ -379,7 +384,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     if(!(leftExpected == UndefinedType || rightExpected == UndefinedType)){
                         
                         if(leftExpected == CharInt || rightExpected == CharInt){
-                            //not sure what to do, but am getting multiple printouts with this
+                            //not sure what to do, but am getting multiple printouts with CharInt
                             ;
                         }
                         else{
@@ -402,6 +407,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         }
                         else{
                             //Error: requires both sides to be an array
+                            // [ for arrays is also being caught here and printing out
                             if((leftArr && !rightArr) || (!leftArr && rightArr)){
                                 printError(5, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                             }
@@ -440,11 +446,6 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 if(valFound->subkind.decl == FuncK){
                     printError(11, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                     break;
-                }
-
-                //check for may be uninitialized error
-                if(!valFound->attr.value){
-                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                 }
 
                 //Array index errors
@@ -674,4 +675,56 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
     e.linenum = linenum;
     e.errorMsg = strdup(sprintBuffer);
     errBuffer.push_back(e);
+}
+
+void checkArrays(TreeNode *tree)
+{
+   TreeNode *left = NULL;
+   TreeNode *right = NULL;
+
+   left = tree->child[0];
+   right = tree->child[1];
+
+   if(tree->child[0]->subkind.exp == IdK)
+   {
+      left = (TreeNode*)symbolTable.lookup(tree->child[0]->attr.name);
+      if(left != NULL)
+      {
+         tree->child[0]->expType = left->expType;
+         tree->expType = left->expType;
+      }
+
+      if(left == NULL || !left->isArray)
+      {
+         printErrors(14, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
+      }
+   }
+   else
+   {
+      printErrors(14, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
+   }
+   if(tree->child[1] != NULL)
+   {
+      if(tree->child[1]->expType != Integer && tree->child[1]->expType != UndefinedType /*&& tree->child[0]->subkind.exp == IdK && !tree->child[1]->isErr*/)
+      {
+         printErrors(13, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[0]->expType), NULL, 0);
+      }
+   }
+   if(tree->child[1] != NULL && tree->child[1]->subkind.exp == IdK)
+   {
+      //printf("here before seg\n");
+     //printf("right->isArray: %i LINE %i\n", right->isArray, tree->lineno);
+      if(right != NULL && right->isArray == true)
+      {
+         printError(12, t->linnum, 0, right->attr.name, NULL, NULL, 0); //
+         tree->isErr = true;
+         numErrors++;
+      }
+      if(right != NULL)
+      {
+         //tree->expType = right->expType;
+         tree->child[1]->expType = right->expType;
+      }
+   }
+   //tree->isArray = true;
 }
