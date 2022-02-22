@@ -287,6 +287,16 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
         case BreakK:
             break;
 
+        case RangeK:
+            inRange = true;
+
+            for(int i = 0; i < MAXCHILDREN; i++){
+                if(t->child[i]){
+                    analyze(t->child[i], nErrors, nWarnings);
+                }
+            }
+            break;
+
         case CompoundK:
             //Enter a new scope, unless the flags are the beginning of a func decl
             bool keepCurScope = enterScope;
@@ -307,15 +317,6 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
             break;
 
-        case RangeK:
-            //inRange = true;
-
-            for(int i = 0; i < MAXCHILDREN; i++){
-                if(t->child[i]){
-                    analyze(t->child[i], nErrors, nWarnings);
-                }
-            }
-            break;
     }
 
 }
