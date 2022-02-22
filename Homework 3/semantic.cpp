@@ -162,8 +162,8 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             symbolTable.enter(t->attr.name);
 
             //might need this to avoid second enter() call with upcoming compound flags
-            enterScope = false;
-            functionReturnType = t->expType;
+            //enterScope = false;
+            //functionReturnType = t->expType;
 
             //loop though function parameters and statements
             for(int i = 0; i < MAXCHILDREN; i++){
