@@ -199,7 +199,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             loopDepth = symbolTable.depth();
             inLoop = true;
         }
-    }
+    }*/
 
     if(t->subkind.stmt != CompoundK){
         //symbolTable.enter(t->attr.name);
@@ -226,7 +226,6 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
     if(child0 != NULL && child0->child[0] != NULL) c0isArr = false;
     if(child1 != NULL && child1->child[0] != NULL) c1isArr = false;
     if(child2 != NULL && child2->child[0] != NULL) c2isArr = false;
-    */
 
     switch(t->subkind.stmt){
         case IfK:
