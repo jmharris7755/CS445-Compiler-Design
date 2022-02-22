@@ -124,7 +124,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
         //next case, check VarK, starting by looping through children
         case VarK:
             for(int i = 0; i < MAXCHILDREN; i++){
-                analyze(t->child[0], nErrors, nWarnings);
+                analyze(t->child[i], nErrors, nWarnings);
             }
 
             //If VarK is not empty
