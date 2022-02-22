@@ -432,6 +432,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
         case IdK:
             valFound = (TreeNode*)symbolTable.lookup(t->attr.name);
+            printf("value found:\n", valFound);
             //if unable to find, Error: "Symbol undeclared"
             if(valFound == NULL){
                 printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);                

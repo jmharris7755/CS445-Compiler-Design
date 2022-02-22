@@ -499,7 +499,7 @@ int main(int argc, char *argv[])
     }
     else if(printAST && TYPES){
         semanticAnalysis(ast, numErrors, numWarnings);
-        if(numErrors == 0)
+        if(numErrors < 1)
         {
             printTree(ast, 0, TYPES);
         }
