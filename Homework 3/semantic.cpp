@@ -696,18 +696,18 @@ void checkArrays(TreeNode *tree)
 
       if(left == NULL || !left->isArray)
       {
-         printErrors(14, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
+         printErrors(14, tree->linenum, 0, tree->child[0]->attr.name, NULL, NULL, 0);
       }
    }
    else
    {
-      printErrors(14, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
+      printErrors(14, tree->linenum, 0, tree->child[0]->attr.name, NULL, NULL, 0);
    }
    if(tree->child[1] != NULL)
    {
       if(tree->child[1]->expType != Integer && tree->child[1]->expType != UndefinedType /*&& tree->child[0]->subkind.exp == IdK && !tree->child[1]->isErr*/)
       {
-         printErrors(13, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[0]->expType), NULL, 0);
+         printErrors(13, tree->linenum, 0, tree->child[0]->attr.name, conExpType(tree->child[0]->expType), NULL, 0);
       }
    }
    if(tree->child[1] != NULL && tree->child[1]->subkind.exp == IdK)
@@ -716,9 +716,7 @@ void checkArrays(TreeNode *tree)
      //printf("right->isArray: %i LINE %i\n", right->isArray, tree->lineno);
       if(right != NULL && right->isArray == true)
       {
-         printError(12, t->linnum, 0, right->attr.name, NULL, NULL, 0); //
-         tree->isErr = true;
-         numErrors++;
+         printError(12, tree->linnum, 0, right->attr.name, NULL, NULL, 0); //
       }
       if(right != NULL)
       {
