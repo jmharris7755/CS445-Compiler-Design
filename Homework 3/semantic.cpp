@@ -312,7 +312,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
-                    analyze(t->child[i]);
+                    analyze(t->child[i], nErrors, nWarnings);
                 }
             }
             break;
