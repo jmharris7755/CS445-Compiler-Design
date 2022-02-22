@@ -390,6 +390,11 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         char uMinus[] = "chsign";
                         printError(8, t->linenum, 0, uMinus, conExpType(leftExpected), conExpType(leftSide), 0);
                     }
+                    //check for sizeof unary
+                    else if(!strcmp(t->attr.name, '*') && (!leftArr && leftSide != UndefinedType)){
+                        char uSizeof[] = "sizeof";
+                        printError(7, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                    }
                     else{
                         printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                     }
@@ -459,7 +464,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                             if(!strcmp(t->attr.name, "[")){
                                 ;
                             }
-                
+                            //error requires both operands be arrays or not but lhs is type %s an array and rhs is type %s an array.
                             else if((leftArr && !rightArr) || (!leftArr && rightArr)){
                                 printError(5, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                             }
@@ -512,9 +517,11 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         break;
                     }
                     else{
+                        //Error: array should be index by type int...
                         if(t->child[0]->expType != Integer){
                             printError(13, t->linenum, 0, t->attr.name, conExpType(t->child[0]->expType), NULL, 0);
                         }
+                        //Error: array index is the unindexed array...
                         if(t->child[0]->isArray && t->child[0]->child[0] == NULL){
                             printError(12, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
                         }
