@@ -443,7 +443,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 }
 
                 //check for may be uninitialized error
-                if(t->value == NULL){
+                if(valFound->attr.value == NULL){
                     printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                 }
 
