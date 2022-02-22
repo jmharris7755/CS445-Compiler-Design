@@ -601,7 +601,7 @@ void getExpTypes(const char* strng, bool isBinary, bool &unaryErrors, ExpType &l
                 }
                 //Doesn't work with arrays error
                 if(i >= 9 && i <= 12){
-                    left = right = Char; 
+                    left = right = CharInt; 
                     rightT = Boolean;
                 }
                 if(i >= 13 && i <=14){
