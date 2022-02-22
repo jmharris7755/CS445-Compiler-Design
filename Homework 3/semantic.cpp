@@ -308,7 +308,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             break;
 
         case RangeK:
-            inRange = true;
+            //inRange = true;
 
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
