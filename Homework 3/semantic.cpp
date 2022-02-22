@@ -393,7 +393,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     //check for sizeof unary
                     else if(!strcmp(t->attr.name, "*") && (!leftArr && leftSide != UndefinedType)){
                         char uSizeof[] = "sizeof";
-                        printError(7, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                        printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
                     }
                     else{
                         printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
@@ -412,7 +412,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         printError(6, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                     }
                     else if(strcmp(t->attr.name, "*") == 0){
-                        printError(7, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                        char uSizeof[] = "sizeof";
+                        printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
                     }
                 }
             }
