@@ -56,7 +56,7 @@ ERROR(96): The operation '?' does not work with arrays.							ERROR(96): The ope
 ERROR(97): '/' requires operands of type int but lhs is of type char.					ERROR(97): '/' requires operands of type int but lhs is of type char.
 ERROR(97): '/' requires operands of type int but rhs is of type char.					ERROR(97): '/' requires operands of type int but rhs is of type char.
 ERROR(97): The operation '/' does not work with arrays.							ERROR(97): The operation '/' does not work with arrays.
-ERROR(98): The operation 'sizeof' only works with arrays.					   |	ERROR(98): Unary '*' requires an operand of type int but was given type bool.
+ERROR(98): The operation 'sizeof' only works with arrays.					   |	ERROR(98): The operation '*' only works with arrays.
 ERROR(99): 'bbb' is a simple variable and cannot be called.						ERROR(99): 'bbb' is a simple variable and cannot be called.
 ERROR(102): '<-' requires operands of the same type but lhs is type char and rhs is type bool.		ERROR(102): '<-' requires operands of the same type but lhs is type char and rhs is type bool.
 ERROR(105): '+' requires operands of type int but lhs is of type void.					ERROR(105): '+' requires operands of type int but lhs is of type void.
