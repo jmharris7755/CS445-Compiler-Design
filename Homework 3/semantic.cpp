@@ -195,17 +195,13 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
     if(t->subkind.stmt == WhileK || t->subkind.stmt == ForK || t->subkind.stmt == IfK){
         
         if(!inLoop){
-            //enter a new scope get depth, and set flag
-            symbolTable.enter(t->attr.name);
             loopDepth = symbolTable.depth();
             inLoop = true;
-        }
-        else{
-            symbolTable.leave();
         }
     }
 
     if(t->subkind.stmt != CompoundK){
+        symbolTable.enter(t->attr.name);
         for(int i = 0; i < MAXCHILDREN; i++){
             analyze(t->child[i], nErrors, nWarnings);
             if(t->child[i] != NULL && t->child[i]->isArray == true){
@@ -232,17 +228,21 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
     switch(t->subkind.stmt){
         case IfK:
+            inLoop = false;
+            symbolTable.leave();
             break;
 
         case WhileK:
             if(loopDepth == symbolTable.depth()){
                 inLoop = false;
+                symbolTable.leave();
             }
             break;
 
         case ForK:
             if(loopDepth == symbolTable.depth()){
                 inLoop = false;
+                symbolTable.leave();
             }
             break;
 
