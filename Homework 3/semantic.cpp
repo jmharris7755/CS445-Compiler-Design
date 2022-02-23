@@ -129,7 +129,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             }
 
             //If VarK is not empty
-            /*if(t->child[0] != NULL){
+            if(t->child[0] != NULL){
                 //lookup ID declaration
                 if(t->child[0]->nodekind == ExpK && (t->subkind.exp == IdK && t->child[0]->subkind.exp == CallK)){
                     declared = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
@@ -137,14 +137,15 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                 else{
                     declared = t->child[0];
                     //not initialized?
-                    //printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                    //printf("Here %s\n", t->child[0]->attr.name);
+                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                 }
             }
 
-            check for initialization  -- doing nothing
-            if(declared->expType != t->expType){
-              printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-            }*/
+            //check for initialization  -- doing nothing
+            //if(declared->expType != t->expType){
+            //  printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+            //}
 
            //check for duplicate declarations
            if(!symbolTable.insert(t->attr.name, t)){
@@ -381,6 +382,11 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 isBinary = true;
             }
 
+            //Check for initialization, set is init to true if found
+            if(!strcmp(t->attr.name, "<-") && (isBinary && t->subkind.exp == AssignK)){
+                t->child[0]->isInit = true;
+            }
+
             //Get expected type based on OpK
             getExpTypes(t->attr.name, isBinary, unaryErrors, leftExpected, rightExpected, returnType);
 
@@ -392,7 +398,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 rightErr = true;
             }
 
-            //start checking left side and right side for array errors
+            //start checking for Unary errors
             if(!isBinary && !leftErr){
                 //Error: Unary '%s' requires an operand of %s but was given %s
                 if(leftSide != leftExpected && leftExpected != UndefinedType){
@@ -417,7 +423,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 //check for Unary 'not' -- not working from getExpTypes? 
                 //this does catch it though
                 else if(!strcmp(t->attr.name, "not")){
-                    leftExpected = Boolean;
+                    //leftExpected = Boolean;
                     printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                 }
 
@@ -524,11 +530,17 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
             if(valFound == NULL){
                 printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);                
             }
+            
             else{
                 t->expType = valFound->expType;
                 t->isArray = valFound->isArray;
                 t->isGlobal = valFound->isGlobal;
                 t->isStatic = valFound->isStatic;
+                t->isInit = valFound->isInit;
+
+                /*if(t->isInit == false && valFound->subkind.decl != FuncK){
+                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                }*/
 
                 //Error: cannot use function as variable
                 if(valFound->subkind.decl == FuncK){
@@ -601,15 +613,17 @@ void getExpTypes(const char* strng, bool isBinary, bool &unaryErrors, ExpType &l
 
     if(!isBinary){
         for(int i = 0; i < 6; i++){
-            if(i == 0){
-                left = right = rightT = Boolean;
-            }
-            if(i == 1){
-                left = right = UndefinedType;
-                rightT = Integer;
-            }
-            if(i >= 2){
-                left = right = rightT = Integer;
+            if(op == unaryOps[i]){
+                if(i == 0){
+                    left = right = rightT = Boolean;
+                }
+                if(i == 1){
+                    left = right = UndefinedType;
+                    rightT = Integer;
+                }
+                if(i >= 2){
+                    left = right = rightT = Integer;
+                }
             }
         }
     }

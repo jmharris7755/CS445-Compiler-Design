@@ -68,6 +68,7 @@ typedef struct treeNode
     bool isArray; // is this an array
     bool isStatic; // is staticly allocated?
     bool isGlobal; //is variable global?
+    bool isInit; //track if ID was initialized
     //int memSize; //how much memory does it take up?
     //int memOffset; //How are is ti offest from address 9999?
     // even more semantic stuff will go here in later assignments.
