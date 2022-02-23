@@ -62,6 +62,16 @@ void semanticAnalysis(TreeNode *t, int& errors, int& warnings){
     if(mainCheck == NULL){
         printError(15, 0, 0, NULL, NULL, NULL, 0);
     }
+    else if(mainCheck != NULL){
+        if(mainCheck->nodekind == DeclK && mainCheck->subkind.decl != FuncK){
+            if(mainCheck->subkind.decl == ParamK || mainCheck->child[0]!= NULL){
+                printError(15, 0, 0, NULL, NULL, NULL, 0);
+            }
+        }
+        else if(mainCheck->child[0] != NULL && mainCheck->child[0]->subkind.decl == ParamK){
+            printError(15, 0, 0, NULL, NULL, NULL, 0);
+        }
+    }
 
     printErrors();
     errors = nErrors;
