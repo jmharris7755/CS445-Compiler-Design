@@ -409,23 +409,28 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         printError(8, t->linenum, 0, uMinus, conExpType(leftExpected), conExpType(leftSide), 0);
                     }
                     //check for sizeof unary
-                    else if(!strcmp(t->attr.name, "*") && (!leftArr && leftSide != UndefinedType)){
+                    /*else if(!strcmp(t->attr.name, "*") && (!leftArr && leftSide != UndefinedType)){
                         char uSizeof[] = "sizeof";
                         printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
                     }
                     else if(!strcmp(t->attr.name, "*") && leftArr){
                         ; //do noting * operating is being used correctly on array
-                    }
+                    }*/
                     else{
                         printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                     }
                 }
                 //check for Unary 'not' -- not working from getExpTypes? 
                 //this does catch it though
-                else if(!strcmp(t->attr.name, "not")){
+                else if(!strcmp(t->attr.name, "not") && leftSide != leftExpected){
                     //leftExpected = Boolean;
                     printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                 }
+                //Check for Unary size of Error
+                else if(!strcmp(t->attr.name, "*") && (!leftArr && leftSide != UndefinedType)){
+                    char uSizeof[] = "sizeof";
+                    printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
+                } 
 
                 //Error: Does not work with Array and Only works with Array
                 if(leftArr){
@@ -456,6 +461,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                             if(!strcmp(conExpType(leftSide), "int") && !strcmp(conExpType(rightSide), "CharInt")){
                                 char diffCharInt[] = "char";
                                  printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), diffCharInt, 0);
+                            }
+                            else if(!strcmp(conExpType(leftSide), "char") && !strcmp(conExpType(rightSide), "CharInt")){
+                                ; //do nothing, correct matching
                             }
                             else{
                                 //print normally
