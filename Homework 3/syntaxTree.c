@@ -325,7 +325,7 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                         printf(" of type bool");
                     }
 
-                    printf("[line: %d]\n", t->linenum);
+                    printf(" [line: %d]\n", t->linenum);
                 }
 
                 else if(t->expType == CharInt){
