@@ -1,0 +1,12 @@
+##HW3 test for Uninitialized ID
+
+int main()
+begin
+
+int a;
+
+a;
+b;
+a<-0;
+
+end
