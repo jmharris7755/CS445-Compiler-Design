@@ -121,12 +121,12 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
         declared = (TreeNode*)symbolTable.lookup(t->attr.name);
         printError(0, t->linenum, declared->linenum, t->attr.name, NULL, NULL, 0);
     }
-    //printf("Not VarK declared: %s\n", declared->attr.name);
 
     switch(t->subkind.decl){
         
         //loop through params, analyze children
         case ParamK:
+
             for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
             }
@@ -136,9 +136,10 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
         //next case, check VarK, starting by looping through children
         case VarK:
+        
             for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
-            }
+            }           
 
             //If VarK is not empty
             /*if(t->child[0] != NULL){
@@ -164,12 +165,6 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                TreeNode* exists = (TreeNode*)symbolTable.lookup(t->attr.name);
                printError(0, t->linenum, exists->linenum, t->attr.name, NULL, NULL, 0);
            }
-           else{
-               printf("VarK inserted: %s\n", t->attr.name);
-               t->isDeclared = true;
-               printf("isDeclared Status: %d\n", t->isDeclared);
-           }
-
 
            break;
 
@@ -186,9 +181,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
             //loop though function parameters and statements
             for(int i = 0; i < MAXCHILDREN; i++){
-                if(t->child[i] != NULL){
-                    analyze(t->child[i], nErrors, nWarnings);
-                }
+                analyze(t->child[i], nErrors, nWarnings);
             }
 
             //leave current scope
@@ -366,8 +359,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 leftNode = t->child[0];
                 leftSide = leftNode->expType;
                 leftArr = leftNode->isArray;
-                leftInit = leftNode->isInit;
-                leftDecl = leftNode->isDeclared;
+
                 if(leftNode->child[0] != NULL){
                     leftArr = false; //indexed array is not an array after indexed
                     leftIndx = true; //redundancy for indexing nonarrays
@@ -387,8 +379,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 rightNode = t->child[1];
                 rightSide = rightNode->expType;
                 rightArr = rightNode->isArray;
-                rightInit = rightNode->isInit;
-                rightDecl = rightNode->isDeclared;
+
                 if(rightNode->child[0] != NULL){
                     rightArr = false; //indexed array is not an array after indexed
                     rightIndx = true; //redundancy for indexing nonarrays
@@ -402,18 +393,6 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     }
                 }
                 isBinary = true;
-            }
-
-            //Check for initialization, set is init to true if found
-            if(!strcmp(t->attr.name, "<-") && (isBinary /*&& t->subkind.exp == AssignK*/)){
-                if(t->subkind.exp == AssignK){
-                t->child[0]->isInit = true;
-                printf("<- check in AssignK OpK\n");
-                printf("Child 0 Name, isInit and isDeclared: %s %d %d\n", t->child[0]->attr.name, t->child[0]->isInit, t->child[0]->isDeclared);
-                }
-            }
-            else{
-                t->child[0]->isInit = false;
             }
 
             //Get expected type based on OpK
@@ -564,34 +543,22 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
         case IdK:
             valFound = (TreeNode*)symbolTable.lookup(t->attr.name);
             //if unable to find, Error: "Symbol undeclared"
-            printf("check Node Init: %d\n", t->isInit);
             if(valFound == NULL){
                 printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);                
             }
-            
+
             else{
-                t->expType = valFound->expType;
-                t->isArray = valFound->isArray;
-                t->isGlobal = valFound->isGlobal;
-                t->isStatic = valFound->isStatic;
-                t->isInit = valFound->isInit;
-                t->isDeclared = valFound->isDeclared;
-
-                printf("IdK check of Name, isInit, isDeclared %s %d %d\n", t->attr.name, t->isInit, t->isDeclared);
-
-                /*if(t->isInit == false && valFound->subkind.decl != FuncK){
-                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-                }*/
 
                 //Error: cannot use function as variable
                 if(valFound->subkind.decl == FuncK){
                     printError(11, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                     break;
                 }
-
-                //check if left child of <- is declared and not initialized
-                if(t->isDeclared == true && t->isInit == false){
-                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                else{
+                    t->expType = valFound->expType;
+                    t->isArray = valFound->isArray;
+                    t->isGlobal = valFound->isGlobal;
+                    t->isStatic = valFound->isStatic;
                 }
 
                 //Array index errors

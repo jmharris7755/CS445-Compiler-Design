@@ -1714,7 +1714,7 @@ yyreduce:
 #line 237 "parser.y"
                                                                                 { (yyval.tree) = (yyvsp[-1].tree);
                                                                                   (yyval.tree)->child[0] = (yyvsp[-2].tree);
-                                                                                  (yyval.tree)->child[1] = (yyvsp[0].tree); }
+                                                                                  (yyval.tree)->child[1] = (yyvsp[0].tree);}
 #line 1719 "parser.tab.c"
     break;
 

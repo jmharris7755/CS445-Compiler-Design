@@ -70,6 +70,7 @@ typedef struct treeNode
     bool isGlobal; //is variable global?
     bool isInit; //track if ID was initialized
     bool isDeclared; //track if a variable was declared
+    bool wasUsed; //track if Variable has been used
     //int memSize; //how much memory does it take up?
     //int memOffset; //How are is ti offest from address 9999?
     // even more semantic stuff will go here in later assignments.
@@ -90,5 +91,7 @@ void convertSiblingType(TreeNode *, ExpType);
 void printSpaces(int);
 
 void printExp(ExpType t);
+
+void setInit(TreeNode*, TreeNode*);
 
 #endif

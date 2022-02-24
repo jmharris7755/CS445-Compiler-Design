@@ -236,7 +236,7 @@ breakStmt           :       BREAK SEMICOLON                                     
 
 exp                 :       mutable assignop exp                                { $$ = $2;
                                                                                   $$->child[0] = $1;
-                                                                                  $$->child[1] = $3; }
+                                                                                  $$->child[1] = $3;}
 
                     |       mutable INC                                         { $$ = newExpNode(AssignK, $2);
                                                                                   $$->attr.name = $2->tokenStrInput;
