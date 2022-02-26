@@ -69,8 +69,9 @@ typedef struct treeNode
     bool isStatic; // is staticly allocated?
     bool isGlobal; //is variable global?
     bool isInit; //track if ID was initialized
-    bool isDeclared; //track if a variable was declared
+    bool warningReported; //track if a warning was reported
     bool wasUsed; //track if Variable has been used
+    bool isDeclared; //track if a Variable has been declared
     //int memSize; //how much memory does it take up?
     //int memOffset; //How are is ti offest from address 9999?
     // even more semantic stuff will go here in later assignments.
