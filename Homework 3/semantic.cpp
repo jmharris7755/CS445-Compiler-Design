@@ -1,4 +1,8 @@
- 
+ //Current Progress: testing allbad.c-
+ //Need to get "wasUsed" warning working
+ //Change error 5 to be 2 cases instead of 1: lhs and rhs
+ //Make sure to remove print statements
+ //check parse tree printouts!!!
 //semantic.cpp
 #include <stdio.h>
 #include <string.h>
@@ -36,8 +40,6 @@ TreeNode *curFunc = NULL;
 ExpType functionReturnType;
 SymbolTable symbolTable;
 
-int globOffset = 0;
-int locOffset = 0;
 
 SymbolTable returnSymbolTable() {
     return symbolTable;
@@ -57,19 +59,21 @@ void semanticAnalysis(TreeNode *t, int& errors, int& warnings){
 
     analyze(t, nErrors, nWarnings);
 
+    symbolTable.applyToAll(wasUsedWarn);
+
     //check for main defined
     TreeNode *mainCheck = (TreeNode*)symbolTable.lookup("main");
     if(mainCheck == NULL){
-        printError(15, 0, 0, NULL, NULL, NULL, 0);
+        printError(16, 0, 0, NULL, NULL, NULL, 0);
     }
     else if(mainCheck != NULL){
         if(mainCheck->nodekind == DeclK && mainCheck->subkind.decl != FuncK){
             //if(mainCheck->subkind.decl == ParamK || mainCheck->child[0]!= NULL){ ?? double check
-                printError(15, 0, 0, NULL, NULL, NULL, 0);
+                printError(16, 0, 0, NULL, NULL, NULL, 0);
             //}
         }
         else if(mainCheck->child[0] != NULL && mainCheck->child[0]->subkind.decl == ParamK){
-            printError(15, 0, 0, NULL, NULL, NULL, 0);
+            printError(16, 0, 0, NULL, NULL, NULL, 0);
         }
     }
 
@@ -126,8 +130,6 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
         
         //loop through params, analyze children
         case ParamK:
-        //function parameters are printing here
-        printf("Func param: %s\n", t->attr.name);
         //set declared status
             //t->isDeclared = true;
             for(int i = 0; i < MAXCHILDREN; i++){
@@ -144,10 +146,12 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
         //next case, check VarK, starting by looping through children
         case VarK:
-        
+
+            if(t->child[0] != NULL){
             for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
-            }           
+            } 
+            }          
 
             //If VarK is not empty
             /*if(t->child[0] != NULL){
@@ -176,14 +180,13 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
            if(t->child[0] != NULL){
                t->isInit = true;
-               t->wasUsed = true;
+               //t->wasUsed = true;
                t->isDeclared = true;
+               
            }
            else{
                t->isDeclared = true;
            }
-
-           printf("VarK Name, ExpType: %s %s\n", t->attr.name, conExpType(t->expType));
 
            break;
 
@@ -197,11 +200,14 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             //might need this to avoid second enter() call with upcoming compound flags
             enterScope = false;
             functionReturnType = t->expType;
+            
 
             //loop though function parameters and statements
             for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
             }
+
+            symbolTable.applyToAll(wasUsedWarn);
 
             //leave current scope
             symbolTable.leave();
@@ -215,49 +221,6 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
 //Function to check statement nodes
 void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
-/*
-    //variables to track child errors and array status
-    bool c0err, c1err, c2err, c0isArr, c1isArr, c2isArr;
-    c0err = c1err = c2err = false;
-    c0isArr = c1isArr = c2isArr = false;
-
-    //Keep track of if we are in a loop or not for error checking
-    // before analyzing children nodes
-    
-    if(t->subkind.stmt == WhileK || t->subkind.stmt == ForK || t->subkind.stmt == IfK){
-        
-        if(!inLoop){
-            loopDepth = symbolTable.depth();
-            inLoop = true;
-        }
-    }
-
-    if(t->subkind.stmt != CompoundK){
-        //symbolTable.enter(t->attr.name);
-        for(int i = 0; i < MAXCHILDREN; i++){
-            analyze(t->child[i], nErrors, nWarnings);
-            if(t->child[i] != NULL && t->child[i]->isArray == true){
-                if(i = 0){
-                    c0isArr = true;
-                }
-                if(i = 1){
-                    c1isArr = true;
-                }
-                if(i = 2){
-                    c2isArr = true;
-                }
-            }
-        }
-    }
-
-    TreeNode* child0 = t->child[0];
-    TreeNode* child1 = t->child[1];
-    TreeNode* child2 = t->child[2];
-
-    if(child0 != NULL && child0->child[0] != NULL) c0isArr = false;
-    if(child1 != NULL && child1->child[0] != NULL) c1isArr = false;
-    if(child2 != NULL && child2->child[0] != NULL) c2isArr = false;
-    */
 
     switch(t->subkind.stmt){
         case IfK:
@@ -270,6 +233,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 }
             }
             inLoop = false;
+            //symbolTable.applyToAll(wasUsedWarn);
             symbolTable.leave();
             enterScope = true;
             break;
@@ -285,6 +249,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             }
             //if(loopDepth == symbolTable.depth()){
                 inLoop = false;
+                symbolTable.applyToAll(wasUsedWarn);
                 symbolTable.leave();
                 enterScope = true;
             //}
@@ -295,6 +260,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             inLoop = true;
             symbolTable.enter(t->attr.name);
             enterScope = false;
+            
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
                 analyze(t->child[i], nErrors, nWarnings);
@@ -306,6 +272,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             }
             //if(loopDepth == symbolTable.depth()){
                 inLoop = false;
+                symbolTable.applyToAll(wasUsedWarn);
                 symbolTable.leave();
                 enterScope = true;
             //}
@@ -323,7 +290,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 else{
                     if(t->child[0]->isArray){
                         //cannot return array error
-                        printError(9, t->linenum, 0, NULL, NULL, NULL, 0);
+                        printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
                     }
                 }
             }
@@ -334,12 +301,16 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
         case RangeK:
             inRange = true;
-
+            //printf("RangeK check: %s %s\n", t->attr.name, t->child[0]->attr.name);
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
                     analyze(t->child[i], nErrors, nWarnings);
+
                 }
             }
+
+            inRange = false;
+
             break;
 
         case CompoundK:
@@ -357,6 +328,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             }
             //Check if single compound and leave scope if true
             if(keepCurScope){
+                symbolTable.applyToAll(wasUsedWarn);
                 symbolTable.leave();
             }
 
@@ -384,6 +356,92 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
     switch(t->subkind.exp) {
         case AssignK:
         case OpK:
+
+            //Check for <- operator first (assignment statement)
+            if(!strcmp(t->attr.name, "<-")){
+                //make sure child0 is not null
+                if(t->child[0] != NULL){
+                    
+                    //check for "[" (arrays) on the left and set child of [ init to true
+                    if(t->child[0]->child[0]!=NULL && !strcmp(t->child[0]->attr.name, "[")){
+                        t->child[0]->child[0]->isInit = true;
+
+                        //printf("OpK strcmp child1 of child0 %s %s %d\n", t->attr.name, t->child[0]->child[1]->attr.name, t->child[0]->child[1]->isInit);
+
+                        //check for ID inside of []
+                        if(t->child[0]->child[1] != NULL){
+                            t->child[0]->child[1]->isInit = true;
+                            //check for operation inside of []
+                            if(t->child[0]->child[1]->child[0] != NULL && t->child[0]->child[1]->child[1] != NULL){
+                            if(t->child[0]->child[1]->subkind.exp == OpK){
+                                t->child[0]->child[1]->child[0]->isInit = true;
+                                t->child[0]->child[1]->child[1]->isInit = true;
+                            //printf("OpK strcmp child1 of child0 %s %s %s %d\n", t->attr.name, t->child[0]->child[1]->attr.name, t->child[0]->child[1]->attr.name, t->linenum);
+                            }
+                            }
+                        }
+                        else if(t->child[0]->child[1]->child[0] != NULL){
+                            t->child[0]->child[1]->child[0]->isInit = true;
+                        }
+
+                    }
+                    //check for uninit ID being assigned to itself? (right child isn't null and is Void)
+                    else if(t->child[1] !=NULL && t->child[1]->expType == Void){
+                        //check if double assignment: x<-y<-z
+                        if(!strcmp(t->child[1]->attr.name, "<-")){
+                            t->child[0]->isInit = true;
+                        }
+                        //if ID is assigned to CallK output initialized is true
+                        if(t->child[1]->subkind.exp == CallK){
+                            t->child[0]->isInit = true;
+                        }
+
+                        //check for array on right side -- left child is init if the left child of [ is init
+                        else if(!strcmp(t->child[1]->attr.name, "[")){
+                            //make sure Id isn't initializing itself
+                            char* lhs = strdup(t->child[0]->attr.name);
+                            char* rhs = strdup(t->child[1]->child[0]->attr.name);
+                            if(/*t->child[1]->child[0]->isInit &&*/ strcmp(lhs, rhs)){
+                                t->child[0]->isInit = true;
+                            }
+
+                        }
+                        else if(t->child[0]!=NULL && t->child[1]!=NULL){
+                            if(t->child[0]->subkind.exp == IdK && !t->child[0]->isInit){
+                                if(t->child[1]->subkind.exp == IdK){
+                                    //make sure same variable isn't initializing itself
+                                    char* lhs = strdup(t->child[0]->attr.name);
+                                    char* rhs = strdup(t->child[1]->attr.name);
+                                    if(strcmp(lhs, rhs)){
+                                        t->child[0]->isInit = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        else{
+                            //printf("OpK else init check: %s %s %s %d\n", t->child[0]->attr.name, t->attr.name, t->child[1]->attr.name, t->linenum); 
+                        }
+                    }
+                   
+                    else {
+                        t->child[0]->isInit = true;
+                    }
+                }
+
+            }
+
+            //variables that appear on either side of an operator except for <- should be considered used
+            if(strcmp(t->attr.name, "<-")){
+                if(t->child[0] != NULL){
+                    t->child[0]->wasUsed = true;
+                    
+                }
+                if(t->child[1] != NULL){
+                    t->child[1]->wasUsed = true;
+                }
+            }
+
             for(int i= 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
             }
@@ -393,15 +451,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 leftSide = leftNode->expType;
                 leftArr = leftNode->isArray;
 
-                //symboltbl look up c0
-                
-                //set was used
-
-                //check if initialized -- print warning if not
-
                 if(leftNode->child[0] != NULL){
                     leftArr = false; //indexed array is not an array after indexed
-                    leftIndx = true; //redundancy for indexing nonarrays
+                    leftIndx = true; //indexing nonarrays
                 }
                 if(leftNode->nodekind == ExpK){
                     if(leftNode->subkind.exp == CallK){
@@ -418,19 +470,11 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 rightNode = t->child[1];
                 rightSide = rightNode->expType;
                 rightArr = rightNode->isArray;
-
-                //symboltbl look up c0
-                
-                
-                //set was used
-                
-
-                //check if initialized -- print warning if not
                 
 
                 if(rightNode->child[0] != NULL){
                     rightArr = false; //indexed array is not an array after indexed
-                    rightIndx = true; //redundancy for indexing nonarrays
+                    rightIndx = true; //indexing nonarrays
                 }
                 if(rightNode->nodekind == ExpK){
                     if(rightNode->subkind.exp == CallK){
@@ -462,42 +506,37 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     //check for Unary '-' to convert to chsign
                     if(!strcmp(t->attr.name, "-")){
                         char uMinus[] = "chsign";
-                        printError(8, t->linenum, 0, uMinus, conExpType(leftExpected), conExpType(leftSide), 0);
+                        printError(9, t->linenum, 0, uMinus, conExpType(leftExpected), conExpType(leftSide), 0);
                     }
-                    //check for sizeof unary
-                    /*else if(!strcmp(t->attr.name, "*") && (!leftArr && leftSide != UndefinedType)){
-                        char uSizeof[] = "sizeof";
-                        printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
-                    }
-                    else if(!strcmp(t->attr.name, "*") && leftArr){
-                        ; //do noting * operating is being used correctly on array
-                    }*/
+
                     else{
-                        printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
+                        printError(9, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                     }
                 }
                 //check for Unary 'not' -- not working from getExpTypes? 
                 //this does catch it though
                 else if(!strcmp(t->attr.name, "not") && leftSide != leftExpected){
                     //leftExpected = Boolean;
-                    printError(8, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
+                    printError(9, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                 }
                 //Check for Unary size of Error
                 else if(!strcmp(t->attr.name, "*") && (!leftArr && leftSide != UndefinedType)){
                     char uSizeof[] = "sizeof";
-                    printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
+                    printError(8, t->linenum, 0, uSizeof, NULL, NULL, 0);
                 } 
 
                 //Error: Does not work with Array and Only works with Array
                 if(leftArr){
                     if(strcmp(t->attr.name, "*") != 0){
-                        printError(6, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                        //check for chsign
+                        if(!strcmp(t->attr.name, "-")){
+                            char uMinus[] = "chsign";
+                            printError(7, t->linenum, 0, uMinus, NULL, NULL, 0);
+                        }
+                        else{
+                            printError(7, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                        }
                     }
-                    /*else if(strcmp(t->attr.name, "*") == 0){
-                        char uSizeof[] = "sizeof";
-                        printError(7, t->linenum, 0, uSizeof, NULL, NULL, 0);
-                        ;
-                    }*/
                 }
             }
                 else{
@@ -550,14 +589,22 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     //check Array errors
                     if(leftArr || rightArr){
                         //Error: does not work with Arrays
-                        if(leftExpected != UndefinedType){
+                        if(strcmp(t->attr.name, "<-") && leftExpected != UndefinedType){
                             if(!strcmp(t->attr.name, "<") || !strcmp(t->attr.name, ">") || !strcmp(t->attr.name, "=") || !strcmp(t->attr.name, ">=") || !strcmp(t->attr.name, "<=") || !strcmp(t->attr.name, "><")){
-                                ; //do nothing, these operators can be used with arrays
+                                //do nothing, these operators can be used with arrays -- I lied, error check
+                                 if(leftArr && !rightArr){
+                                printError(5, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                                }
+                                else if(!leftArr && rightArr){
+                                printError(6, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                                }
                             }
+
                             else{
-                            printError(6, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                            printError(7, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                             }
                         }
+                        
                         else{
                             //Error: requires both sides to be an array
                             // [ for arrays is also being caught here and printing out
@@ -568,7 +615,12 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                             //%s -- don't print types, split into a left !right and !left right is an array
                             //error requires both operands be arrays or not but lhs is type %s an array and rhs is type %s an array.
                             else if((leftArr && !rightArr) || (!leftArr && rightArr)){
+                                if(leftArr && !rightArr){
                                 printError(5, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                                }
+                                else if(!leftArr && rightArr){
+                                    printError(6, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                                }
                             }
                         }
                     }
@@ -593,21 +645,39 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
             valFound = (TreeNode*)symbolTable.lookup(t->attr.name);
             //if unable to find, Error: "Symbol undeclared"
             if(valFound == NULL){
-                printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);                
+                //check for ID inside of Range, considered declared if it shows up
+                if(inRange){
+                    t->isDeclared = true;
+                }
+                else{
+                printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);     
+                }           
+            }
+            else if(inRange){
+                t->isInit = true;
             }
 
             else{
+
                 //check if initialized -- error if not -- make sure not param, warning hasn't been reported
                 //isn't vark isn't <-, isn't global, isn't Void, 
-
-                 if(!valFound->isInit && !valFound->warningReported && !valFound->isGlobal && valFound->isDeclared){
-                     valFound->warningReported = true;
-                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-                }
+                 if(valFound->isDeclared == true){
+                     //printf("valFound Name, Declared, Static: %s, %d, %d %d\n", valFound->attr.name, valFound->isDeclared, valFound->isStatic, t->linenum);
+                 if(!valFound->isInit && !valFound->warningReported && !valFound->isStatic && !valFound->isGlobal){
+                     if(!t->isInit){
+                        valFound->warningReported = true;
+                        //printf("Idk check uninit warn %s %d\n", valFound->attr.name, valFound->isStatic);
+                        printError(18, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                     }
+                     else{
+                         valFound->isInit = true;
+                     }
+                 }
+                 }
 
                 //Error: cannot use function as variable
                 if(valFound->subkind.decl == FuncK){
-                    printError(11, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                    printError(12, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                     break;
                 }
                 else{
@@ -615,9 +685,11 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     t->isArray = valFound->isArray;
                     t->isGlobal = valFound->isGlobal;
                     t->isStatic = valFound->isStatic;
-                    t->isInit = valFound->isInit;
-                    t->isDeclared = valFound->isDeclared;
-                    t->wasUsed = true;
+
+                    //not used if in Range
+                    if(!inRange){
+                    valFound->wasUsed = true;
+                    }
                 }
 
                 //Array index errors
@@ -634,11 +706,11 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     else{
                         //Error: array should be index by type int...
                         if(t->child[0]->expType != Integer){
-                            printError(13, t->linenum, 0, t->attr.name, conExpType(t->child[0]->expType), NULL, 0);
+                            printError(14, t->linenum, 0, t->attr.name, conExpType(t->child[0]->expType), NULL, 0);
                         }
                         //Error: array index is the unindexed array...
                         if(t->child[0]->isArray && t->child[0]->child[0] == NULL){
-                            printError(12, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
+                            printError(13, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
                         }
                     }
                 }
@@ -646,26 +718,31 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
             break;
 
         case CallK:
+            TreeNode* funcFound;
+            //check for undeclared call
+            if(t->subkind.exp == CallK){
+                funcFound = (TreeNode*)symbolTable.lookup(t->attr.name);
+                if(funcFound == NULL){
+                    printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);   
+                }
+            }
+            
+
             for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
                 //look up name of parameter, if not null -> isUsed
             }
 
-            //check for undeclared
-            valFound = (TreeNode*)symbolTable.lookup(t->attr.name);
-            if(valFound == NULL){
-                printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);   
-            }
-
-            else{
-                t->expType = valFound->expType;
-                t->isArray = valFound->isArray;
-                t->isGlobal = valFound->isGlobal;
-                t->isStatic = valFound->isStatic;
+            if(funcFound != NULL){
+                t->expType = funcFound->expType;
+                t->isArray = funcFound->isArray;
+                t->isGlobal = funcFound->isGlobal;
+                t->isStatic = funcFound->isStatic;
+                funcFound->wasUsed = true;
 
                 //Error: is a simple variable and cannot be used as a call
-                if(valFound->subkind.decl != FuncK){
-                    printError(10, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                if(funcFound->subkind.decl != FuncK){
+                    printError(11, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                 }
             }
       
@@ -756,7 +833,7 @@ char* conExpType(ExpType type){
 //print errors using sprintf and buffer based on error code (switch case)
 void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, char* s3, double d){
 
-    if(errCode > 15){
+    if(errCode > 16){
         nWarnings++;
     }
     else{
@@ -788,61 +865,66 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
             sprintf(sprintBuffer, "ERROR(%d): '%s' requires operands of type %s but rhs is of type %s.\n", linenum, s1, s2, s3);
             break;
 
+                //This needs to be split into 2 cases, right hand side and left hand side
         case 5: 
-            sprintf(sprintBuffer, "ERROR(%d): '%s' requires both operands be arrays or not but lhs is type %s an array and rhs is type %s an array.\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires both operands be arrays or not but lhs is an array and rhs is not an array.\n", linenum, s1);
             break;
 
-        case 6: 
-            sprintf(sprintBuffer, "ERROR(%d): The operation '%s' does not work with arrays.\n", linenum, s1);
+        case 6:
+            sprintf(sprintBuffer, "ERROR(%d): '%s' requires both operands be arrays or not but lhs is not an array and rhs is an array.\n", linenum, s1);
             break;
 
         case 7: 
+            sprintf(sprintBuffer, "ERROR(%d): The operation '%s' does not work with arrays.\n", linenum, s1);
+            break;
+
+        case 8: 
             sprintf(sprintBuffer, "ERROR(%d): The operation '%s' only works with arrays.\n", linenum, s1);
             break;
 
-        case 8:
+        case 9:
             sprintf(sprintBuffer, "ERROR(%d): Unary '%s' requires an operand of type %s but was given type %s.\n", linenum, s1, s2, s3);
             break;
 
 
         //Return Errors
-        case 9: 
+        case 10: 
             sprintf(sprintBuffer, "ERROR(%d): Cannot return an array.\n", linenum);
             break;
 
         //Function Errors
-        case 10: 
+        case 11: 
             sprintf(sprintBuffer, "ERROR(%d): '%s' is a simple variable and cannot be called.\n", linenum, s1);
             break;
 
-        case 11:
+        case 12:
             sprintf(sprintBuffer, "ERROR(%d): Cannot use function '%s' as a variable.\n", linenum, s1);
             break;
 
         //Array Index Errors
-        case 12:
+        case 13:
             sprintf(sprintBuffer, "ERROR(%d): Array index is the unindexed array '%s'.\n", linenum, s1);
             break;
 
-        case 13: 
+        case 14: 
             sprintf(sprintBuffer, "ERROR(%d): Array '%s' should be indexed by type int but got type %s.\n", linenum, s1, s2);
             break;
 
-        case 14: 
+        case 15: 
             sprintf(sprintBuffer, "ERROR(%d): Cannot index nonarray '%s'.\n", linenum, s1);
             break;
 
         // 'Main' Error
-        case 15: 
+        case 16: 
             sprintf(sprintBuffer, "ERROR(LINKER): A function named 'main()' must be defined.\n");
             break;
 
         //Warnings -- initialized but not used, uninitialized
-        case 16: 
+        case 17: 
             sprintf(sprintBuffer, "WARNING(%d): The variable '%s' seems not to be used.\n", linenum, s1);
             break;
 
-        case 17:
+        case 18:
             sprintf(sprintBuffer, "WARNING(%d): Variable '%s' may be uninitialized when used here.\n", linenum, s1);
             break;
     }
@@ -873,25 +955,25 @@ void arrayErrors(TreeNode *t)
 
       if(leftNode == NULL || !leftNode->isArray)
       {
-         printError(14, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
+         printError(15, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
       }
    }
    else
    {
-      printError(14, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
+      printError(15, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
    }
    if(t->child[1] != NULL)
    {
       if(t->child[1]->expType != Integer && t->child[1]->expType != UndefinedType)
       {
-         printError(13, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[1]->expType), NULL, 0);
+         printError(14, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[1]->expType), NULL, 0);
       }
    }
    if(t->child[1] != NULL && t->child[1]->subkind.exp == IdK)
    {
       if(rightNode != NULL && rightNode->isArray == true)
       {
-         printError(12, t->linenum, 0, rightNode->attr.name, NULL, NULL, 0); //
+         printError(13, t->linenum, 0, rightNode->attr.name, NULL, NULL, 0); //
       }
       if(rightNode != NULL)
       {
@@ -899,4 +981,15 @@ void arrayErrors(TreeNode *t)
       }
    }
 
+}
+
+void wasUsedWarn(std::string symbol, void* t){
+
+    TreeNode* checkUsed;
+
+    checkUsed = symbolTable.lookupNode(symbol.c_str());       
+
+    if(!checkUsed->wasUsed && !checkUsed->isGlobal){
+        printError(17, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
+    }
 }

@@ -297,6 +297,10 @@ void SymbolTable::applyToAllGlobal(void (*action)(std::string , void *))
     stack[0]->applyToAll(action);
 }
 
+TreeNode* SymbolTable::lookupNode(std::string symbol) {
+    return (TreeNode*)lookup(symbol);
+}
+
 
 
 

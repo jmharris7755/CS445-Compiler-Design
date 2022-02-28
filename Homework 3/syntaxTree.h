@@ -77,6 +77,7 @@ typedef struct treeNode
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
 
+
 TreeNode *newDeclNode(DeclKind kind, TokenData *tokenData);
 
 TreeNode *newStmtNode(StmtKind kind, TokenData *tokenData);
@@ -94,5 +95,6 @@ void printSpaces(int);
 void printExp(ExpType t);
 
 void setInit(TreeNode*, TreeNode*);
+
 
 #endif

@@ -118,7 +118,7 @@ union YYSTYPE
 
     ExpType type;               //For passing types (i.e pass a type in a decl like int or bool)
     TokenData *tokenData;       //For terminals. Token data comes from yylex() in the $ vars
-    TreeNode *tree;             //For nonterminals. Add these nodes as you build the tree. 
+    TreeNode *tree;             //For nonterminals. Add these nodes as you build the tree.
 
 #line 124 "parser.tab.h"
 

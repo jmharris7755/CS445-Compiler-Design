@@ -95,14 +95,16 @@ TreeNode *addaSibling(TreeNode *t, TreeNode *s){
         return t;
     }
     if(s!=NULL && t!=NULL){
+        
         TreeNode *newT = (TreeNode *)malloc(sizeof(TreeNode));
-        newT = t;
-    
+        newT = t;    
 
         while(newT !=NULL && newT->sibling !=NULL){
-            newT = newT->sibling;
+            newT = newT->sibling;            
+
         }
         newT->sibling = s;
+        
     }
     return t;
 }
@@ -170,14 +172,16 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
 
                 case VarK:
                     if(t->isArray == true){
-                        printf("Var: %s of array of type ", t->attr.name);
+                        printf("Var: %s is array of type ", t->attr.name);
                         printExp(t->expType);
                         printf(" [line: %d]\n", t->linenum);
                     }
-                    else if(t->isStatic == true){
+                    else if(!TYPES){
+                        if(t->isStatic == true){
                         printf("Var: %s of static type ", t->attr.name);
                         printExp(t->expType);
                         printf(" [line: %d]\n", t->linenum);
+                        }
                     }
                     else{
                         printf("Var: %s of type ", t->attr.name);
@@ -194,7 +198,7 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
 
                 case ParamK:
                     if(t->isArray){
-                        printf("Parm: %s of array of type ", t->attr.name);
+                        printf("Parm: %s is array of type ", t->attr.name);
                         printExp(t->expType);
                         printf(" [line: %d]\n", t->linenum);
                     }
@@ -259,16 +263,11 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                 if(t->child[1] == NULL && !strcmp(t->attr.name, "-")){
                     
                     printf("Op: chsign");
-                    if(t->expType == UndefinedType){
-                        //if 'P' option
-                        if(TYPES){
+                    if(TYPES){
+                        if(t->expType == UndefinedType){
                             printf(" of undefined type");
                         }
-                    }
-                    else
-                    {
-                        //if 'P' option
-                        if(TYPES){
+                        else{
                             printf(" of type ");
                             printExp(t->expType);
                         }
@@ -279,16 +278,11 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
 
                 else if(t->child[1] == NULL && !strcmp(t->attr.name, "*")){
                     printf("Op: sizeof");
-                    if(t->expType == UndefinedType){
-                        //if 'P' option
-                        if(TYPES){
+                    if(TYPES){
+                        if(t->expType == UndefinedType || !t->child[0]->isArray){
                             printf(" of undefined type");
                         }
-                    }
-                    else
-                    {
-                        //if 'P' option
-                        if(TYPES){
+                        else{
                             printf(" of type ");
                             printExp(t->expType);
                         }
@@ -296,7 +290,8 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                     printf(" [line: %d]\n", t->linenum);
                 }
 
-                else{
+
+                else if(t->child[1] != NULL && !strcmp(t->attr.name, "=")){
                     printf("Op: %s", t->attr.name);
                     if(t->expType == UndefinedType){
                         //if 'P' option
@@ -308,6 +303,35 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                     {
                         //if 'P' option
                         if(TYPES){
+                            printf(" of type bool");
+                            //printExp(t->expType);
+                        }
+                    }
+                    printf(" [line: %d]\n", t->linenum);
+                }
+
+                else if(!strcmp(t->attr.name, "%")){
+                    printf("Op: %s", t->attr.name);
+                    if(TYPES){
+                        if(t->expType == UndefinedType){
+                            printf(" of undefined type");
+                        }
+                        else{
+                            printf(" of type ");
+                            printExp(t->expType);
+                        }
+                    }
+                    printf(" [line: %d]\n", t->linenum);
+                }
+
+                else{
+                    printf("Op: %s", t->attr.name);
+                    if(TYPES){
+                        if(t->expType == UndefinedType){
+                            printf(" of undefined type");
+                        }
+                        
+                        else{
                             printf(" of type ");
                             printExp(t->expType);
                         }
@@ -318,7 +342,7 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
 
                 case ConstantK:
                 if(t->expType == Boolean){
-                    printf("Const %s ", t->attr.name);
+                    printf("Const %s", t->attr.name);
 
                     //if 'P' option
                     if(TYPES){
@@ -329,7 +353,7 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                 }
 
                 else if(t->expType == CharInt){
-                    printf("Const \"");
+                    printf("Const is array \"");
                     printf("%s\"", t->attr.name);
 
                     //if 'P' option
@@ -368,8 +392,13 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
 
                     //if 'P' option
                     if(TYPES){
-                        printf(" of type ");
-                        printExp(t->expType);
+                        if(t->expType == UndefinedType || t->expType == Void){
+                            printf(" of undefined type");
+                        }
+                        else{
+                            printf(" of type ");
+                            printExp(t->expType);
+                        }
                     }
 
                     printf(" [line: %d]\n", t->linenum);

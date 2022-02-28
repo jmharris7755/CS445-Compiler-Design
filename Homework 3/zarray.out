@@ -1,0 +1,4 @@
+2d1
+< ERROR(12): Symbol 'output' is not declared.
+3a3
+> ERROR(12): Symbol 'output' is not declared.

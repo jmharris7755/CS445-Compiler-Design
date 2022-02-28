@@ -15,5 +15,6 @@ void getExpTypes(const char* string, bool isBinary, bool &unaryErrors, ExpType &
 char* conExpType(ExpType type);
 void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, char* s3, double d);
 void arrayErrors(TreeNode *t);
+void wasUsedWarn(std::string, void*);
 
 #endif

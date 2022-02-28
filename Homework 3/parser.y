@@ -40,7 +40,7 @@ void yyerror(const char *msg)
 %union {
     ExpType type;               //For passing types (i.e pass a type in a decl like int or bool)
     TokenData *tokenData;       //For terminals. Token data comes from yylex() in the $ vars
-    TreeNode *tree;             //For nonterminals. Add these nodes as you build the tree. 
+    TreeNode *tree;             //For nonterminals. Add these nodes as you build the tree.
 }
 
 %token <tokenData> ID NUMCONST CHARCONST STRINGCONST BOOLCONST SPEC KEYWORD
@@ -77,7 +77,7 @@ varDecl             :       typeSpec varDeclList SEMICOLON                      
                                                                                   convertSiblingType($$, $1); }
                     ;
 
-scopedVarDecl       :       STATIC typeSpec varDeclList SEMICOLON               { $$ = $3; $$->isStatic = true; 
+scopedVarDecl       :       STATIC typeSpec varDeclList SEMICOLON               {$$ = $3; $$->isStatic = true; 
                                                                                   convertSiblingType($$, $2);}
 
                     |       typeSpec varDeclList SEMICOLON                      { $$ = $2; 
@@ -134,8 +134,7 @@ parmIdList          :       parmIdList COMMA parmId                             
                     |       parmId                                              { $$ = $1; }
                     ;
 
-parmId                                                                                                :       ID                                                  { $$ = newDeclNode(ParamK, $1);
-$$->attr.name = strdup($1->tokenStrInput); }
+parmId              :       ID                                                  { $$ = newDeclNode(ParamK, $1);$$->attr.name = strdup($1->tokenStrInput); }
 
                     |       ID LBRACKET RBRACKET                                { $$ = newDeclNode(ParamK, $1); 
                                                                                   $$->attr.name = strdup($1->tokenStrInput); 
@@ -484,7 +483,7 @@ int main(int argc, char *argv[])
         }
         else {
             //failed to open
-            printf("ERROR(ARGLIST): source file \'%s\' could not be opened.\n", argv[1]);
+            printf("ERROR(ARGLIST): source file \"%s\" could not be opened.\n", argv[1]);
             numErrors++;
             printf("Number of warnings: %d\n", numWarnings);
             printf("Number of errors: %d\n", numErrors);
