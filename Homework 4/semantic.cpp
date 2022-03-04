@@ -173,10 +173,22 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             //}
 
            //check for duplicate declarations
+           TreeNode* exists;
            if(!symbolTable.insert(t->attr.name, t)){
-               TreeNode* exists = (TreeNode*)symbolTable.lookup(t->attr.name);
+               exists = (TreeNode*)symbolTable.lookup(t->attr.name);
                printError(0, t->linenum, exists->linenum, t->attr.name, NULL, NULL, 0);
            }
+
+            //Fix for static declarations with siblings not being set correctly
+            //Specifically in var.c- and everythingS22.c-
+           if(t->sibling != NULL){
+                //printf("VarK t has a sibling. %s\n", t->sibling->attr.name);
+                if(t->isStatic){
+                    t->sibling->isStatic = t->isStatic;
+                //printf("VarK t isStatic: %d\n", t->isStatic);
+                }
+            }
+
 
            if(t->child[0] != NULL){
                t->isInit = true;
