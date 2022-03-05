@@ -1065,25 +1065,33 @@ void printError(int errCode, int linenum, int reasonNum, char* s1, char* s2, cha
     errBuffer.push_back(e);
 }
 
+//Check for array errors 13-15
 void arrayErrors(TreeNode *t)
 {
+    //set up lhs and rhs sides
    TreeNode *leftNode = NULL;
    TreeNode *rightNode = NULL;
 
    leftNode = t->child[0];
    rightNode = t->child[1];
 
+    //if lhs is an ID
    if(t->child[0]->subkind.exp == IdK)
    {
+       //lookup LHS
       leftNode = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
+      
+      //if exists, set exp types
       if(leftNode != NULL)
       {
          t->child[0]->expType = leftNode->expType;
          t->expType = leftNode->expType;
       }
 
+      //lhs exists and not an array
       if(leftNode == NULL || !leftNode->isArray)
       {
+          //Error: can't index nonarray
          printError(15, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0);
       }
    }
@@ -1093,15 +1101,19 @@ void arrayErrors(TreeNode *t)
    }
    if(t->child[1] != NULL)
    {
+       //check if array is being indexed by something other than an int
       if(t->child[1]->expType != Integer && t->child[1]->expType != UndefinedType)
       {
+          //Error: array should be indexed by type int but got...
          printError(14, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[1]->expType), NULL, 0);
       }
    }
    if(t->child[1] != NULL && t->child[1]->subkind.exp == IdK)
    {
+       //right node exists and is being indexed by an array
       if(rightNode != NULL && rightNode->isArray == true)
       {
+          //Error: Array is unindexed array
          printError(13, t->linenum, 0, rightNode->attr.name, NULL, NULL, 0); //
       }
       if(rightNode != NULL)
@@ -1119,12 +1131,11 @@ void checkNestAssK(TreeNode *c1){
         c1->child[0]->isInit = true;
         //printf("nestAssk check: %s %s\n", c1->attr.name, c1->child[0]->attr.name);
     }
-    /*if(c1->child[1] != NULL && c1->subkind.exp == AssignK){
-        printf("nestAssK check 2: %s %s\n", c1->attr.name, c1->child[1]->attr.name);
-        //checkNestAssK(c1->child[1]);
-    }*/
 }
 
+//Function to check for wasUsed warnings
+//recommended by TA to write an additonal function lookupNode for
+//the symbolTable to check for this flag. 
 void wasUsedWarn(std::string symbol, void* t){
 
     TreeNode* checkUsed;
