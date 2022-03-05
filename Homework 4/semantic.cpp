@@ -183,7 +183,8 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             //Specifically in var.c- and everythingS22.c-
            if(t->sibling != NULL){
                 //printf("VarK t has a sibling. %s\n", t->sibling->attr.name);
-                if(t->isStatic){
+                //also need to check if they were declared on the same line
+                if(t->isStatic && t->linenum == t->sibling->linenum){
                     t->sibling->isStatic = t->isStatic;
                 //printf("VarK t isStatic: %d\n", t->isStatic);
                 }
@@ -397,7 +398,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         }
 
                     }
-                    //check for uninit ID being assigned to itself? (right child isn't null and is Void)
+                    //nested assignments and ID set to CallK checks
                     else if(t->child[1] !=NULL && t->child[1]->expType == Void){
                         //check if double assignment: x<-y<-z
                         if(!strcmp(t->child[1]->attr.name, "<-")){
@@ -419,7 +420,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
                         }
                         else if(t->child[0]!=NULL && t->child[1]!=NULL){
+                            //printf("OpK else init check: %s %s %s %d\n", t->child[0]->attr.name, t->attr.name, t->child[1]->attr.name, t->linenum);
                             if(t->child[0]->subkind.exp == IdK && !t->child[0]->isInit){
+                                //printf("OpK else init check: %s %s %s %d\n", t->child[0]->attr.name, t->attr.name, t->child[1]->attr.name, t->linenum);
                                 if(t->child[1]->subkind.exp == IdK){
                                     //make sure same variable isn't initializing itself
                                     char* lhs = strdup(t->child[0]->attr.name);
@@ -427,6 +430,14 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                                     if(strcmp(lhs, rhs)){
                                         t->child[0]->isInit = true;
                                     }
+                                }
+                                //recursive check for multiple assignK's on rhs += -= /= *=
+                                //if child0 is and ID, not init and on lhs of nested assignments
+                                //it should be inititalized
+                                else if(t->child[1]->subkind.exp == AssignK){
+                                    checkNestAssK(t->child[1]);
+                                    t->child[0]->isInit = true;
+                                    //printf("OpK else init check2: %s %s %s %d\n", t->child[0]->attr.name, t->attr.name, t->child[1]->attr.name, t->linenum);
                                 }
                             }
                         }
@@ -876,7 +887,7 @@ void printError(int errCode, int linenum, int reasonNum, char* s1, char* s2, cha
         nErrors++;
     }
 
-    //print error depending on error code 0 - 17
+    //print error depending on error code 0 - 38
     switch(errCode){
 
         //Declaration Errors
@@ -1099,6 +1110,19 @@ void arrayErrors(TreeNode *t)
       }
    }
 
+}
+
+//Check for nested assignments -- warnings missed in everythingS22 on HW3
+void checkNestAssK(TreeNode *c1){
+
+    if(c1->child[0] != NULL){
+        c1->child[0]->isInit = true;
+        //printf("nestAssk check: %s %s\n", c1->attr.name, c1->child[0]->attr.name);
+    }
+    /*if(c1->child[1] != NULL && c1->subkind.exp == AssignK){
+        printf("nestAssK check 2: %s %s\n", c1->attr.name, c1->child[1]->attr.name);
+        //checkNestAssK(c1->child[1]);
+    }*/
 }
 
 void wasUsedWarn(std::string symbol, void* t){

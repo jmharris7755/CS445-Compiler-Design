@@ -17,5 +17,6 @@ void printError(int errCode, int linenum, int explaineno, char* s1, char* s2, ch
 void arrayErrors(TreeNode *t);
 void wasUsedWarn(std::string, void*);
 void parameterErrors(TreeNode *funcFound, TreeNode *t, TreeNode *ffParm, TreeNode *tParm, int paramCount);
+void checkNestAssK(TreeNode *c1);
 
 #endif
