@@ -1417,7 +1417,7 @@ yyreduce:
                                                                                 { (yyval.tree) = newDeclNode(VarK, (yyvsp[-3].tokenData)); 
                                                                                   (yyval.tree)->attr.name = (yyvsp[-3].tokenData)->tokenStrInput;
                                                                                   (yyval.tree)->isArray = true;
-                                                                                  (yyval.tree)->thisTokenData = (yyvsp[-3].tokenData); (yyval.tree)->expType = UndefinedType; }
+                                                                                  (yyval.tree)->thisTokenData = (yyvsp[-3].tokenData); (yyval.tree)->expType = UndefinedType;}
 #line 1422 "parser.tab.c"
     break;
 

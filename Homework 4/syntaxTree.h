@@ -72,6 +72,7 @@ typedef struct treeNode
     bool warningReported; //track if a warning was reported
     bool wasUsed; //track if Variable has been used
     bool isDeclared; //track if a Variable has been declared
+    bool declErr;
     //int memSize; //how much memory does it take up?
     //int memOffset; //How are is ti offest from address 9999?
     // even more semantic stuff will go here in later assignments.

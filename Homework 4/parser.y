@@ -96,7 +96,7 @@ varDeclId           :       ID                                                  
                     |       ID LBRACKET NUMCONST RBRACKET                       { $$ = newDeclNode(VarK, $1); 
                                                                                   $$->attr.name = $1->tokenStrInput;
                                                                                   $$->isArray = true;
-                                                                                  $$->thisTokenData = $1; $$->expType = UndefinedType; }
+                                                                                  $$->thisTokenData = $1; $$->expType = UndefinedType;}
                     ;
 
 typeSpec            :       BOOL                                                { $$ = Boolean; }

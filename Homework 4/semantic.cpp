@@ -33,11 +33,14 @@ bool enterScope = true;
 bool returnFlag = false;
 bool inLoop = false;
 bool inRange = false;
+bool inFor = false;
 int loopDepth = 1;
+int rangePos = 0;
 
 TreeNode *curFunc = NULL;
 
 ExpType functionReturnType;
+ExpType actualReturnType;
 SymbolTable symbolTable;
 
 
@@ -207,6 +210,9 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             //set t to current function variable
             curFunc = t;
 
+            //set returnFlag to false
+            returnFlag = false;
+
             //Enter a scope for function arguments and compund section
             symbolTable.enter(t->attr.name);
 
@@ -221,6 +227,18 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             }
 
             symbolTable.applyToAll(wasUsedWarn);
+
+            //if returnFlag is false, then there was no return statement, 
+            //print warning
+            if(returnFlag == false && t->expType != Void){
+                //Warning 19: "WARNING(%d): Expecting to return %s but function '%s' has no return statement.\n"
+                printError(19, t->linenum, 0, conExpType(functionReturnType), t->attr.name, NULL, 0);
+            }
+            // return type from function "return x" is not the expected type
+            else if(returnFlag == true && functionReturnType != actualReturnType && actualReturnType != Void){
+                //Error 31: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n"
+                printError(31, t->linenum, 0, t->attr.name, conExpType(functionReturnType), conExpType(actualReturnType), 0);
+            }
 
             //leave current scope
             symbolTable.leave();
@@ -242,8 +260,16 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             enterScope = false;
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[0]){
-                analyze(t->child[i], nErrors, nWarnings);
+                    //printf("IfK chid0 %s %s %d\n", t->child[0]->attr.name, conExpType(t->child[0]->expType), t->linenum);
+                    analyze(t->child[i], nErrors, nWarnings);
                 }
+            }
+
+            //boolean test condition check
+            if(t->child[0]->expType != Boolean && t->child[0]->subkind.exp != OpK){
+                char ifStmt[] = "if";
+                //Error 27: "ERROR(%d): Expecting Boolean test condition in %s statement but got type %s.\n"
+                printError(27, t->linenum, 0, ifStmt, conExpType(t->child[0]->expType), NULL, 0 );
             }
             inLoop = false;
             //symbolTable.applyToAll(wasUsedWarn);
@@ -271,6 +297,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
         case ForK:
             //Might need to add isInit check in For case also
             inLoop = true;
+            inFor = true;
             symbolTable.enter(t->attr.name);
             enterScope = false;
             
@@ -283,7 +310,9 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 t->child[1]->isInit = true;
                 }
             }
+
             //if(loopDepth == symbolTable.depth()){
+                inFor = false;
                 inLoop = false;
                 symbolTable.applyToAll(wasUsedWarn);
                 symbolTable.leave();
@@ -297,14 +326,19 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 //symbolTable look up of c0 attr.name
                 //set is child0 to is used 
 
+                //set returnFlag to track functions that have a return statement
+                returnFlag = true;
+
+                //store return type to compare aginst in FuncK
+                actualReturnType = t->expType;
+
                 if(curFunc == NULL){
                     break;
                 }
-                else{
-                    if(t->child[0]->isArray){
-                        //cannot return array error
-                        printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
-                    }
+                //check if t is an array
+                else if(t->child[0]->isArray){
+                    //cannot return array error
+                    printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
                 }
             }
             break;
@@ -313,14 +347,17 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             break;
 
         case RangeK:
+            rangePos = 0;
             inRange = true;
             //printf("RangeK check: %s %s\n", t->attr.name, t->child[0]->attr.name);
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
+                    rangePos++;
                     analyze(t->child[i], nErrors, nWarnings);
-
+                    //printf("RangeK check: %s %d %d\n", t->child[i]->attr.name, t->linenum, t->child[i]->isArray);
                 }
             }
+
 
             inRange = false;
 
@@ -603,7 +640,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                                 printError(3, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                             }
                             //right error -- types.c- main++, ++ operator going to here
-                            if(rightSide != rightExpected && !rightErr && rightSide != UndefinedType){
+                            if(rightSide != rightExpected && !rightErr && rightSide != UndefinedType && rightSide != Void){
                                 printError(4, t->linenum, 0, t->attr.name, conExpType(rightExpected), conExpType(rightSide), 0);
                             }
                         }
@@ -673,10 +710,40 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     t->isDeclared = true;
                 }
                 else{
-                printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);     
+                printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0); 
+                    t->declErr = true;    
                 }           
             }
+            //check if ID is in a range
             else if(inRange){
+
+                //check if ID is in a for loop
+                if(inFor){
+                    //set expType of t to declared expType
+                    t->expType = valFound->expType;
+
+                    //check for int at position 1 of for loop
+                    if(t->expType != Integer && rangePos == 1)
+                    {
+                        char intExpect[] = "int";
+                        //Error 26: "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n"
+                        printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
+                    }
+
+                    //not allowed to use arrays in range of for
+                    if(valFound->isArray){
+                        //Error 24: "ERROR(%d): Cannot use array in position %d in range of for statement.\n"
+                        printError(24, t->linenum, 0, NULL, NULL, NULL, rangePos);
+                    }
+
+                    //don't check for this here
+                    //check for type matching at positions as well
+                    /*if(t->expType != valFound->expType){
+                        //Error 26: "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n"
+                        printError(26, t->linenum, 0, conExpType(valFound->expType), conExpType(t->expType), NULL, rangePos);
+                    }*/
+                }
+                //printf("IdK / RangeK check: %s %d %d\n", valFound->attr.name, t->linenum, valFound->isArray);
                 t->isInit = true;
             }
 
@@ -709,8 +776,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     t->isGlobal = valFound->isGlobal;
                     t->isStatic = valFound->isStatic;
 
-                    //not used if in Range
-                    if(!inRange){
+                    //not used if in Range and rule out FuncK
+                    //funcK should be considered used only in CallK
+                    if(!inRange && valFound->subkind.decl != FuncK){
                     valFound->wasUsed = true;
                     }
                 }
@@ -747,21 +815,19 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
             if(t->subkind.exp == CallK){
                 funcFound = (TreeNode*)symbolTable.lookup(t->attr.name);
                 if(funcFound == NULL){
-                    printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);   
+                    printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0);  
+                        t->declErr = true; 
                 }
-                /*else{
-                    if(funcFound->child[0] != NULL)
-                    {printf("CallK lookup Check: %s\n", conExpType(funcFound->child[0]->expType));}
-                }*/
+                else{
+                    //if(funcFound->child[0] != NULL)
+                    //{printf("CallK lookup Check: %s\n", conExpType(funcFound->child[0]->expType));}
+                    
+                }
             }
-            
 
-            for(int i = 0; i < MAXCHILDREN; i++){
-                /*if(t->child[i] != NULL){
-                    paramCount++;
-                }*/
+             for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
-            }
+                }
 
             if(funcFound != NULL){
                 t->expType = funcFound->expType;
@@ -776,6 +842,10 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 }
                 //check parameters
                 else{
+
+                    //printf("CallK funcFound check1: %s\n", funcFound->attr.name);
+
+                    //function found has parameters and current call has parameters
                     if(funcFound->child[0] != NULL && t->child[0] != NULL){
                        
                        //recursive comparison of parameters because checking each child
@@ -783,10 +853,13 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                        parameterErrors(funcFound, t, funcFound->child[0], t->child[0], paramCount);
                     }
                     //too many parameters
+                    //function found has expects no params, but current call has them
                     else if(funcFound->child[0] == NULL && t->child[0] != NULL){
+                        //printf("CallK funcFound check2: %s\n", funcFound->attr.name);
                         printError(38, t->linenum, funcFound->linenum, t->attr.name, NULL, NULL, 0);
                     }
                     //too few parameters
+                    //function found is expecting paramters but current call has none
                     else if(funcFound->child[0] != NULL && t->child[0] == NULL){
                         printError(37, t->linenum, funcFound->linenum, t->attr.name, NULL, NULL, 0);
                     }
@@ -963,7 +1036,7 @@ void printError(int errCode, int linenum, int reasonNum, char* s1, char* s2, cha
 
         // 'Main' Error
         case 16: 
-            sprintf(sprintBuffer, "ERROR(LINKER): A function named 'main()' must be defined.\n");
+            sprintf(sprintBuffer, "ERROR(LINKER): A function named 'main' with no parameters must be defined.\n");
             break;
 
         //Warnings -- initialized but not used, uninitialized
@@ -977,7 +1050,7 @@ void printError(int errCode, int linenum, int reasonNum, char* s1, char* s2, cha
 
         //Additonal Errors added for Assignment 4
         case 19: 
-            sprintf(sprintBuffer, "WARNING(%d): Expecting to return %s but function '%s' has no return statement.\n", linenum, s1, s2);
+            sprintf(sprintBuffer, "WARNING(%d): Expecting to return type %s but function '%s' has no return statement.\n", linenum, s1, s2);
             break;
 
         case 20:
@@ -1003,19 +1076,19 @@ void printError(int errCode, int linenum, int reasonNum, char* s1, char* s2, cha
             break;
 
         case 25:
-            sprintf(sprintBuffer, "ERROR(%d): Expecting %s in parameter %d of call to '%s' declared on line %d but got %s.\n", linenum, s2, i, s1, reasonNum, s3);
+            sprintf(sprintBuffer, "ERROR(%d): Expecting type %s in parameter %d of call to '%s' declared on line %d but got type %s.\n", linenum, s2, i, s1, reasonNum, s3);
             break;
 
         case 26:
-            sprintf(sprintBuffer, "ERROR(%d): Expecting %s in position %d in range of for statement but got %s.\n", linenum, s1, i, s3);
+            sprintf(sprintBuffer, "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n", linenum, s1, i, s2);
             break;
 
         case 27:
-            sprintf(sprintBuffer, "ERROR(%d): Expecting Boolean test condition in %s statement but got %s.\n", linenum, s1, s2);
+            sprintf(sprintBuffer, "ERROR(%d): Expecting Boolean test condition in %s statement but got type %s.\n", linenum, s1, s2);
             break;
 
         case 28:
-            sprintf(sprintBuffer, "ERROR(%d): Expecting array in parameter %d of call to '%s' declared on line %d.\n", linenum, i, s1, linenum);
+            sprintf(sprintBuffer, "ERROR(%d): Expecting array in parameter %d of call to '%s' declared on line %d.\n", linenum, i, s1, reasonNum);
             break;
 
         case 29:
@@ -1027,7 +1100,7 @@ void printError(int errCode, int linenum, int reasonNum, char* s1, char* s2, cha
             break;
 
         case 31:
-            sprintf(sprintBuffer, "ERROR(%d): Function '%s' at line %d is expecting to return %s but returns %s.\n", linenum, s1, linenum, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n", linenum, s1, linenum, s2, s3);
             break;
 
         case 32:
@@ -1047,7 +1120,7 @@ void printError(int errCode, int linenum, int reasonNum, char* s1, char* s2, cha
             break;
         
         case 36:
-            sprintf(sprintBuffer, "ERROR(%d): Not expecting array in parameter %d of call to '%s' declared on line %d.\n", linenum, i, s1, linenum);
+            sprintf(sprintBuffer, "ERROR(%d): Not expecting array in parameter %d of call to '%s' declared on line %d.\n", linenum, i, s1, reasonNum);
             break;
 
         case 37:
@@ -1125,6 +1198,7 @@ void arrayErrors(TreeNode *t)
 }
 
 //Check for nested assignments -- warnings missed in everythingS22 on HW3
+//no longer nested (recursive) causes other problems
 void checkNestAssK(TreeNode *c1){
 
     if(c1->child[0] != NULL){
@@ -1142,20 +1216,82 @@ void wasUsedWarn(std::string symbol, void* t){
 
     checkUsed = symbolTable.lookupNode(symbol.c_str());       
 
-    if(!checkUsed->wasUsed && !checkUsed->isGlobal){
-        printError(17, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
+    if(!checkUsed->wasUsed && !checkUsed->isGlobal && strcmp(checkUsed->attr.name, "main")){
+        //if parameter, print parameter variant
+        //Warning 21: "WARNING(%d): The parameter '%s' seems not to be used.\n"
+        if(checkUsed->subkind.decl == ParamK){
+            printError(21, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
+        }
+
+        //otherwise print variable variant
+        //Warning 17: "WARNING(%d): The variable '%s' seems not to be used.\n"
+        else{
+            printError(17, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
+        }
+    }
+    //if function as not called, it wasn't used
+    else if(!checkUsed->wasUsed && checkUsed->isGlobal && checkUsed->subkind.decl == FuncK){
+        
+        //exclude "main"
+        if(strcmp(checkUsed->attr.name, "main")){
+            //Warning 20: "WARNING(%d): The function '%s' seems not to be used.\n"
+            printError(20, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
+        }
+    }
+
+    //check for globals that are not used
+    else if(!checkUsed->wasUsed && checkUsed->isGlobal){
+         printError(17, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
     }
 }
 
+
+//function to recursively check paramaters in function, for each sibling parameter. 
 void parameterErrors(TreeNode *funcFound, TreeNode *t, TreeNode *ffParm, TreeNode *tParm, int paramCount){
+    
+    //Compare number of parameters  
+
+    //if function found has no addl params, but current call does
+    //too many arguments
+    if(ffParm->sibling == NULL && tParm->sibling != NULL){
+        //printf("parmErrors checking 4: %s %d\n", funcFound->attr.name, t->linenum);
+        printError(38, t->linenum, funcFound->linenum, t->attr.name, NULL, NULL, 0);
+    }
+    //if function found requires addl params, but call is missing them
+    //too few aruments
+    else if(ffParm->sibling != NULL && tParm->sibling == NULL){
+        //printf("parmErrors checking 5: %s %d\n", funcFound->attr.name, t->linenum);
+        printError(37, t->linenum, funcFound->linenum, t->attr.name, NULL, NULL, 0);
+    }
+
+    //analyze(t->child[paramCount], nErrors, nWarnings);
+    
     if(tParm->expType != UndefinedType){
         
         //Error 25: "ERROR(%d): Expecting %s in parameter %d of call to '%s' declared on line %d but got %s.\n"
-        if(ffParm->expType != tParm->expType){
+        if(ffParm->expType != tParm->expType && !tParm->declErr){
             //printf("Parameter Errors made it here %s %s\n", conExpType(ffParm->expType), conExpType(tParm->expType));
             printError(25, t->linenum, funcFound->linenum, funcFound->attr.name, conExpType(ffParm->expType), conExpType(tParm->expType), paramCount);
             //printf("is the issue the printError?\n");
+
+             //Error 36: "ERROR(%d): Not expecting array in parameter %d of call to '%s' declared on line %d.\n"
+            if(!ffParm->isArray && tParm->isArray){
+                printError(36, t->linenum, funcFound->linenum, funcFound->attr.name, NULL, NULL, paramCount);
+            }
+            //Error 28: "ERROR(%d): Expecting array in parameter %d of call to '%s' declared on line %d.\n" 
+            else if(ffParm->isArray && !tParm->isArray){
+                printError(28, t->linenum, funcFound->linenum, funcFound->attr.name, NULL, NULL, paramCount);
+            }
         }
+        //Error 36: "ERROR(%d): Not expecting array in parameter %d of call to '%s' declared on line %d.\n"
+        else if(!ffParm->isArray && tParm->isArray){
+            printError(36, t->linenum, funcFound->linenum, funcFound->attr.name, NULL, NULL, paramCount);
+        }
+        //Error 28: "ERROR(%d): Expecting array in parameter %d of call to '%s' declared on line %d.\n" 
+        else if(ffParm->isArray && !tParm->isArray){
+            printError(28, t->linenum, funcFound->linenum, funcFound->attr.name, NULL, NULL, paramCount);
+        }
+       
     }
 
     paramCount++;
@@ -1164,4 +1300,5 @@ void parameterErrors(TreeNode *funcFound, TreeNode *t, TreeNode *ffParm, TreeNod
     if(ffParm->sibling != NULL && tParm->sibling != NULL){
     parameterErrors(funcFound, t, ffParm->sibling, tParm->sibling, paramCount);
     }
+
 }

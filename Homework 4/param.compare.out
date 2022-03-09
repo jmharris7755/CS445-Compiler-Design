@@ -1,0 +1,27 @@
+ERROR(4): Too many parameters passed for function 'DArtagnan' declared		ERROR(4): Too many parameters passed for function 'DArtagnan' declared
+ERROR(5): Too many parameters passed for function 'DArtagnan' declared	  <
+ERROR(5): '+' requires operands of type int but lhs is of type bool.		ERROR(5): '+' requires operands of type int but lhs is of type bool.
+									  >	ERROR(5): Too many parameters passed for function 'DArtagnan' declared
+WARNING(3): Expecting to return type int but function 'Athos' has no r		WARNING(3): Expecting to return type int but function 'Athos' has no r
+ERROR(10): Not expecting array in parameter 2 of call to 'Athos' decla	  <
+ERROR(10): Too few parameters passed for function 'Athos' declared on 		ERROR(10): Too few parameters passed for function 'Athos' declared on 
+ERROR(12): Too many parameters passed for function 'Athos' declared on	  |	ERROR(10): Not expecting array in parameter 2 of call to 'Athos' decla
+ERROR(12): 'and' requires operands of type bool but lhs is of type int		ERROR(12): 'and' requires operands of type bool but lhs is of type int
+ERROR(12): 'and' requires operands of type bool but rhs is of type int		ERROR(12): 'and' requires operands of type bool but rhs is of type int
+									  >	ERROR(12): Too many parameters passed for function 'Athos' declared on
+WARNING(9): Expecting to return type char but function 'Aramis' has no		WARNING(9): Expecting to return type char but function 'Aramis' has no
+WARNING(21): Variable 'a' may be uninitialized when used here.			WARNING(21): Variable 'a' may be uninitialized when used here.
+WARNING(21): Variable 'b' may be uninitialized when used here.			WARNING(21): Variable 'b' may be uninitialized when used here.
+WARNING(21): Variable 'c' may be uninitialized when used here.			WARNING(21): Variable 'c' may be uninitialized when used here.
+ERROR(23): Too few parameters passed for function 'Athos' declared on 		ERROR(23): Too few parameters passed for function 'Athos' declared on 
+ERROR(24): Too many parameters passed for function 'Athos' declared on		ERROR(24): Too many parameters passed for function 'Athos' declared on
+ERROR(25): Expecting type int in parameter 1 of call to 'Athos' declar	  <
+ERROR(25): Symbol 'thx1138' is not declared.					ERROR(25): Symbol 'thx1138' is not declared.
+									  >	ERROR(25): Expecting type int in parameter 1 of call to 'Athos' declar
+ERROR(25): Expecting type char in parameter 3 of call to 'Athos' decla		ERROR(25): Expecting type char in parameter 3 of call to 'Athos' decla
+WARNING(16): The parameter 'aa' seems not to be used.				WARNING(16): The parameter 'aa' seems not to be used.
+WARNING(16): The parameter 'bb' seems not to be used.				WARNING(16): The parameter 'bb' seems not to be used.
+WARNING(16): The parameter 'cc' seems not to be used.				WARNING(16): The parameter 'cc' seems not to be used.
+ERROR(LINKER): A function named 'main' with no parameters must be defi		ERROR(LINKER): A function named 'main' with no parameters must be defi
+Number of warnings: 8								Number of warnings: 8
+Number of errors: 14								Number of errors: 14

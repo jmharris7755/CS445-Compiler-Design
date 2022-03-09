@@ -392,7 +392,7 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
 
                     //if 'P' option
                     if(TYPES){
-                        if(t->expType == UndefinedType || t->expType == Void){
+                        if(t->expType == UndefinedType /*|| t->expType == Void*/){
                             printf(" of undefined type");
                         }
                         else{
