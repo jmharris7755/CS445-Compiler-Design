@@ -34,6 +34,7 @@ bool returnFlag = false;
 bool inLoop = false;
 bool inRange = false;
 bool inFor = false;
+bool sizeOfArrayFlg = false;
 int loopDepth = 1;
 int rangePos = 0;
 
@@ -151,29 +152,12 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
         case VarK:
 
             if(t->child[0] != NULL){
-            for(int i = 0; i < MAXCHILDREN; i++){
-                analyze(t->child[i], nErrors, nWarnings);
-            } 
+
+                for(int i = 0; i < MAXCHILDREN; i++){
+                    analyze(t->child[i], nErrors, nWarnings);
+                    //printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
+                }
             }          
-
-            //If VarK is not empty
-            /*if(t->child[0] != NULL){
-                //lookup ID declaration
-                if(t->child[0]->nodekind == ExpK && (t->subkind.exp == IdK && t->child[0]->subkind.exp == CallK)){
-                    declared = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
-                }
-                else{
-                    declared = t->child[0];
-                    //not initialized?
-                    //printf("Here %s\n", t->child[0]->attr.name);
-                    printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-                }
-            }*/
-
-            //check for initialization  -- doing nothing
-            //if(declared->expType != t->expType){
-            //  printError(17, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-            //}
 
            //check for duplicate declarations
            TreeNode* exists;
@@ -195,6 +179,35 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
 
            if(t->child[0] != NULL){
+               //varK initializtion type checking
+               //if rhs of initializer is an ID
+               if(t->child[0]->subkind.exp == IdK){
+                   //Error 32: "ERROR(%d): Initializer for variable '%s' is not a constant expression.\n"
+                   printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                   //printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
+               }
+               //check for simple expression -- may put into recursive function
+               else if(t->child[0]->subkind.exp == OpK){
+                   
+                   //check for binary operation
+                   if(t->child[0] != NULL && t->child[0]->child[1] == NULL){
+                       //Error 32: "ERROR(%d): Initializer for variable '%s' is not a constant expression.\n"
+                       printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                       //printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
+                   }
+               }
+               //check if array is being initialized by something other than an array
+               else if(t->isArray && !t->child[0]->isArray){
+                   //Error 35: "ERROR(%d): Initializer for variable '%s' requires both operands be arrays or not but variable is an array and rhs is not an array.\n"
+                   printError(35, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                   //printf("VarK initializtion Array check: %s %d\n", t->attr.name, t->linenum);
+               }
+               //probably need this, but haven't run into it yet
+               //check if variable is being initialized by an array
+               /*else if(!t->isArray && t->child[0]->isArray){
+                   //Error 34: "ERROR(%d): Initializer for variable '%s' requires both operands be arrays or not but variable is not an array and rhs is an array.\n" 
+                   printError(34, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+               }*/
                t->isInit = true;
                //t->wasUsed = true;
                t->isDeclared = true;
@@ -226,8 +239,6 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                 analyze(t->child[i], nErrors, nWarnings);
             }
 
-            symbolTable.applyToAll(wasUsedWarn);
-
             //if returnFlag is false, then there was no return statement, 
             //print warning
             if(returnFlag == false && t->expType != Void){
@@ -239,6 +250,8 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                 //Error 31: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n"
                 printError(31, t->linenum, 0, t->attr.name, conExpType(functionReturnType), conExpType(actualReturnType), 0);
             }
+
+            symbolTable.applyToAll(wasUsedWarn);
 
             //leave current scope
             symbolTable.leave();
@@ -280,18 +293,37 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
         case WhileK:
             inLoop = true;
             symbolTable.enter(t->attr.name);
+            loopDepth ++;
             enterScope = false;
+
+             //printf("WhileK check: %s %d\n", t->child[0]->attr.name, t->linenum);
+
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
                 analyze(t->child[i], nErrors, nWarnings);
+
+                //only print error once for child 0 -- fixes issues with nested
+                //while statements being skipped, or while statements printing
+                //multiple times
+                if(i < 1){
+                    if(t->child[0]->expType != Boolean && t->child[0]->subkind.exp != OpK){
+                    char whileStmt[] = "while";
+                    //Error 27: "ERROR(%d): Expecting Boolean test condition in %s statement but got type %s.\n"
+                    printError(27, t->linenum, 0, whileStmt, conExpType(t->child[0]->expType), NULL, 0 );
                 }
             }
-            //if(loopDepth == symbolTable.depth()){
+                }
+            }
+
+            loopDepth--;
+
+            symbolTable.applyToAll(wasUsedWarn);
+
+            if(loopDepth == 1){
                 inLoop = false;
-                symbolTable.applyToAll(wasUsedWarn);
                 symbolTable.leave();
                 enterScope = true;
-            //}
+            }
             break;
 
         case ForK:
@@ -303,6 +335,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
+
                 analyze(t->child[i], nErrors, nWarnings);
                 
                 //maybe need these
@@ -323,6 +356,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
         case ReturnK:
             analyze(t->child[0], nErrors, nWarnings);
             if(t->child[0] != NULL){
+                //printf("ReturnK check: %s\n", t->child[0]->attr.name);
                 //symbolTable look up of c0 attr.name
                 //set is child0 to is used 
 
@@ -340,26 +374,50 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                     //cannot return array error
                     printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
                 }
+                //check for return assignment / op "return x<-x"
+                else if(t->child[0]->child[0] != NULL){
+                    if(t->child[0]->child[0]->isArray){
+                        //cannot return array error
+                    printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
+                    }
+                }
             }
             break;
 
         case BreakK:
+
+            //printf("BreakK check: Break Here %d\n", t->linenum);
+
+            //if not in loop, can't have a break statement
+            if(!inLoop){
+                //Error 22: "ERROR(%d): Cannot have a break statement outside of loop.\n"
+                printError(22, t->linenum, 0, NULL, NULL, NULL, 0);
+            }
             break;
 
         case RangeK:
-            rangePos = 0;
+            rangePos;
             inRange = true;
             //printf("RangeK check: %s %s\n", t->attr.name, t->child[0]->attr.name);
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
                     rangePos++;
                     analyze(t->child[i], nErrors, nWarnings);
+
+                    //check child 1 for being an int
+                    /*if(t->child[1]){
+                        if(t->child[1]->expType != Integer && rangePos > 2){
+                            char intExpect[] = "int";
+                            printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
+                        }
+                    }*/
                     //printf("RangeK check: %s %d %d\n", t->child[i]->attr.name, t->linenum, t->child[i]->isArray);
                 }
             }
 
 
             inRange = false;
+            rangePos = 0;
 
             break;
 
@@ -407,8 +465,11 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
         case AssignK:
         case OpK:
 
+        //printf("OpK initializer checks: %s %d\n", t->attr.name, t->linenum);
+
             //Check for <- operator first (assignment statement)
             if(!strcmp(t->attr.name, "<-")){
+
                 //make sure child0 is not null
                 if(t->child[0] != NULL){
                     
@@ -471,6 +532,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                                 //recursive check for multiple assignK's on rhs += -= /= *=
                                 //if child0 is and ID, not init and on lhs of nested assignments
                                 //it should be inititalized
+                                //edit, no longer recursive. Caused issues.
                                 else if(t->child[1]->subkind.exp == AssignK){
                                     checkNestAssK(t->child[1]);
                                     t->child[0]->isInit = true;
@@ -502,9 +564,18 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 }
             }
 
+            //set sizeof flag for * on arrays in for statement
+            if(!strcmp(t->attr.name, "*")){
+                sizeOfArrayFlg = true;
+            }
+
             for(int i= 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
             }
+
+            //unset flag after analyzing chldren
+            sizeOfArrayFlg = false;
+
             //set up left hand side
             if(t->child[0] != NULL){
                 leftNode = t->child[0];
@@ -583,6 +654,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 else if(!strcmp(t->attr.name, "*") && (!leftArr && leftSide != UndefinedType)){
                     char uSizeof[] = "sizeof";
                     printError(8, t->linenum, 0, uSizeof, NULL, NULL, 0);
+                    printf("Sizeof check %s %d %d %s\n", t->child[0]->attr.name, t->linenum, t->child[0]->isArray, conExpType(t->child[0]->expType));
                 } 
 
                 //Error: Does not work with Array and Only works with Array
@@ -699,14 +771,28 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
             for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
             }
+            //check constants in range of for loop
+            if(inRange){
+                   if(inFor){
+
+                    //check for int type
+                    if(t->expType != Integer)
+                    {
+                        char intExpect[] = "int";
+                        //Error 26: "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n"
+                        printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
+                    }
+                   }
+               }
             break;
 
         case IdK:
             valFound = (TreeNode*)symbolTable.lookup(t->attr.name);
+
             //if unable to find, Error: "Symbol undeclared"
             if(valFound == NULL){
-                //check for ID inside of Range, considered declared if it shows up
-                if(inRange){
+                //check for ID inside of Range at position 1, considered declared if it shows up
+                if(inRange && rangePos == 1){
                     t->isDeclared = true;
                 }
                 else{
@@ -721,6 +807,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 if(inFor){
                     //set expType of t to declared expType
                     t->expType = valFound->expType;
+                    t->isArray = valFound->isArray;
 
                     //check for int at position 1 of for loop
                     if(t->expType != Integer && rangePos == 1)
@@ -731,7 +818,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     }
 
                     //not allowed to use arrays in range of for
-                    if(valFound->isArray){
+                    if(valFound->isArray && !sizeOfArrayFlg){
                         //Error 24: "ERROR(%d): Cannot use array in position %d in range of for statement.\n"
                         printError(24, t->linenum, 0, NULL, NULL, NULL, rangePos);
                     }
@@ -839,6 +926,21 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 //Error: is a simple variable and cannot be used as a call
                 if(funcFound->subkind.decl != FuncK){
                     printError(11, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                }
+                
+                //check for calls in range of for loop
+                else if(inRange){
+                    if(inFor){
+
+                        //check for int type
+                        if(t->expType != Integer)
+                        {
+                            //printf("CallK: %d %s\n", t->linenum, conExpType(t->expType));
+                            char intExpect[] = "int";
+                            //Error 26: "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n"
+                            printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
+                        }
+                    }
                 }
                 //check parameters
                 else{
@@ -1153,6 +1255,7 @@ void arrayErrors(TreeNode *t)
    {
        //lookup LHS
       leftNode = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
+      
       
       //if exists, set exp types
       if(leftNode != NULL)
