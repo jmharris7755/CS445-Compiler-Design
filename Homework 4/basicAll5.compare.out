@@ -1,0 +1,192 @@
+ERROR(13): Symbol 'x' is already declared at line 11.				ERROR(13): Symbol 'x' is already declared at line 11.
+ERROR(17): Symbol 'cat' is not declared.					ERROR(17): Symbol 'cat' is not declared.
+WARNING(19): Variable 'b' may be uninitialized when used here.			WARNING(19): Variable 'b' may be uninitialized when used here.
+ERROR(19): Function 'dog' at line 11 is expecting to return type char 		ERROR(19): Function 'dog' at line 11 is expecting to return type char 
+WARNING(11): The parameter 'x' seems not to be used.				WARNING(11): The parameter 'x' seems not to be used.
+ERROR(22): Symbol 'dog' is already declared at line 11.				ERROR(22): Symbol 'dog' is already declared at line 11.
+WARNING(25): The variable 'x' seems not to be used.				WARNING(25): The variable 'x' seems not to be used.
+WARNING(22): Expecting to return type int but function 'dog' has no re		WARNING(22): Expecting to return type int but function 'dog' has no re
+WARNING(22): The parameter 'x' seems not to be used.				WARNING(22): The parameter 'x' seems not to be used.
+ERROR(31): Initializer for variable 'b' of type int is of type char		ERROR(31): Initializer for variable 'b' of type int is of type char
+ERROR(33): Initializer for variable 'd' is not a constant expression.		ERROR(33): Initializer for variable 'd' is not a constant expression.
+ERROR(34): Initializer for variable 'e' is not a constant expression.		ERROR(34): Initializer for variable 'e' is not a constant expression.
+ERROR(36): Function 'cat' at line 29 is expecting to return type char 		ERROR(36): Function 'cat' at line 29 is expecting to return type char 
+WARNING(32): The variable 'c' seems not to be used.				WARNING(32): The variable 'c' seems not to be used.
+WARNING(33): The variable 'd' seems not to be used.				WARNING(33): The variable 'd' seems not to be used.
+WARNING(34): The variable 'e' seems not to be used.				WARNING(34): The variable 'e' seems not to be used.
+WARNING(29): The parameter 'x' seems not to be used.				WARNING(29): The parameter 'x' seems not to be used.
+ERROR(39): Symbol 'cat' is already declared at line 29.				ERROR(39): Symbol 'cat' is already declared at line 29.
+ERROR(45): Function 'ibex' at line 42 is expecting to return type int 		ERROR(45): Function 'ibex' at line 42 is expecting to return type int 
+WARNING(44): The variable 'unusedLocal' seems not to be used.			WARNING(44): The variable 'unusedLocal' seems not to be used.
+WARNING(42): The parameter 'x' seems not to be used.				WARNING(42): The parameter 'x' seems not to be used.
+ERROR(50): Function 'ox' at line 48 is expecting no return value, but 		ERROR(50): Function 'ox' at line 48 is expecting no return value, but 
+WARNING(48): The parameter 'y' seems not to be used.				WARNING(48): The parameter 'y' seems not to be used.
+WARNING(53): Expecting to return type char but function 'emu' has no r		WARNING(53): Expecting to return type char but function 'emu' has no r
+WARNING(53): The parameter 'x' seems not to be used.				WARNING(53): The parameter 'x' seems not to be used.
+WARNING(53): The parameter 'y' seems not to be used.				WARNING(53): The parameter 'y' seems not to be used.
+WARNING(53): The parameter 'z' seems not to be used.				WARNING(53): The parameter 'z' seems not to be used.
+ERROR(60): Symbol 'x' is already declared at line 59.				ERROR(60): Symbol 'x' is already declared at line 59.
+ERROR(61): Symbol 'x' is already declared at line 59.				ERROR(61): Symbol 'x' is already declared at line 59.
+ERROR(70): Symbol 'v' is not declared.						ERROR(70): Symbol 'v' is not declared.
+WARNING(72): Variable 'x' may be uninitialized when used here.			WARNING(72): Variable 'x' may be uninitialized when used here.
+ERROR(72): Expecting Boolean test condition in if statement but got ty	  <
+ERROR(73): Expecting Boolean test condition in if statement but got ty		ERROR(73): Expecting Boolean test condition in if statement but got ty
+									  >	ERROR(72): Expecting Boolean test condition in if statement but got ty
+ERROR(74): Expecting Boolean test condition in while statement but got		ERROR(74): Expecting Boolean test condition in while statement but got
+ERROR(75): Expecting type char in parameter 1 of call to 'ox' declared		ERROR(75): Expecting type char in parameter 1 of call to 'ox' declared
+ERROR(75): Expecting Boolean test condition in while statement but got		ERROR(75): Expecting Boolean test condition in while statement but got
+WARNING(77): The variable 'z' seems not to be used.				WARNING(77): The variable 'z' seems not to be used.
+ERROR(78): Expecting type int in position 2 in range of for statement 		ERROR(78): Expecting type int in position 2 in range of for statement 
+WARNING(78): The variable 'i' seems not to be used.				WARNING(78): The variable 'i' seems not to be used.
+ERROR(79): Expecting type int in position 1 in range of for statement 		ERROR(79): Expecting type int in position 1 in range of for statement 
+WARNING(79): The variable 'i' seems not to be used.				WARNING(79): The variable 'i' seems not to be used.
+ERROR(80): Expecting type int in position 3 in range of for statement 		ERROR(80): Expecting type int in position 3 in range of for statement 
+WARNING(80): The variable 'i' seems not to be used.				WARNING(80): The variable 'i' seems not to be used.
+ERROR(82): Cannot use function 'cat' as a variable.				ERROR(82): Cannot use function 'cat' as a variable.
+WARNING(83): Variable 'b' may be uninitialized when used here.			WARNING(83): Variable 'b' may be uninitialized when used here.
+ERROR(83): '<-' requires operands of the same type but lhs is type cha		ERROR(83): '<-' requires operands of the same type but lhs is type cha
+ERROR(84): '+=' requires operands of type int but lhs is of type char.		ERROR(84): '+=' requires operands of type int but lhs is of type char.
+ERROR(85): '-=' requires operands of type int but rhs is of type char.		ERROR(85): '-=' requires operands of type int but rhs is of type char.
+ERROR(86): '>' requires operands of the same type but lhs is type int 		ERROR(86): '>' requires operands of the same type but lhs is type int 
+WARNING(89): Variable 'bb' may be uninitialized when used here.			WARNING(89): Variable 'bb' may be uninitialized when used here.
+ERROR(89): Expecting Boolean test condition in if statement but got ty	  <
+ERROR(89): Cannot use array as test condition in if statement.		  <
+ERROR(90): Expecting Boolean test condition in if statement but got ty		ERROR(90): Expecting Boolean test condition in if statement but got ty
+ERROR(90): Cannot use array as test condition in if statement.			ERROR(90): Cannot use array as test condition in if statement.
+									  >	ERROR(89): Expecting Boolean test condition in if statement but got ty
+									  >	ERROR(89): Cannot use array as test condition in if statement.
+ERROR(91): Expecting Boolean test condition in while statement but got		ERROR(91): Expecting Boolean test condition in while statement but got
+ERROR(91): Cannot use array as test condition in while statement.		ERROR(91): Cannot use array as test condition in while statement.
+ERROR(93): Cannot have a break statement outside of loop.			ERROR(93): Cannot have a break statement outside of loop.
+ERROR(95): Expecting Boolean test condition in while statement but got		ERROR(95): Expecting Boolean test condition in while statement but got
+ERROR(96): Expecting Boolean test condition in while statement but got		ERROR(96): Expecting Boolean test condition in while statement but got
+ERROR(96): Expecting Boolean test condition in while statement but got		ERROR(96): Expecting Boolean test condition in while statement but got
+WARNING(98): Variable 'aa' may be uninitialized when used here.			WARNING(98): Variable 'aa' may be uninitialized when used here.
+ERROR(98): '+' requires operands of type int but lhs is of type char.		ERROR(98): '+' requires operands of type int but lhs is of type char.
+ERROR(98): The operation '+' does not work with arrays.				ERROR(98): The operation '+' does not work with arrays.
+WARNING(99): Variable 'zz' may be uninitialized when used here.			WARNING(99): Variable 'zz' may be uninitialized when used here.
+WARNING(100): Variable 'cc' may be uninitialized when used here.		WARNING(100): Variable 'cc' may be uninitialized when used here.
+ERROR(102): '=' requires operands of the same type but lhs is type cha		ERROR(102): '=' requires operands of the same type but lhs is type cha
+ERROR(103): '=' requires operands of the same type but lhs is type cha		ERROR(103): '=' requires operands of the same type but lhs is type cha
+ERROR(104): '=' requires operands of the same type but lhs is type int		ERROR(104): '=' requires operands of the same type but lhs is type int
+ERROR(106): '+' requires operands of type int but lhs is of type bool.		ERROR(106): '+' requires operands of type int but lhs is of type bool.
+ERROR(106): '+' requires operands of type int but rhs is of type char.		ERROR(106): '+' requires operands of type int but rhs is of type char.
+ERROR(108): '*' requires operands of type int but lhs is of type char.		ERROR(108): '*' requires operands of type int but lhs is of type char.
+ERROR(108): '*' requires operands of type int but rhs is of type bool.		ERROR(108): '*' requires operands of type int but rhs is of type bool.
+ERROR(110): Unary 'not' requires an operand of type bool but was given		ERROR(110): Unary 'not' requires an operand of type bool but was given
+ERROR(111): '+' requires operands of type int but lhs is of type char.		ERROR(111): '+' requires operands of type int but lhs is of type char.
+ERROR(111): Unary 'not' requires an operand of type bool but was given		ERROR(111): Unary 'not' requires an operand of type bool but was given
+ERROR(114): Cannot index nonarray 'x'.						ERROR(114): Cannot index nonarray 'x'.
+ERROR(116): 'and' requires operands of type bool but lhs is of type ch		ERROR(116): 'and' requires operands of type bool but lhs is of type ch
+ERROR(116): 'and' requires operands of type bool but rhs is of type ch		ERROR(116): 'and' requires operands of type bool but rhs is of type ch
+ERROR(116): '*' requires operands of type int but lhs is of type char.		ERROR(116): '*' requires operands of type int but lhs is of type char.
+ERROR(116): '*' requires operands of type int but rhs is of type bool.		ERROR(116): '*' requires operands of type int but rhs is of type bool.
+ERROR(116): '+' requires operands of type int but lhs is of type char.		ERROR(116): '+' requires operands of type int but lhs is of type char.
+ERROR(116): '=' requires operands of the same type but lhs is type cha		ERROR(116): '=' requires operands of the same type but lhs is type cha
+ERROR(116): '<-' requires operands of the same type but lhs is type in		ERROR(116): '<-' requires operands of the same type but lhs is type in
+ERROR(117): Symbol 'y' is not declared.						ERROR(117): Symbol 'y' is not declared.
+ERROR(117): 'and' requires operands of type bool but lhs is of type ch		ERROR(117): 'and' requires operands of type bool but lhs is of type ch
+ERROR(117): '*' requires operands of type int but lhs is of type char.		ERROR(117): '*' requires operands of type int but lhs is of type char.
+ERROR(117): '*' requires operands of type int but rhs is of type bool.		ERROR(117): '*' requires operands of type int but rhs is of type bool.
+ERROR(117): '+' requires operands of type int but lhs is of type char.		ERROR(117): '+' requires operands of type int but lhs is of type char.
+ERROR(117): '=' requires operands of the same type but lhs is type cha		ERROR(117): '=' requires operands of the same type but lhs is type cha
+ERROR(117): '<-' requires operands of the same type but lhs is type in		ERROR(117): '<-' requires operands of the same type but lhs is type in
+ERROR(118): 'and' requires operands of type bool but lhs is of type ch		ERROR(118): 'and' requires operands of type bool but lhs is of type ch
+ERROR(118): 'and' requires operands of type bool but rhs is of type ch		ERROR(118): 'and' requires operands of type bool but rhs is of type ch
+ERROR(118): '*' requires operands of type int but lhs is of type char.		ERROR(118): '*' requires operands of type int but lhs is of type char.
+ERROR(118): '*' requires operands of type int but rhs is of type bool.		ERROR(118): '*' requires operands of type int but rhs is of type bool.
+ERROR(118): 'or' requires operands of type bool but rhs is of type int		ERROR(118): 'or' requires operands of type bool but rhs is of type int
+ERROR(118): '<-' requires operands of the same type but lhs is type in		ERROR(118): '<-' requires operands of the same type but lhs is type in
+ERROR(120): The operation 'sizeof' only works with arrays.			ERROR(120): The operation 'sizeof' only works with arrays.
+ERROR(121): 'and' requires operands of type bool but lhs is of type in		ERROR(121): 'and' requires operands of type bool but lhs is of type in
+ERROR(121): 'and' requires operands of type bool but rhs is of type in		ERROR(121): 'and' requires operands of type bool but rhs is of type in
+ERROR(127): Cannot use function 'cat' as a variable.				ERROR(127): Cannot use function 'cat' as a variable.
+ERROR(129): Array 'aa' should be indexed by type int but got type char		ERROR(129): Array 'aa' should be indexed by type int but got type char
+ERROR(129): Array index is the unindexed array 'aa'.				ERROR(129): Array index is the unindexed array 'aa'.
+ERROR(130): Symbol 'AA' is not declared.					ERROR(130): Symbol 'AA' is not declared.
+ERROR(130): Cannot index nonarray 'AA'.						ERROR(130): Cannot index nonarray 'AA'.
+ERROR(132): Symbol 'meerkat' is not declared.					ERROR(132): Symbol 'meerkat' is not declared.
+ERROR(134): Symbol 'xyzzy' is not declared.					ERROR(134): Symbol 'xyzzy' is not declared.
+ERROR(135): Symbol 'meerkat' is not declared.					ERROR(135): Symbol 'meerkat' is not declared.
+ERROR(136): Symbol 'xyzzy' is not declared.					ERROR(136): Symbol 'xyzzy' is not declared.
+ERROR(136): 'and' requires operands of type bool but rhs is of type in		ERROR(136): 'and' requires operands of type bool but rhs is of type in
+ERROR(138): Symbol 'flight' is not declared.					ERROR(138): Symbol 'flight' is not declared.
+ERROR(138): Unary 'not' requires an operand of type bool but was given		ERROR(138): Unary 'not' requires an operand of type bool but was given
+ERROR(138): Unary 'chsign' requires an operand of type int but was giv		ERROR(138): Unary 'chsign' requires an operand of type int but was giv
+ERROR(138): Symbol 'uu' is not declared.					ERROR(138): Symbol 'uu' is not declared.
+ERROR(138): Symbol 'y' is not declared.						ERROR(138): Symbol 'y' is not declared.
+ERROR(138): '*' requires operands of type int but lhs is of type char.		ERROR(138): '*' requires operands of type int but lhs is of type char.
+ERROR(138): '+' requires operands of type int but lhs is of type char.		ERROR(138): '+' requires operands of type int but lhs is of type char.
+ERROR(140): 'x' is a simple variable and cannot be called.			ERROR(140): 'x' is a simple variable and cannot be called.
+ERROR(142): Expecting type char in parameter 1 of call to 'dog' declar	  <
+ERROR(142): Too many parameters passed for function 'dog' declared on 		ERROR(142): Too many parameters passed for function 'dog' declared on 
+									  >	ERROR(142): Expecting type char in parameter 1 of call to 'dog' declar
+ERROR(143): Too few parameters passed for function 'ibex' declared on 		ERROR(143): Too few parameters passed for function 'ibex' declared on 
+ERROR(145): Expecting type char in parameter 1 of call to 'dog' declar		ERROR(145): Expecting type char in parameter 1 of call to 'dog' declar
+ERROR(147): Not expecting array in parameter 1 of call to 'cat' declar		ERROR(147): Not expecting array in parameter 1 of call to 'cat' declar
+WARNING(148): Variable 'ba' may be uninitialized when used here.		WARNING(148): Variable 'ba' may be uninitialized when used here.
+ERROR(148): Expecting type char in parameter 1 of call to 'cat' declar		ERROR(148): Expecting type char in parameter 1 of call to 'cat' declar
+ERROR(148): Not expecting array in parameter 1 of call to 'cat' declar		ERROR(148): Not expecting array in parameter 1 of call to 'cat' declar
+ERROR(150): Expecting array in parameter 1 of call to 'ibex' declared 		ERROR(150): Expecting array in parameter 1 of call to 'ibex' declared 
+ERROR(151): Expecting type char in parameter 1 of call to 'ibex' decla		ERROR(151): Expecting type char in parameter 1 of call to 'ibex' decla
+ERROR(152): Cannot use function 'ibex' as a variable.				ERROR(152): Cannot use function 'ibex' as a variable.
+ERROR(152): Cannot index nonarray 'ibex'.					ERROR(152): Cannot index nonarray 'ibex'.
+ERROR(154): Cannot use function 'ibex' as a variable.				ERROR(154): Cannot use function 'ibex' as a variable.
+ERROR(155): Cannot use function 'ibex' as a variable.				ERROR(155): Cannot use function 'ibex' as a variable.
+ERROR(157): Array 'aa' should be indexed by type int but got type char		ERROR(157): Array 'aa' should be indexed by type int but got type char
+ERROR(158): Array 'aa' should be indexed by type int but got type char		ERROR(158): Array 'aa' should be indexed by type int but got type char
+ERROR(158): Array index is the unindexed array 'zz'.				ERROR(158): Array index is the unindexed array 'zz'.
+ERROR(159): Expecting type char in parameter 1 of call to 'ox' declare		ERROR(159): Expecting type char in parameter 1 of call to 'ox' declare
+ERROR(159): Array 'aa' should be indexed by type int but got type void		ERROR(159): Array 'aa' should be indexed by type int but got type void
+ERROR(160): Array 'aa' should be indexed by type int but got type char		ERROR(160): Array 'aa' should be indexed by type int but got type char
+ERROR(161): Array 'aa' should be indexed by type int but got type bool		ERROR(161): Array 'aa' should be indexed by type int but got type bool
+ERROR(162): Cannot use function 'ox' as a variable.				ERROR(162): Cannot use function 'ox' as a variable.
+ERROR(163): Cannot use function 'ibex' as a variable.				ERROR(163): Cannot use function 'ibex' as a variable.
+ERROR(165): Expecting type char in parameter 1 of call to 'ox' declare		ERROR(165): Expecting type char in parameter 1 of call to 'ox' declare
+ERROR(165): '<-' requires operands of the same type but lhs is type ch		ERROR(165): '<-' requires operands of the same type but lhs is type ch
+ERROR(166): Expecting type char in parameter 1 of call to 'ox' declare		ERROR(166): Expecting type char in parameter 1 of call to 'ox' declare
+ERROR(166): '+' requires operands of type int but lhs is of type char.		ERROR(166): '+' requires operands of type int but lhs is of type char.
+ERROR(166): '+' requires operands of type int but rhs is of type void.		ERROR(166): '+' requires operands of type int but rhs is of type void.
+ERROR(166): '<-' requires operands of the same type but lhs is type ch		ERROR(166): '<-' requires operands of the same type but lhs is type ch
+ERROR(167): Expecting type char in parameter 1 of call to 'ox' declare		ERROR(167): Expecting type char in parameter 1 of call to 'ox' declare
+ERROR(167): Expecting type char in parameter 1 of call to 'cat' declar		ERROR(167): Expecting type char in parameter 1 of call to 'cat' declar
+ERROR(168): Expecting type char in parameter 1 of call to 'cat' declar		ERROR(168): Expecting type char in parameter 1 of call to 'cat' declar
+ERROR(169): Expecting type char in parameter 1 of call to 'cat' declar		ERROR(169): Expecting type char in parameter 1 of call to 'cat' declar
+ERROR(171): '<-' requires operands of the same type but lhs is type ch		ERROR(171): '<-' requires operands of the same type but lhs is type ch
+ERROR(173): '<-' requires operands of the same type but lhs is type ch		ERROR(173): '<-' requires operands of the same type but lhs is type ch
+ERROR(173): '<-' requires operands of the same type but lhs is type in		ERROR(173): '<-' requires operands of the same type but lhs is type in
+ERROR(173): '<-' requires operands of the same type but lhs is type ch		ERROR(173): '<-' requires operands of the same type but lhs is type ch
+ERROR(175): '*' requires operands of type int but lhs is of type char.		ERROR(175): '*' requires operands of type int but lhs is of type char.
+ERROR(175): '*' requires operands of type int but rhs is of type char.		ERROR(175): '*' requires operands of type int but rhs is of type char.
+ERROR(175): 'and' requires operands of type bool but lhs is of type in		ERROR(175): 'and' requires operands of type bool but lhs is of type in
+ERROR(175): 'and' requires operands of type bool but rhs is of type in		ERROR(175): 'and' requires operands of type bool but rhs is of type in
+ERROR(177): '+' requires operands of type int but lhs is of type char.		ERROR(177): '+' requires operands of type int but lhs is of type char.
+ERROR(177): Expecting type char in parameter 1 of call to 'emu' declar	  <
+ERROR(177): Symbol 'parrot' is not declared.					ERROR(177): Symbol 'parrot' is not declared.
+ERROR(177): 'and' requires operands of type bool but lhs is of type in		ERROR(177): 'and' requires operands of type bool but lhs is of type in
+ERROR(177): 'and' requires operands of type bool but rhs is of type ch		ERROR(177): 'and' requires operands of type bool but rhs is of type ch
+									  >	ERROR(177): Expecting type char in parameter 1 of call to 'emu' declar
+ERROR(177): Expecting type char in parameter 3 of call to 'emu' declar		ERROR(177): Expecting type char in parameter 3 of call to 'emu' declar
+ERROR(178): Expecting type char in parameter 1 of call to 'emu' declar	  <
+ERROR(178): '+' requires operands of type int but lhs is of type char.		ERROR(178): '+' requires operands of type int but lhs is of type char.
+ERROR(178): Expecting type char in parameter 1 of call to 'emu' declar	  <
+ERROR(178): Symbol 'parrot' is not declared.					ERROR(178): Symbol 'parrot' is not declared.
+ERROR(178): 'and' requires operands of type bool but lhs is of type in		ERROR(178): 'and' requires operands of type bool but lhs is of type in
+ERROR(178): 'and' requires operands of type bool but rhs is of type ch		ERROR(178): 'and' requires operands of type bool but rhs is of type ch
+									  >	ERROR(178): Expecting type char in parameter 1 of call to 'emu' declar
+ERROR(178): Expecting type char in parameter 3 of call to 'emu' declar		ERROR(178): Expecting type char in parameter 3 of call to 'emu' declar
+ERROR(178): 'and' requires operands of type bool but rhs is of type ch		ERROR(178): 'and' requires operands of type bool but rhs is of type ch
+									  >	ERROR(178): '*' requires operands of type int but lhs is of type char.
+									  >	ERROR(178): Expecting type char in parameter 1 of call to 'emu' declar
+ERROR(178): Expecting type char in parameter 2 of call to 'emu' declar		ERROR(178): Expecting type char in parameter 2 of call to 'emu' declar
+ERROR(178): Expecting type char in parameter 3 of call to 'emu' declar	  <
+ERROR(178): Too many parameters passed for function 'emu' declared on 		ERROR(178): Too many parameters passed for function 'emu' declared on 
+ERROR(178): '*' requires operands of type int but lhs is of type char.	  |	ERROR(178): Expecting type char in parameter 3 of call to 'emu' declar
+ERROR(182): Cannot return an array.						ERROR(182): Cannot return an array.
+WARNING(68): The variable 'c' seems not to be used.				WARNING(68): The variable 'c' seems not to be used.
+WARNING(59): The variable 'yuri' seems not to be used.				WARNING(59): The variable 'yuri' seems not to be used.
+WARNING(57): The function 'mane' seems not to be used.				WARNING(57): The function 'mane' seems not to be used.
+WARNING(40): The variable 'unusedGlobal' seems not to be used.			WARNING(40): The variable 'unusedGlobal' seems not to be used.
+ERROR(LINKER): A function named 'main' with no parameters must be defi		ERROR(LINKER): A function named 'main' with no parameters must be defi
+Number of warnings: 31								Number of warnings: 31
+Number of errors: 151								Number of errors: 151

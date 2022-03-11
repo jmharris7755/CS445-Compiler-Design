@@ -37,6 +37,7 @@ bool inFor = false;
 bool sizeOfArrayFlg = false;
 int loopDepth = 1;
 int rangePos = 0;
+int returnLinenum;
 
 TreeNode *curFunc = NULL;
 
@@ -47,10 +48,6 @@ SymbolTable symbolTable;
 
 SymbolTable returnSymbolTable() {
     return symbolTable;
-}
-
-bool compare(const symErrors& f, const symErrors& s){
-    return f.linenum < s.linenum;
 }
 
 void printErrors(){
@@ -64,6 +61,7 @@ void semanticAnalysis(TreeNode *t, int& errors, int& warnings){
     analyze(t, nErrors, nWarnings);
 
     symbolTable.applyToAll(wasUsedWarn);
+    symbolTable.applyToAllGlobal(wasUsedWarn);
 
     //check for main defined
     TreeNode *mainCheck = (TreeNode*)symbolTable.lookup("main");
@@ -208,6 +206,11 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                    //Error 34: "ERROR(%d): Initializer for variable '%s' requires both operands be arrays or not but variable is not an array and rhs is an array.\n" 
                    printError(34, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                }*/
+               //check for var of one type initialized with a different type
+               else if(t->expType != t->child[0]->expType){
+                   //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
+                   printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), conExpType(t->child[0]->expType), 0);
+               }
                t->isInit = true;
                //t->wasUsed = true;
                t->isDeclared = true;
@@ -239,16 +242,33 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                 analyze(t->child[i], nErrors, nWarnings);
             }
 
+            /*if(returnFlag == true){
+                printf("FuncK return stmt type %s %d\n", conExpType(actualReturnType), t->linenum);
+            }*/
+
             //if returnFlag is false, then there was no return statement, 
             //print warning
             if(returnFlag == false && t->expType != Void){
                 //Warning 19: "WARNING(%d): Expecting to return %s but function '%s' has no return statement.\n"
                 printError(19, t->linenum, 0, conExpType(functionReturnType), t->attr.name, NULL, 0);
             }
+        
+            //check for void functions having a return statement
+            else if(returnFlag == true && t->expType == Void){
+                //Error 29: "ERROR(%d): Function '%s' at line %d is expecting no return value, but return has a value.\n"
+                printError(29, returnLinenum, t->linenum, t->attr.name, NULL, NULL, 0);
+            }
+
+            //check for functions expecting a return value, but there was not one
+            else if(returnFlag == true && t->expType != Void && actualReturnType == UndefinedType){
+                //Error 30: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but return has no value.\n"
+                printError(30, returnLinenum, t->linenum, t->attr.name, conExpType(t->expType), NULL, 0);
+            }
+
             // return type from function "return x" is not the expected type
             else if(returnFlag == true && functionReturnType != actualReturnType && actualReturnType != Void){
                 //Error 31: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n"
-                printError(31, t->linenum, 0, t->attr.name, conExpType(functionReturnType), conExpType(actualReturnType), 0);
+                printError(31, returnLinenum, t->linenum, t->attr.name, conExpType(functionReturnType), conExpType(actualReturnType), 0);
             }
 
             symbolTable.applyToAll(wasUsedWarn);
@@ -284,6 +304,12 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 //Error 27: "ERROR(%d): Expecting Boolean test condition in %s statement but got type %s.\n"
                 printError(27, t->linenum, 0, ifStmt, conExpType(t->child[0]->expType), NULL, 0 );
             }
+            //check for arrays being used as a test condition
+            if(t->child[0]->isArray){
+                char ifStmt[] = "if";
+                //Error 23: "ERROR(%d): Cannot use array as test condition in %s statement.\n"
+                printError(23, t->linenum, 0, ifStmt, NULL, NULL, 0);
+            }
             inLoop = false;
             //symbolTable.applyToAll(wasUsedWarn);
             symbolTable.leave();
@@ -307,10 +333,16 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 //multiple times
                 if(i < 1){
                     if(t->child[0]->expType != Boolean && t->child[0]->subkind.exp != OpK){
-                    char whileStmt[] = "while";
-                    //Error 27: "ERROR(%d): Expecting Boolean test condition in %s statement but got type %s.\n"
-                    printError(27, t->linenum, 0, whileStmt, conExpType(t->child[0]->expType), NULL, 0 );
-                }
+                        char whileStmt[] = "while";
+                        //Error 27: "ERROR(%d): Expecting Boolean test condition in %s statement but got type %s.\n"
+                        printError(27, t->linenum, 0, whileStmt, conExpType(t->child[0]->expType), NULL, 0 );
+                    }
+                    //check for arrays being used as a test condition
+                    if(t->child[0]->isArray){
+                        char whileStmt[] = "while";
+                        //Error 23: "ERROR(%d): Cannot use array as test condition in %s statement.\n"
+                        printError(23, t->linenum, 0, whileStmt, NULL, NULL, 0);
+                    }
             }
                 }
             }
@@ -354,17 +386,24 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             break;
 
         case ReturnK:
+
+                //set returnFlag to track functions that have a return statement
+                returnFlag = true;
+                returnLinenum = t->linenum;
+
             analyze(t->child[0], nErrors, nWarnings);
             if(t->child[0] != NULL){
                 //printf("ReturnK check: %s\n", t->child[0]->attr.name);
                 //symbolTable look up of c0 attr.name
                 //set is child0 to is used 
 
-                //set returnFlag to track functions that have a return statement
-                returnFlag = true;
 
                 //store return type to compare aginst in FuncK
-                actualReturnType = t->expType;
+                actualReturnType = t->child[0]->expType;
+
+                /*if(t->child[0]->subkind.exp != ConstantK){
+                printf("ReturnK child check: %d %s\n", t->linenum, conExpType(t->child[0]->expType));
+                }*/
 
                 if(curFunc == NULL){
                     break;
@@ -381,6 +420,10 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                     printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
                     }
                 }
+            }
+            //check for no return value after statement
+            else if(t->child[0] == NULL){
+                actualReturnType = UndefinedType;
             }
             break;
 
@@ -451,8 +494,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
     bool leftStr, rightStr, isBinary, leftArr, rightArr, leftIndx, rightIndx, leftInit, leftDecl, rightInit, rightDecl, throwError;
     leftStr = rightStr = isBinary = leftArr = rightArr = leftIndx = rightIndx = leftInit = leftDecl = rightInit = rightDecl = throwError = false;
 
-    ExpType leftSide, rightSide, returnType, leftExpected, rightExpected;
-    leftSide = rightSide = returnType = leftExpected = rightExpected = UndefinedType;
+    ExpType leftSide, rightSide, returnType, leftExpected, rightExpected, childReturnType;
+    leftSide = rightSide = returnType = leftExpected = rightExpected = childReturnType = UndefinedType;
 
     bool rightErr, leftErr, unaryErrors;
     rightErr = leftErr = unaryErrors = false;
@@ -654,7 +697,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 else if(!strcmp(t->attr.name, "*") && (!leftArr && leftSide != UndefinedType)){
                     char uSizeof[] = "sizeof";
                     printError(8, t->linenum, 0, uSizeof, NULL, NULL, 0);
-                    printf("Sizeof check %s %d %d %s\n", t->child[0]->attr.name, t->linenum, t->child[0]->isArray, conExpType(t->child[0]->expType));
+                    //printf("Sizeof check %s %d %d %s\n", t->child[0]->attr.name, t->linenum, t->child[0]->isArray, conExpType(t->child[0]->expType));
                 } 
 
                 //Error: Does not work with Array and Only works with Array
@@ -685,12 +728,27 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         else if(leftSide != rightSide && !leftErr && !rightErr){
                             //check for CharInt and differentiate
                             //replace CharInt with char if leftside is int and right is charint
+
                             if(!strcmp(conExpType(leftSide), "int") && !strcmp(conExpType(rightSide), "CharInt")){
                                 char diffCharInt[] = "char";
                                  printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), diffCharInt, 0);
                             }
                             else if(!strcmp(conExpType(leftSide), "char") && !strcmp(conExpType(rightSide), "CharInt")){
                                 ; //do nothing, correct matching
+                            }
+                            //check for nested assignment operators
+                            else if(!strcmp(t->attr.name, "<-") && t->child[1]->subkind.exp == OpK){
+                                //get return type for child 1
+                                getReturnType(t->child[1]->attr.name, isBinary, childReturnType);
+                                //printf("OpK check: %s %d %s\n", t->child[1]->attr.name, t->linenum, conExpType(childReturnType));
+                                if(childReturnType == Boolean){
+                                    
+                                    printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(childReturnType), 0);
+                                }
+                                //call on rhs of child1 OpK
+                                else if(t->child[1]->child[1] != NULL && t->child[1]->child[1]->subkind.exp == CallK){
+                                    printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(childReturnType), 0);
+                                }
                             }
                             else{
                                 //print normally
@@ -712,8 +770,13 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                                 printError(3, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                             }
                             //right error -- types.c- main++, ++ operator going to here
-                            if(rightSide != rightExpected && !rightErr && rightSide != UndefinedType && rightSide != Void){
-                                printError(4, t->linenum, 0, t->attr.name, conExpType(rightExpected), conExpType(rightSide), 0);
+                            if(rightSide != rightExpected && !rightErr && rightSide != UndefinedType){
+                                if(rightSide == Void && t->child[1]->subkind.exp == CallK){
+                                    printError(4, t->linenum, 0, t->attr.name, conExpType(rightExpected), conExpType(rightSide), 0);
+                                }
+                                else if(rightSide != Void){
+                                    printError(4, t->linenum, 0, t->attr.name, conExpType(rightExpected), conExpType(rightSide), 0);
+                                }
                             }
                         }
                     }
@@ -907,8 +970,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 }
                 else{
                     //if(funcFound->child[0] != NULL)
-                    //{printf("CallK lookup Check: %s\n", conExpType(funcFound->child[0]->expType));}
-                    
+                    //{printf("CallK lookup Check: %s\n", conExpType(funcFound->child[0]->expType));}                    
                 }
             }
 
@@ -1016,11 +1078,63 @@ void getExpTypes(const char* strng, bool isBinary, bool &unaryErrors, ExpType &l
                     rightT = Boolean;
                 }
                 if(i == 15){
-                    left = right = rightT = UndefinedType;
+                    left = right = UndefinedType;
+                    rightT = Boolean;
                 }
                 if(i >= 16){
                     left = right = rightT = Boolean;
                     unaryErrors = true;
+                }
+
+            }
+        }
+    }
+
+}
+
+//Determine return type of OpK operator
+void getReturnType(const char* strng, bool isBinary, ExpType &rightT){
+    //c++ string array to hold unary operators
+    std::string unaryOps[6] = {"not", "*", "?", "-", "--", "++"};
+
+    //c++ string array to hold binary operators
+    std::string binaryOps[18] = {"+", "-", "*", "/", "%", "+=", "-=", "*=", "/=", ">", "<", ">=", "<=", "==", "!=", "=", "and", "or"};
+    std::string op(strng);
+
+    if(!isBinary){
+        for(int i = 0; i < 6; i++){
+            if(op == unaryOps[i]){
+                if(i == 0){
+                    rightT = Boolean;
+                }
+                if(i == 1){
+                    
+                    rightT = Integer;
+                }
+                if(i >= 2){
+                    rightT = Integer;
+                }
+            }
+        }
+    }
+    else{
+        for(int i = 0; i < 18; i++){
+            if(op == binaryOps[i]){
+                if(i >= 0 && i <= 8){
+                    rightT = Integer;
+                }
+                //Doesn't work with arrays error
+                if(i >= 9 && i <= 12){
+                    rightT = Boolean;
+                }
+                if(i >= 13 && i <=14){
+                    rightT = Boolean;
+                }
+                if(i == 15){
+                    rightT = Boolean;
+                }
+                if(i >= 16){
+                    rightT = Boolean;
                 }
 
             }
@@ -1194,15 +1308,15 @@ void printError(int errCode, int linenum, int reasonNum, char* s1, char* s2, cha
             break;
 
         case 29:
-            sprintf(sprintBuffer, "ERROR(%d): Function '%s' at line %d is expecting no return value, but return has a value.\n", linenum, s1, linenum);
+            sprintf(sprintBuffer, "ERROR(%d): Function '%s' at line %d is expecting no return value, but return has a value.\n", linenum, s1, reasonNum);
             break;
 
         case 30:
-            sprintf(sprintBuffer, "ERROR(%d): Function '%s' at line %d is expecting to return %s but return has no value.\n", linenum, s1, linenum, s2);
+            sprintf(sprintBuffer, "ERROR(%d): Function '%s' at line %d is expecting to return type %s but return has no value.\n", linenum, s1, reasonNum, s2);
             break;
 
         case 31:
-            sprintf(sprintBuffer, "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n", linenum, s1, linenum, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n", linenum, s1, reasonNum, s2, s3);
             break;
 
         case 32:
@@ -1210,7 +1324,7 @@ void printError(int errCode, int linenum, int reasonNum, char* s1, char* s2, cha
             break;
 
         case 33:
-            sprintf(sprintBuffer, "ERROR(%d): Initializer for variable '%s' of %s is of %s\n", linenum, s1, s2, s3);
+            sprintf(sprintBuffer, "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3);
             break;
 
         case 34:
@@ -1280,8 +1394,16 @@ void arrayErrors(TreeNode *t)
        //check if array is being indexed by something other than an int
       if(t->child[1]->expType != Integer && t->child[1]->expType != UndefinedType)
       {
-          //Error: array should be indexed by type int but got...
-         printError(14, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[1]->expType), NULL, 0);
+          //kind of confused by this one -- was trying to fix extra errors on 127 / 129 and this fixed it
+          //used trial and error with printouts..but need to try to understand
+          if(t->child[1]->subkind.decl == ParamK && t->child[1]->subkind.exp != CallK && t->child[1]->expType == Void){
+          //printf("array errors check: %s %d %d\n", t->child[1]->attr.name, t->child[1]->subkind.decl, t->linenum);
+          }
+          else{
+            //Error: array should be indexed by type int but got...
+            printError(14, t->linenum, 0, t->child[0]->attr.name, conExpType(t->child[1]->expType), NULL, 0);
+          }
+          
       }
    }
    if(t->child[1] != NULL && t->child[1]->subkind.exp == IdK)
@@ -1317,7 +1439,9 @@ void wasUsedWarn(std::string symbol, void* t){
 
     TreeNode* checkUsed;
 
-    checkUsed = symbolTable.lookupNode(symbol.c_str());       
+    checkUsed = symbolTable.lookupNode(symbol.c_str()); 
+
+    //printf("checkUsed check: %s %d\n", checkUsed->attr.name, checkUsed->linenum);      
 
     if(!checkUsed->wasUsed && !checkUsed->isGlobal && strcmp(checkUsed->attr.name, "main")){
         //if parameter, print parameter variant
