@@ -375,7 +375,7 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                     printf(" [line: %d]\n", t->linenum);
                 }
 
-                else{
+                else {
                     printf("Const %d", t->attr.value);
 
                     //if 'P' option

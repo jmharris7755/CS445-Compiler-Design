@@ -178,10 +178,6 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
            if(t->child[0] != NULL){
 
-               //fix issues with char on lhs and charint on rhs causing init error
-               if(t->expType == Char && t->child[0]->expType == CharInt){
-                   t->child[0]->expType = Char;
-               }
                //varK initializtion type checking
                //if rhs of initializer is an ID
                if(t->child[0]->subkind.exp == IdK){
@@ -194,9 +190,15 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                    
                    //check for binary operation
                    if(t->child[0] != NULL && t->child[0]->child[1] == NULL){
-                       //Error 32: "ERROR(%d): Initializer for variable '%s' is not a constant expression.\n"
-                       printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-                       //printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
+                       printf("Init check: %s %d\n", t->child[0]->attr.name,t->linenum);
+
+                        //check for chSign, make sure isn't not used on an array
+                        //might need to add add'l constantK check
+                       if(strcmp(t->child[0]->attr.name, "-") && !t->isArray){
+                        //Error 32: "ERROR(%d): Initializer for variable '%s' is not a constant expression.\n"
+                        printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                        //printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
+                       }
                    }
                }
                //check if array is being initialized by something other than an array
@@ -213,9 +215,15 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                }*/
                //check for var of one type initialized with a different type
                else if(t->expType != t->child[0]->expType){
-                   
-                    //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
-                    printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), conExpType(t->child[0]->expType), 0);
+
+                    //fix issues with char on lhs and charint on rhs causing init error
+                    if(t->expType == Char && t->child[0]->expType == CharInt){
+                        ; // no error. Correct matching
+                    }
+                    else{
+                        //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
+                        printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), conExpType(t->child[0]->expType), 0);
+                    }
                }
                t->isInit = true;
                //t->wasUsed = true;
@@ -231,7 +239,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
         case FuncK:
             //set t to current function variable
             curFunc = t;
-            printf("funcK check: %s %d\n", t->attr.name, t->linenum);
+            //printf("funcK check: %s %d\n", t->attr.name, t->linenum);
 
             //set returnFlag to false
             returnFlag = false;
@@ -283,7 +291,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             //leave current scope
             symbolTable.leave();
 
-            printf("funcK left check: %s %d\n", t->attr.name, t->linenum);
+           //printf("funcK left check: %s %d\n", t->attr.name, t->linenum);
             //reset current function
             curFunc = NULL;
 
@@ -475,7 +483,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                             printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
                         }
                     }*/
-                    //printf("RangeK check: %s %d %d\n", t->child[i]->attr.name, t->linenum, t->child[i]->isArray);
+                    //printf("RangeK check: %s %d %d\n", t->child[i]->attr.name, t->linenum, rangePos);
                 }
             }
 
@@ -565,6 +573,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     }
                     //nested assignments and ID set to CallK checks
                     else if(t->child[1] !=NULL && t->child[1]->expType == Void){
+
+                        //printf("OpK %s %s %s %d\n", t->attr.name, t->child[0]->attr.name, t->child[1]->attr.name, t->linenum);
                         //check if double assignment: x<-y<-z
                         if(!strcmp(t->child[1]->attr.name, "<-")){
                             t->child[0]->isInit = true;
@@ -614,7 +624,22 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     }
                    
                     else {
-                        t->child[0]->isInit = true;
+                        //check for single nest where ID is being assigned to itself
+                        if(t->child[1] != NULL && t->child[1]->child[0] != NULL){
+                            if(t->child[1]->child[0]->subkind.exp == IdK){
+                                char *c0 = strdup(t->child[0]->attr.name);
+                                char *c10 = strdup(t->child[1]->child[0]->attr.name);
+                                //if it isn't, then it's initialized
+                                if(strcmp(c0, c10)){
+                                    t->child[0]->isInit = true;
+                                    //printf("OpK else init check: %s %s %s %d\n", t->child[0]->attr.name, t->attr.name, t->child[1]->attr.name, t->linenum); 
+                                }
+                            }
+
+                        }
+                        else{
+                            t->child[0]->isInit = true;
+                        }
                     }
                 }
 
@@ -764,11 +789,13 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                             else if(!strcmp(t->attr.name, "<-") && t->child[1]->subkind.exp == OpK){
                                 //get return type for child 1
                                 getReturnType(t->child[1]->attr.name, isBinary, childReturnType);
-                                //printf("OpK check: %s %d %s\n", t->child[1]->attr.name, t->linenum, conExpType(childReturnType));
-                                if(childReturnType == Boolean){
+                                //printf("OpK check: %s %s %s %d %s\n", t->child[0]->attr.name, conExpType(t->child[0]->expType), t->child[1]->attr.name, t->linenum, conExpType(childReturnType));
+                                if(childReturnType != t->child[0]->expType/*childReturnType == Boolean*/){
                                     
                                     printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(childReturnType), 0);
                                 }
+                                //check for additon on rhs -- only valid if lhs is also an int
+                                //else if(t->child)
                                 //call on rhs of child1 OpK
                                 else if(t->child[1]->child[1] != NULL && t->child[1]->child[1]->subkind.exp == CallK){
                                     printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(childReturnType), 0);
@@ -892,6 +919,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
                 //check if ID is in a for loop
                 if(inFor){
+                    printf("IdK / RangeK check: %s %d %d, %d %d %s\n", valFound->attr.name, t->linenum, rangePos, valFound->isInit, valFound->isDeclared, conExpType(valFound->expType));
                     //set expType of t to declared expType
                     t->expType = valFound->expType;
                     t->isArray = valFound->isArray;
@@ -899,9 +927,39 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     //check for int at position 1 of for loop
                     if(t->expType != Integer && rangePos == 1)
                     {
+                        //check for size of array flag to see if array is being used
+                        //or size of array is being used as int. 
+                        if(!sizeOfArrayFlg){
+                        //printf("init check: %s %d\n", t->attr.name, t->linenum);
                         char intExpect[] = "int";
                         //Error 26: "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n"
                         printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
+                        }
+
+                    }
+                    
+                    //checking position 1 of for loops for uninit, declared IDs.
+                    else if(rangePos == 1 && !valFound->isInit){
+                        if(valFound->isDeclared == true){
+                            printf("valFound Name, Declared, Static: %s, %d, %d %d\n", valFound->attr.name, valFound->isDeclared, valFound->isStatic, t->linenum);
+                            if(!valFound->isInit && !valFound->warningReported && !valFound->isStatic && !valFound->isGlobal){
+                                if(!t->isInit){
+                                    valFound->warningReported = true;
+                                    valFound->wasUsed = true;
+                                    //printf("Idk check uninit warn %s %d\n", valFound->attr.name, valFound->isStatic);
+                                    printError(18, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                                }
+                                else{
+                                    valFound->isInit = true;
+                                }
+                            }
+                    
+                        }
+                    }
+                    //ID used in for range in pos other than init pos
+                    //should be considered used. 
+                    else if(rangePos > 1 && valFound->isInit){
+                        valFound->wasUsed = true;
                     }
 
                     //not allowed to use arrays in range of for
