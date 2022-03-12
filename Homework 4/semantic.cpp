@@ -224,6 +224,12 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                         //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
                         printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), charInsert, 0);
                     }
+                    //exclude void IDs on rhs -- made this change so init5 and initbad both work
+                    //check other files, may need to rethink
+                    else if(t->child[0]->expType == Void && t->child[0]->subkind.exp == IdK){
+                        //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
+                        //printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), conExpType(t->child[0]->expType), 0);
+                    }
                     else{
                         //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
                         printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), conExpType(t->child[0]->expType), 0);
@@ -299,8 +305,13 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
             // return type from function "return x" is not the expected type
             else if(returnFlag == true && functionReturnType != actualReturnType && actualReturnType != Void && t->expType != Void){
-                //Error 31: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n"
-                printError(31, returnLinenum, t->linenum, t->attr.name, conExpType(functionReturnType), conExpType(actualReturnType), 0);
+
+                //check for char for function return type and charint for actual
+                if(!(functionReturnType == Char && actualReturnType == CharInt)){
+                
+                    //Error 31: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n"
+                    printError(31, returnLinenum, t->linenum, t->attr.name, conExpType(functionReturnType), conExpType(actualReturnType), 0);
+                }
             }
 
             symbolTable.applyToAll(wasUsedWarn);
@@ -673,6 +684,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     else {
                         //check for single nest where ID is being assigned to itself
                         if(t->child[1] != NULL && t->child[1]->child[0] != NULL){
+                            //printf("OpK else init check: %s %s %s %d\n", t->child[0]->attr.name, t->attr.name, t->child[1]->attr.name, t->linenum);
                             if(t->child[1]->child[0]->subkind.exp == IdK){
                                 char *c0 = strdup(t->child[0]->attr.name);
                                 char *c10 = strdup(t->child[1]->child[0]->attr.name);
@@ -682,6 +694,12 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                                     //printf("OpK else init check: %s %s %s %d\n", t->child[0]->attr.name, t->attr.name, t->child[1]->attr.name, t->linenum); 
                                 }
                             }
+                            //nested ops with consts
+                            else /*if(t->child[0]->subkind.exp == IdK && t->child[1]->child[1]->subkind.exp == ConstantK)*/{
+                                //printf("OpK else init check: %s %s %s %d\n", t->child[0]->attr.name, t->attr.name, t->child[1]->attr.name, t->linenum); 
+                                t->child[0]->isInit = true;
+                            }
+                            
 
                         }
                         else{
@@ -837,8 +855,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                                 //get return type for child 1
                                 getReturnType(t->child[1]->attr.name, isBinary, childReturnType);
                                 //printf("OpK check: %s %s %s %d %s\n", t->child[0]->attr.name, conExpType(t->child[0]->expType), t->child[1]->attr.name, t->linenum, conExpType(childReturnType));
-                                if(childReturnType != t->child[0]->expType/*childReturnType == Boolean*/){
-                                    
+                                if(childReturnType != t->child[0]->expType){
                                     printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(childReturnType), 0);
                                 }
                                 //check for additon on rhs -- only valid if lhs is also an int
@@ -849,8 +866,12 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                                 }
                             }
                             else{
+                                //where I left off, start by check submission!!!!
+                                if(t->child[0]->subkind.exp != CallK){
                                 //print normally
                                  printError(2, t->linenum, 0, t->attr.name, conExpType(leftSide), conExpType(rightSide), 0);
+                                }
+                                else{}
                             }
                         }
                     }
@@ -1608,7 +1629,11 @@ void checkNestOpsInit(TreeNode *t, TreeNode *child){
     }
     //check for unaryop -- not a constant expression
     else if(child->child[0] != NULL && child->child[1] == NULL){
+        //exclude not unary? -- init5.c-
+        if(strcmp(child->attr.name, "not")){
+        //printf("here %s %d\n", child->attr.name, t->linenum);
         printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+        }
     }
 }
 
@@ -1633,15 +1658,15 @@ void wasUsedWarn(std::string symbol, void* t){
 
     //printf("checkUsed check: %s %d\n", checkUsed->attr.name, checkUsed->linenum);      
 
-    if(!checkUsed->wasUsed && !checkUsed->isGlobal && strcmp(checkUsed->attr.name, "main")){
+    if(!checkUsed->wasUsed && !checkUsed->isGlobal){
         //if parameter, print parameter variant
         //Warning 21: "WARNING(%d): The parameter '%s' seems not to be used.\n"
-        if(checkUsed->subkind.decl == ParamK && !checkUsed->wasUsedErr){
+        if(checkUsed->subkind.decl == ParamK && !checkUsed->wasUsedErr && strcmp(checkUsed->attr.name, "main")){
             checkUsed->wasUsedErr = true;
             printError(21, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
         }
 
-        else if(checkUsed->subkind.decl == FuncK && !checkUsed->wasUsedErr){
+        else if(checkUsed->subkind.decl == FuncK && !checkUsed->wasUsedErr && strcmp(checkUsed->attr.name, "main")){
             checkUsed->wasUsedErr = true;
             //Warning 20: "WARNING(%d): The function '%s' seems not to be used.\n"
             printError(20, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
