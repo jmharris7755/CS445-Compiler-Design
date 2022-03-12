@@ -177,6 +177,11 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
 
            if(t->child[0] != NULL){
+
+               //fix issues with char on lhs and charint on rhs causing init error
+               if(t->expType == Char && t->child[0]->expType == CharInt){
+                   t->child[0]->expType = Char;
+               }
                //varK initializtion type checking
                //if rhs of initializer is an ID
                if(t->child[0]->subkind.exp == IdK){
@@ -208,8 +213,9 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                }*/
                //check for var of one type initialized with a different type
                else if(t->expType != t->child[0]->expType){
-                   //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
-                   printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), conExpType(t->child[0]->expType), 0);
+                   
+                    //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
+                    printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), conExpType(t->child[0]->expType), 0);
                }
                t->isInit = true;
                //t->wasUsed = true;
@@ -225,6 +231,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
         case FuncK:
             //set t to current function variable
             curFunc = t;
+            printf("funcK check: %s %d\n", t->attr.name, t->linenum);
 
             //set returnFlag to false
             returnFlag = false;
@@ -254,7 +261,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             }
         
             //check for void functions having a return statement
-            else if(returnFlag == true && t->expType == Void){
+            else if(returnFlag == true && t->expType == Void && actualReturnType != UndefinedType){
                 //Error 29: "ERROR(%d): Function '%s' at line %d is expecting no return value, but return has a value.\n"
                 printError(29, returnLinenum, t->linenum, t->attr.name, NULL, NULL, 0);
             }
@@ -266,7 +273,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             }
 
             // return type from function "return x" is not the expected type
-            else if(returnFlag == true && functionReturnType != actualReturnType && actualReturnType != Void){
+            else if(returnFlag == true && functionReturnType != actualReturnType && actualReturnType != Void && t->expType != Void){
                 //Error 31: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n"
                 printError(31, returnLinenum, t->linenum, t->attr.name, conExpType(functionReturnType), conExpType(actualReturnType), 0);
             }
@@ -276,6 +283,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             //leave current scope
             symbolTable.leave();
 
+            printf("funcK left check: %s %d\n", t->attr.name, t->linenum);
             //reset current function
             curFunc = NULL;
 
@@ -290,6 +298,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
         case IfK:
             inLoop = true;
             symbolTable.enter(t->attr.name);
+            loopDepth++;
             enterScope = false;
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[0]){
@@ -310,8 +319,14 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 //Error 23: "ERROR(%d): Cannot use array as test condition in %s statement.\n"
                 printError(23, t->linenum, 0, ifStmt, NULL, NULL, 0);
             }
-            inLoop = false;
-            //symbolTable.applyToAll(wasUsedWarn);
+            
+            loopDepth--;
+
+            symbolTable.applyToAll(wasUsedWarn);
+
+            if(loopDepth == 1){
+                inLoop = false;
+            }
             symbolTable.leave();
             enterScope = true;
             break;
@@ -353,15 +368,16 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
             if(loopDepth == 1){
                 inLoop = false;
-                symbolTable.leave();
-                enterScope = true;
             }
+            symbolTable.leave();
+            enterScope = true;
             break;
 
         case ForK:
             //Might need to add isInit check in For case also
             inLoop = true;
             inFor = true;
+            loopDepth++;
             symbolTable.enter(t->attr.name);
             enterScope = false;
             
@@ -376,9 +392,14 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 }
             }
 
+            loopDepth--;
+
+            if(loopDepth == 1){
+                inLoop = false;
+            }
+
             //if(loopDepth == symbolTable.depth()){
                 inFor = false;
-                inLoop = false;
                 symbolTable.applyToAll(wasUsedWarn);
                 symbolTable.leave();
                 enterScope = true;
@@ -465,9 +486,11 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             break;
 
         case CompoundK:
+
             //Enter a new scope, unless the flags are the beginning of a func decl
             bool keepCurScope = enterScope;
             if(keepCurScope){
+                
                 symbolTable.enter("compound");
             }
             else{
@@ -477,6 +500,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
             }
+
             //Check if single compound and leave scope if true
             if(keepCurScope){
                 symbolTable.applyToAll(wasUsedWarn);
@@ -1446,13 +1470,21 @@ void wasUsedWarn(std::string symbol, void* t){
     if(!checkUsed->wasUsed && !checkUsed->isGlobal && strcmp(checkUsed->attr.name, "main")){
         //if parameter, print parameter variant
         //Warning 21: "WARNING(%d): The parameter '%s' seems not to be used.\n"
-        if(checkUsed->subkind.decl == ParamK){
+        if(checkUsed->subkind.decl == ParamK && !checkUsed->wasUsedErr){
+            checkUsed->wasUsedErr = true;
             printError(21, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
+        }
+
+        else if(checkUsed->subkind.decl == FuncK && !checkUsed->wasUsedErr){
+            checkUsed->wasUsedErr = true;
+            //Warning 20: "WARNING(%d): The function '%s' seems not to be used.\n"
+            printError(20, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
         }
 
         //otherwise print variable variant
         //Warning 17: "WARNING(%d): The variable '%s' seems not to be used.\n"
         else{
+            checkUsed->wasUsedErr = true;
             printError(17, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
         }
     }
@@ -1460,14 +1492,16 @@ void wasUsedWarn(std::string symbol, void* t){
     else if(!checkUsed->wasUsed && checkUsed->isGlobal && checkUsed->subkind.decl == FuncK){
         
         //exclude "main"
-        if(strcmp(checkUsed->attr.name, "main")){
+        if(strcmp(checkUsed->attr.name, "main") && !checkUsed->wasUsedErr){
+            checkUsed->wasUsedErr = true;
             //Warning 20: "WARNING(%d): The function '%s' seems not to be used.\n"
             printError(20, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
         }
     }
 
     //check for globals that are not used
-    else if(!checkUsed->wasUsed && checkUsed->isGlobal){
+    else if(!checkUsed->wasUsed && checkUsed->isGlobal && !checkUsed->wasUsedErr){
+         checkUsed->wasUsedErr = true;
          printError(17, checkUsed->linenum, 0, checkUsed->attr.name, NULL, NULL, 0);
     }
 }
