@@ -1,0 +1,51 @@
+									  >	IdK / RangeK check: a 7 1, 0 1 int
+									  >	valFound Name, Declared, Static: a, 1, 0 7
+									  >	IdK / RangeK check: aa 7 2, 0 1 int
+									  >	valFound Name, Declared, Static: aa, 1, 0 7
+									  >	IdK / RangeK check: b 8 1, 0 1 bool
+									  >	valFound Name, Declared, Static: b, 1, 0 8
+									  >	IdK / RangeK check: bb 8 2, 0 1 bool
+									  >	valFound Name, Declared, Static: bb, 1, 0 8
+									  >	IdK / RangeK check: bb 9 1, 0 1 bool
+									  >	valFound Name, Declared, Static: bb, 1, 0 9
+									  >	IdK / RangeK check: bb 9 2, 0 1 bool
+									  >	valFound Name, Declared, Static: bb, 1, 0 9
+									  >	IdK / RangeK check: bb 9 3, 0 1 bool
+									  >	valFound Name, Declared, Static: bb, 1, 0 9
+									  >	IdK / RangeK check: cc 10 1, 0 1 char
+									  >	valFound Name, Declared, Static: cc, 1, 0 10
+									  >	IdK / RangeK check: c 10 2, 0 1 char
+									  >	valFound Name, Declared, Static: c, 1, 0 10
+									  >	IdK / RangeK check: aa 11 1, 0 1 int
+									  >	valFound Name, Declared, Static: aa, 1, 0 11
+									  >	IdK / RangeK check: aa 11 2, 0 1 int
+									  >	valFound Name, Declared, Static: aa, 1, 0 11
+									  >	IdK / RangeK check: aa 11 3, 0 1 int
+									  >	valFound Name, Declared, Static: aa, 1, 0 11
+WARNING(7): Variable 'a' may be uninitialized when used here.			WARNING(7): Variable 'a' may be uninitialized when used here.
+WARNING(7): Variable 'aa' may be uninitialized when used here.			WARNING(7): Variable 'aa' may be uninitialized when used here.
+ERROR(7): Cannot use array in position 2 in range of for statement.		ERROR(7): Cannot use array in position 2 in range of for statement.
+WARNING(8): Variable 'b' may be uninitialized when used here.		  <
+ERROR(8): Expecting type int in position 1 in range of for statement b		ERROR(8): Expecting type int in position 1 in range of for statement b
+									  >	WARNING(8): Variable 'b' may be uninitialized when used here.
+WARNING(8): Variable 'bb' may be uninitialized when used here.			WARNING(8): Variable 'bb' may be uninitialized when used here.
+ERROR(8): Expecting type int in position 2 in range of for statement b	  <
+ERROR(8): Cannot use array in position 2 in range of for statement.		ERROR(8): Cannot use array in position 2 in range of for statement.
+ERROR(9): Expecting type int in position 1 in range of for statement b		ERROR(9): Expecting type int in position 1 in range of for statement b
+ERROR(9): Cannot use array in position 1 in range of for statement.		ERROR(9): Cannot use array in position 1 in range of for statement.
+ERROR(9): Expecting type int in position 2 in range of for statement b	  <
+ERROR(9): Cannot use array in position 2 in range of for statement.		ERROR(9): Cannot use array in position 2 in range of for statement.
+ERROR(9): Expecting type int in position 3 in range of for statement b	  <
+ERROR(9): Cannot use array in position 3 in range of for statement.		ERROR(9): Cannot use array in position 3 in range of for statement.
+WARNING(10): Variable 'cc' may be uninitialized when used here.		  <
+ERROR(10): Expecting type int in position 1 in range of for statement 		ERROR(10): Expecting type int in position 1 in range of for statement 
+									  >	WARNING(10): Variable 'cc' may be uninitialized when used here.
+ERROR(10): Cannot use array in position 1 in range of for statement.		ERROR(10): Cannot use array in position 1 in range of for statement.
+WARNING(10): Variable 'c' may be uninitialized when used here.			WARNING(10): Variable 'c' may be uninitialized when used here.
+ERROR(10): Expecting type int in position 2 in range of for statement 	  |	ERROR(11): Cannot use array in position 1 in range of for statement.
+									  >	ERROR(11): Cannot use array in position 2 in range of for statement.
+									  >	ERROR(11): Cannot use array in position 3 in range of for statement.
+ERROR(11): 'or' requires operands of type bool but lhs is of type int.		ERROR(11): 'or' requires operands of type bool but lhs is of type int.
+ERROR(11): 'or' requires operands of type bool but rhs is of type int.		ERROR(11): 'or' requires operands of type bool but rhs is of type int.
+Number of warnings: 6								Number of warnings: 6
+Number of errors: 15							  |	Number of errors: 14

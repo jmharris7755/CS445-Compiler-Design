@@ -19,5 +19,6 @@ void wasUsedWarn(std::string, void*);
 void parameterErrors(TreeNode *funcFound, TreeNode *t, TreeNode *ffParm, TreeNode *tParm, int paramCount);
 void checkNestAssK(TreeNode *c1);
 void getReturnType(const char* string, bool isBinary, ExpType &childReturnType);
+void checkNestOpsInit(TreeNode *t, TreeNode* child);
 
 #endif

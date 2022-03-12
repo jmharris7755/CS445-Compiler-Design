@@ -73,7 +73,8 @@ typedef struct treeNode
     bool wasUsed; //track if Variable has been used
     bool isDeclared; //track if a Variable has been declared
     bool declErr;
-    bool wasUsedErr; //track fi wasUsedErr was already printed for t
+    bool wasUsedErr; //track if wasUsedErr was already printed for t
+    bool isIndexed; // track if an array is currently being indexed
     //int memSize; //how much memory does it take up?
     //int memOffset; //How are is ti offest from address 9999?
     // even more semantic stuff will go here in later assignments.

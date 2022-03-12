@@ -180,17 +180,18 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 
                //varK initializtion type checking
                //if rhs of initializer is an ID
-               if(t->child[0]->subkind.exp == IdK){
+               if(t->child[0]->subkind.exp == IdK || t->child[0]->subkind.exp == CallK){
                    //Error 32: "ERROR(%d): Initializer for variable '%s' is not a constant expression.\n"
                    printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                    //printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
                }
                //check for simple expression -- may put into recursive function
                else if(t->child[0]->subkind.exp == OpK){
-                   
+                   //printf("Init check: %s %d\n", t->child[0]->attr.name,t->linenum);
+
                    //check for binary operation
                    if(t->child[0] != NULL && t->child[0]->child[1] == NULL){
-                       printf("Init check: %s %d\n", t->child[0]->attr.name,t->linenum);
+                       //printf("Init check: %s %d\n", t->child[0]->attr.name,t->linenum);
 
                         //check for chSign, make sure isn't not used on an array
                         //might need to add add'l constantK check
@@ -200,30 +201,46 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                         //printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
                        }
                    }
+
+                   //check for non-consts on either side of op
+                   else if(t->child[0]->child[0] != NULL && t->child[0]->child[1] != NULL){
+                       /*if(t->child[0]->child[0]->subkind.exp == IdK){
+                       //Error 32: "ERROR(%d): Initializer for variable '%s' is not a constant expression.\n"
+                        printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                       }*/
+                       checkNestOpsInit(t, t->child[0]);
+                   }
                }
+               //check for var of one type initialized with a different type
+               if(t->expType != t->child[0]->expType){
+
+                    //fix issues with char on lhs and charint on rhs causing init error
+                    if(t->expType == Char && t->child[0]->expType == CharInt){
+                        ; // no error. Correct matching
+                    }
+                    //fixing error for CharInt on rhs of error
+                    else if(t->expType == Integer && t->child[0]->expType == CharInt){
+                        char charInsert[] = "char";
+                        //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
+                        printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), charInsert, 0);
+                    }
+                    else{
+                        //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
+                        printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), conExpType(t->child[0]->expType), 0);
+                    }
+               }
+
                //check if array is being initialized by something other than an array
-               else if(t->isArray && !t->child[0]->isArray){
+               if(t->isArray && !t->child[0]->isArray){
                    //Error 35: "ERROR(%d): Initializer for variable '%s' requires both operands be arrays or not but variable is an array and rhs is not an array.\n"
                    printError(35, t->linenum, 0, t->attr.name, NULL, NULL, 0);
                    //printf("VarK initializtion Array check: %s %d\n", t->attr.name, t->linenum);
                }
                //probably need this, but haven't run into it yet
                //check if variable is being initialized by an array
-               /*else if(!t->isArray && t->child[0]->isArray){
+               if(!t->isArray && t->child[0]->isArray){
                    //Error 34: "ERROR(%d): Initializer for variable '%s' requires both operands be arrays or not but variable is not an array and rhs is an array.\n" 
                    printError(34, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-               }*/
-               //check for var of one type initialized with a different type
-               else if(t->expType != t->child[0]->expType){
-
-                    //fix issues with char on lhs and charint on rhs causing init error
-                    if(t->expType == Char && t->child[0]->expType == CharInt){
-                        ; // no error. Correct matching
-                    }
-                    else{
-                        //Error 33: "ERROR(%d): Initializer for variable '%s' of type %s is of type %s\n", linenum, s1, s2, s3)
-                        printError(33, t->linenum, 0, t->attr.name, conExpType(t->expType), conExpType(t->child[0]->expType), 0);
-                    }
                }
                t->isInit = true;
                //t->wasUsed = true;
@@ -474,6 +491,32 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
                     rangePos++;
+
+                    //check for arrays in Ranges
+                    //if we find an [ and it's child is an array, then the array
+                    //is being indexed.
+                    //if(!strcmp(t->child[i]->attr.name, "[")){ //this line is causing a segfault - commented out
+                        //printf("RangeK check 1: %s %d %d %d\n", t->child[i]->attr.name, t->linenum, t->isArray, rangePos);
+                        if(t->child[i]->child[0] != NULL && t->child[i]->child[0]->isArray){
+                            t->child[i]->child[0]->isIndexed = true;
+                            //printf("RangeK check 2: %s %d %d %d %d\n", t->child[i]->child[0]->attr.name, t->linenum, t->child[i]->child[0]->isArray, t->child[i]->child[0]->isIndexed, rangePos);
+                        }
+                        //if on Pos 1 and child is not declared = rhs of x <- y
+                        else if(rangePos == 1){
+                            if(t->child[0]->subkind.exp == IdK){
+                                TreeNode* valFound = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
+                                if(valFound == NULL){
+                                    //Error 1: ERROR(%d): Symbol '%s' is not declared
+                                    printError(1, t->linenum, 0, t->child[0]->attr.name, NULL, NULL, 0); 
+                                    t->declErr = true;
+                                }
+                                else{
+                                    valFound->wasUsed = true;
+                                }
+                            }
+                        }
+                    //}
+
                     analyze(t->child[i], nErrors, nWarnings);
 
                     //check child 1 for being an int
@@ -483,9 +526,11 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                             printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
                         }
                     }*/
-                    //printf("RangeK check: %s %d %d\n", t->child[i]->attr.name, t->linenum, rangePos);
+                    //printf("RangeK check 1: %s %d %d %d\n", t->child[i]->attr.name, t->linenum, t->isArray, rangePos);
+                    //check for child that is "[", looking for arrays
                 }
             }
+
 
 
             inRange = false;
@@ -566,11 +611,13 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                             }
                             }
                         }
+                        //check for double nensted [[x]]
                         else if(t->child[0]->child[1]->child[0] != NULL){
                             t->child[0]->child[1]->child[0]->isInit = true;
                         }
 
                     }
+
                     //nested assignments and ID set to CallK checks
                     else if(t->child[1] !=NULL && t->child[1]->expType == Void){
 
@@ -815,6 +862,12 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                             //not sure what to do, but am getting multiple printouts with CharInt
                             ;
                         }
+
+                        //check for 2 calls of the same type being operated on
+                        else if(leftSide == rightSide && leftNode->subkind.exp == CallK && rightNode->subkind.exp == CallK){
+                            //printf("CallK check: %s %d\n", t->child[0]->attr.name, t->linenum);
+                            ; //this is allowed
+                        }
                         else{
                             //left error
                             if(leftSide != leftExpected && !leftErr){
@@ -822,7 +875,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                             }
                             //right error -- types.c- main++, ++ operator going to here
                             if(rightSide != rightExpected && !rightErr && rightSide != UndefinedType){
-                                if(rightSide == Void && t->child[1]->subkind.exp == CallK){
+                                if(rightSide == Void && t->child[1]->subkind.exp == CallK && returnType != Boolean){
                                     printError(4, t->linenum, 0, t->attr.name, conExpType(rightExpected), conExpType(rightSide), 0);
                                 }
                                 else if(rightSide != Void){
@@ -905,13 +958,14 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
             //if unable to find, Error: "Symbol undeclared"
             if(valFound == NULL){
+                //printf("valFound check null: %s %d\n", t->attr.name, t->linenum);
                 //check for ID inside of Range at position 1, considered declared if it shows up
                 if(inRange && rangePos == 1){
                     t->isDeclared = true;
                 }
                 else{
-                printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0); 
-                    t->declErr = true;    
+                    printError(1, t->linenum, 0, t->attr.name, NULL, NULL, 0); 
+                        t->declErr = true;    
                 }           
             }
             //check if ID is in a range
@@ -919,29 +973,40 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
                 //check if ID is in a for loop
                 if(inFor){
-                    printf("IdK / RangeK check: %s %d %d, %d %d %s\n", valFound->attr.name, t->linenum, rangePos, valFound->isInit, valFound->isDeclared, conExpType(valFound->expType));
+                    //printf("IdK / RangeK check: %s %d %d %d %d %s\n", valFound->attr.name, t->linenum, rangePos, valFound->isArray, t->isIndexed, conExpType(valFound->expType));
                     //set expType of t to declared expType
                     t->expType = valFound->expType;
                     t->isArray = valFound->isArray;
 
                     //check for int at position 1 of for loop
-                    if(t->expType != Integer && rangePos == 1)
+                    if(t->expType != Integer && rangePos >= 1)
                     {
                         //check for size of array flag to see if array is being used
                         //or size of array is being used as int. 
                         if(!sizeOfArrayFlg){
-                        //printf("init check: %s %d\n", t->attr.name, t->linenum);
-                        char intExpect[] = "int";
-                        //Error 26: "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n"
-                        printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
+
+                            //can not use function // main() // as a variable
+                            if(!strcmp(t->attr.name, "main")){
+                                //Error 12: "ERROR(%d): Cannot use function '%s' as a variable.\n"
+                                printError(12, t->linenum, 0, t->attr.name, NULL, NULL, 0);  
+                            }
+                            else{
+                                //printf("init check: %s %d\n", t->attr.name, t->linenum);
+                                char intExpect[] = "int";
+                                //Error 26: "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n"
+                                printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
+                            }
                         }
 
                     }
+                    /*else if(t->expType != Integer && rangePos > 1){
+                        printf("IdK / RangeK check: %s %d %d %d %d %s\n", valFound->attr.name, t->linenum, rangePos, valFound->isArray, t->isIndexed, conExpType(valFound->expType));
+                    }*/
                     
-                    //checking position 1 of for loops for uninit, declared IDs.
-                    else if(rangePos == 1 && !valFound->isInit){
+                    //checking all positions of for loops for uninit, declared IDs.
+                    if(rangePos >= 1 && !valFound->isInit){
                         if(valFound->isDeclared == true){
-                            printf("valFound Name, Declared, Static: %s, %d, %d %d\n", valFound->attr.name, valFound->isDeclared, valFound->isStatic, t->linenum);
+                            //printf("valFound Name, Declared, Static: %s, %d, %d %d\n", valFound->attr.name, valFound->isDeclared, valFound->isStatic, t->linenum);
                             if(!valFound->isInit && !valFound->warningReported && !valFound->isStatic && !valFound->isGlobal){
                                 if(!t->isInit){
                                     valFound->warningReported = true;
@@ -962,11 +1027,15 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         valFound->wasUsed = true;
                     }
 
-                    //not allowed to use arrays in range of for
-                    if(valFound->isArray && !sizeOfArrayFlg){
+                    //not allowed to use **unindexed arrays in range of for
+                    //if array is currently being indexed, then it should not error here
+                    if(valFound->isArray && !sizeOfArrayFlg && !t->isIndexed){
                         //Error 24: "ERROR(%d): Cannot use array in position %d in range of for statement.\n"
                         printError(24, t->linenum, 0, NULL, NULL, NULL, rangePos);
                     }
+                    //reset index flag, since we don't want to leave it indexed
+                    //if it shows up again unindexed
+                    t->isIndexed = false;
 
                     //don't check for this here
                     //check for type matching at positions as well
@@ -999,7 +1068,9 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
                 //Error: cannot use function as variable
                 if(valFound->subkind.decl == FuncK){
+                    //printf("IdK check: %s %d\n", valFound->attr.name, t->linenum);
                     printError(12, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                    valFound->wasUsed = true;
                     break;
                 }
                 else{
@@ -1052,7 +1123,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 }
                 else{
                     //if(funcFound->child[0] != NULL)
-                    //{printf("CallK lookup Check: %s\n", conExpType(funcFound->child[0]->expType));}                    
+                    //{printf("CallK lookup Check: %s\n", conExpType(funcFound->child[0]->expType));}                   
                 }
             }
 
@@ -1079,10 +1150,19 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                         //check for int type
                         if(t->expType != Integer)
                         {
-                            //printf("CallK: %d %s\n", t->linenum, conExpType(t->expType));
-                            char intExpect[] = "int";
-                            //Error 26: "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n"
-                            printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
+                            //can not use main() as a variable
+                            if(!strcmp(t->attr.name, "main")){
+                                //Error 12: "ERROR(%d): Cannot use function '%s' as a variable.\n"
+                                printError(12, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                                
+
+                            }
+                            else{
+                                //printf("CallK: %d %s\n", t->linenum, conExpType(t->expType));
+                                char intExpect[] = "int";
+                                //Error 26: "ERROR(%d): Expecting type %s in position %d in range of for statement but got type %s.\n"
+                                printError(26, t->linenum, 0, intExpect, conExpType(t->expType), NULL, rangePos);
+                            }
                         }
                     }
                 }
@@ -1502,6 +1582,34 @@ void arrayErrors(TreeNode *t)
       }
    }
 
+}
+
+//check for nested ops for initializtion errors
+void checkNestOpsInit(TreeNode *t, TreeNode *child){
+
+    //TreeNode* t = child;
+
+    //make sure child 0 and child 1 are not null
+    if(child->child[0] != NULL && child->child[1] != NULL){
+
+        //if first child is an op, check it's children
+        if(child->child[0]->subkind.exp == OpK){
+
+            checkNestOpsInit(t, child->child[0]);
+        }
+        //if second child is an op, check it's children
+        if(child->child[1]->subkind.exp == OpK){
+            checkNestOpsInit(t, child->child[1]);
+        }
+        //check for Id's in const expressoin == not a const expression
+        else if(child->child[0]->subkind.exp == IdK || child->child[1]->subkind.exp == IdK){
+            printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+        }
+    }
+    //check for unaryop -- not a constant expression
+    else if(child->child[0] != NULL && child->child[1] == NULL){
+        printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+    }
 }
 
 //Check for nested assignments -- warnings missed in everythingS22 on HW3
