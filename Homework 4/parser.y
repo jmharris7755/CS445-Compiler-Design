@@ -1,12 +1,13 @@
 %{
 //Justin Harris 
 //CS445
-//Last Updated: 2-11-22
+//Last Updated: 3-12-22
 //parser.y
 //This file contains Bison Code
 #include "scanType.h" //TokenData type 
 #include "syntaxTree.h"
 #include "semantic.h"
+#include "IOinit.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -497,6 +498,7 @@ int main(int argc, char *argv[])
         printTree(ast, 0, TYPES);
     }
     else if(printAST && TYPES){
+        setupIO();
         semanticAnalysis(ast, numErrors, numWarnings);
         //COMMENTED OUT THIS IF STATEMENT FOR TESTING ----- CHANGE BACK***********************
         if(numErrors < 1)

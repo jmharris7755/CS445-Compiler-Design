@@ -1,13 +1,13 @@
 #Justin Harris 
 #CS445
-#Last Updated: 2-11-22
+#Last Updated: 3-12-22
 #makefile executed to build my c-
 BIN = parser
 CC = g++
 
-FLES = syntaxTree.c symbolTable.cpp semantic.cpp
+FLES = syntaxTree.c symbolTable.cpp semantic.cpp IOinit.cpp
 SRCS = $(BIN).y  $(BIN).l
-HDRS = scanType.h syntaxTree.h symbolTable.h semantic.h
+HDRS = scanType.h syntaxTree.h symbolTable.h semantic.h IOinit.h
 OBJS = lex.yy.o $(BIN).tab.o 
 
 $(BIN) : $(OBJS)

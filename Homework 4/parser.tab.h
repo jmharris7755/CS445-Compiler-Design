@@ -114,7 +114,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 40 "parser.y"
+#line 41 "parser.y"
 
     ExpType type;               //For passing types (i.e pass a type in a decl like int or bool)
     TokenData *tokenData;       //For terminals. Token data comes from yylex() in the $ vars

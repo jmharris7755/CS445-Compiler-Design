@@ -77,6 +77,22 @@ TreeNode *newExpNode(ExpKind kind, TokenData *tokenData){
     return t;
 }
 
+//function for setting up IO functions since we can't take in any tokenData
+TreeNode *newDeclNodeIO(DeclKind kind){
+    TreeNode *t = (TreeNode *)malloc(sizeof(TreeNode));
+    int i;
+
+    for(i = 0; i<MAXCHILDREN; i++){
+        t->child[i] = NULL;
+        t->sibling = NULL;
+        t->nodekind = DeclK;
+        t->subkind.decl = kind;
+        t->expType = Void;
+    }
+
+    return t;
+}
+
 //convert node to sibling and all sibling nodes to same type
 void convertSiblingType(TreeNode *t, ExpType currentExp){
     TreeNode *curNode = t;

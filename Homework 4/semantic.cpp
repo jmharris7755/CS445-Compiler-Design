@@ -38,6 +38,9 @@ bool sizeOfArrayFlg = false;
 int loopDepth = 1;
 int rangePos = 0;
 int returnLinenum;
+int functionLine;
+
+char *functionName;
 
 TreeNode *curFunc = NULL;
 
@@ -273,6 +276,8 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             //might need this to avoid second enter() call with upcoming compound flags
             enterScope = false;
             functionReturnType = t->expType;
+            functionName = t->attr.name;
+            functionLine = t->linenum;
             
 
             //loop though function parameters and statements
@@ -292,7 +297,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             }
         
             //check for void functions having a return statement
-            else if(returnFlag == true && t->expType == Void && actualReturnType != UndefinedType){
+            /*else if(returnFlag == true && t->expType == Void && actualReturnType != UndefinedType){
                 //Error 29: "ERROR(%d): Function '%s' at line %d is expecting no return value, but return has a value.\n"
                 printError(29, returnLinenum, t->linenum, t->attr.name, NULL, NULL, 0);
             }
@@ -312,7 +317,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                     //Error 31: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n"
                     printError(31, returnLinenum, t->linenum, t->attr.name, conExpType(functionReturnType), conExpType(actualReturnType), 0);
                 }
-            }
+            }*/
 
             symbolTable.applyToAll(wasUsedWarn);
 
@@ -344,7 +349,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             }
 
             //boolean test condition check
-            if(t->child[0]->expType != Boolean && t->child[0]->subkind.exp != OpK){
+            if(t->child[0]->expType != Boolean && t->child[0]->subkind.exp != OpK && !t->child[0]->declErr){
                 char ifStmt[] = "if";
                 //Error 27: "ERROR(%d): Expecting Boolean test condition in %s statement but got type %s.\n"
                 printError(27, t->linenum, 0, ifStmt, conExpType(t->child[0]->expType), NULL, 0 );
@@ -383,7 +388,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 //while statements being skipped, or while statements printing
                 //multiple times
                 if(i < 1){
-                    if(t->child[0]->expType != Boolean && t->child[0]->subkind.exp != OpK){
+                    if(t->child[0]->expType != Boolean && t->child[0]->subkind.exp != OpK && !t->child[0]->declErr){
                         char whileStmt[] = "while";
                         //Error 27: "ERROR(%d): Expecting Boolean test condition in %s statement but got type %s.\n"
                         printError(27, t->linenum, 0, whileStmt, conExpType(t->child[0]->expType), NULL, 0 );
@@ -449,6 +454,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 returnLinenum = t->linenum;
 
             analyze(t->child[0], nErrors, nWarnings);
+
             if(t->child[0] != NULL){
                 //printf("ReturnK check: %s\n", t->child[0]->attr.name);
                 //symbolTable look up of c0 attr.name
@@ -477,11 +483,53 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                     printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
                     }
                 }
+                 //if returnFlag is false, then there was no return statement, 
+                //print warning
+                /*if(returnFlag == false && t->expType != Void){
+                    //Warning 19: "WARNING(%d): Expecting to return %s but function '%s' has no return statement.\n"
+                    printError(19, t->linenum, 0, conExpType(functionReturnType), t->attr.name, NULL, 0);
+                }*/ //this needs to go back in FuncK
+            
+                //check for void functions having a return statement
+                else if(functionReturnType == Void){
+                    //Error 29: "ERROR(%d): Function '%s' at line %d is expecting no return value, but return has a value.\n"
+                    printError(29, returnLinenum, functionLine, functionName, NULL, NULL, 0);
+                }
+
+                // return type from function "return x" is not the expected type
+                else if(functionReturnType != actualReturnType && actualReturnType != Void && functionReturnType != Void){
+
+                    //check for char for function return type and charint for actual
+                    if(!(functionReturnType == Char && actualReturnType == CharInt)){
+                    
+                        //Error 31: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n"
+                        printError(31, returnLinenum, functionLine, functionName, conExpType(functionReturnType), conExpType(actualReturnType), 0);
+                    }
+                }
+                //check for calls as return value
+                else if(functionReturnType != actualReturnType && functionReturnType != Void && t->child[0]->subkind.exp == CallK){
+                    
+                    //check for char for function return type and charint for actual
+                    if(!(functionReturnType == Char && actualReturnType == CharInt)){
+                    
+                        //Error 31: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but returns type %s.\n"
+                        printError(31, returnLinenum, functionLine, functionName, conExpType(functionReturnType), conExpType(actualReturnType), 0);
+                    }
+                }
+            }
+            //if there is a return statement, but no return value
+            else if(t->child[0] == NULL){
+
+                //check for functions expecting a return value, but there was not one
+                if(functionReturnType != Void){
+                    //Error 30: "ERROR(%d): Function '%s' at line %d is expecting to return type %s but return has no value.\n"
+                    printError(30, returnLinenum, functionLine, functionName, conExpType(functionReturnType), NULL, 0);
+                }
             }
             //check for no return value after statement
-            else if(t->child[0] == NULL){
+            /*else if(t->child[0] == NULL){
                 actualReturnType = UndefinedType;
-            }
+            }*/
             break;
 
         case BreakK:
@@ -886,8 +934,22 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
                         //check for 2 calls of the same type being operated on
                         else if(leftSide == rightSide && leftNode->subkind.exp == CallK && rightNode->subkind.exp == CallK){
-                            //printf("CallK check: %s %d\n", t->child[0]->attr.name, t->linenum);
-                            ; //this is allowed
+                            //printf("CallK check: %s %s %d\n", t->child[0]->attr.name, t->child[1]->attr.name, t->linenum);
+                             
+                             //lookup lhs and rhs
+                             TreeNode* lhs = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
+                             TreeNode* rhs = (TreeNode*)symbolTable.lookup(t->child[1]->attr.name);
+
+                             if(lhs != NULL && rhs != NULL){
+
+                                 if(lhs->subkind.decl == FuncK && rhs->subkind.decl == FuncK && !lhs->isIO && !rhs->isIO){
+                                     printError(3, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
+                                     printError(4, t->linenum, 0, t->attr.name, conExpType(rightExpected), conExpType(rightSide), 0);
+                                     //printf("Here %s %s %d %d %d\n", lhs->attr.name, rhs->attr.name, lhs->subkind.decl, rhs->subkind.decl, t->linenum);
+                                 }
+
+                                //printf("Here %s %s %d %d %d\n", lhs->attr.name, rhs->attr.name, lhs->subkind.decl, rhs->subkind.decl, t->linenum);
+                             }
                         }
                         else{
                             //left error
@@ -1721,7 +1783,7 @@ void parameterErrors(TreeNode *funcFound, TreeNode *t, TreeNode *ffParm, TreeNod
     if(tParm->expType != UndefinedType){
         
         //Error 25: "ERROR(%d): Expecting %s in parameter %d of call to '%s' declared on line %d but got %s.\n"
-        if(ffParm->expType != tParm->expType && !tParm->declErr){
+        if(ffParm->expType != tParm->expType && !tParm->declErr && !funcFound->isIO){
             //printf("Parameter Errors made it here %s %s\n", conExpType(ffParm->expType), conExpType(tParm->expType));
             printError(25, t->linenum, funcFound->linenum, funcFound->attr.name, conExpType(ffParm->expType), conExpType(tParm->expType), paramCount);
             //printf("is the issue the printError?\n");

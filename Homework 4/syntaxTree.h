@@ -75,6 +75,7 @@ typedef struct treeNode
     bool declErr;
     bool wasUsedErr; //track if wasUsedErr was already printed for t
     bool isIndexed; // track if an array is currently being indexed
+    bool isIO;      //set to avoid IO parameter errors
     //int memSize; //how much memory does it take up?
     //int memOffset; //How are is ti offest from address 9999?
     // even more semantic stuff will go here in later assignments.
@@ -86,6 +87,8 @@ TreeNode *newDeclNode(DeclKind kind, TokenData *tokenData);
 TreeNode *newStmtNode(StmtKind kind, TokenData *tokenData);
 
 TreeNode *newExpNode(ExpKind kind, TokenData *tokenData);
+
+TreeNode *newDeclNodeIO(DeclKind kind);
 
 TreeNode *addaSibling(TreeNode *, TreeNode *);
 
