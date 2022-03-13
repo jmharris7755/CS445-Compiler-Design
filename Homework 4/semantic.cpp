@@ -479,8 +479,12 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 //check for return assignment / op "return x<-x"
                 else if(t->child[0]->child[0] != NULL){
                     if(t->child[0]->child[0]->isArray){
-                        //cannot return array error
-                    printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
+                        //look for indexed arrays
+                        if(strcmp(t->child[0]->attr.name, "[")){
+                            //cannot return array error
+                            //printf("Here %d\n", t->linenum);
+                            printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
+                        }
                     }
                 }
                  //if returnFlag is false, then there was no return statement, 
@@ -491,7 +495,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 }*/ //this needs to go back in FuncK
             
                 //check for void functions having a return statement
-                else if(functionReturnType == Void){
+                if(functionReturnType == Void){
                     //Error 29: "ERROR(%d): Function '%s' at line %d is expecting no return value, but return has a value.\n"
                     printError(29, returnLinenum, functionLine, functionName, NULL, NULL, 0);
                 }
@@ -943,8 +947,10 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                              if(lhs != NULL && rhs != NULL){
 
                                  if(lhs->subkind.decl == FuncK && rhs->subkind.decl == FuncK && !lhs->isIO && !rhs->isIO){
+                                     if(t->child[0]->expType == Void && t->child[1]->expType == Void){
                                      printError(3, t->linenum, 0, t->attr.name, conExpType(leftExpected), conExpType(leftSide), 0);
                                      printError(4, t->linenum, 0, t->attr.name, conExpType(rightExpected), conExpType(rightSide), 0);
+                                     }
                                      //printf("Here %s %s %d %d %d\n", lhs->attr.name, rhs->attr.name, lhs->subkind.decl, rhs->subkind.decl, t->linenum);
                                  }
 
