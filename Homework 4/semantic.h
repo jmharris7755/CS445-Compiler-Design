@@ -1,3 +1,7 @@
+//Justin Harris 
+//CS445
+//Last Updated: 3-12-22
+
 #ifndef SEMANTIC 
 #define SEMANTIC
 

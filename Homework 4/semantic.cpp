@@ -1,8 +1,6 @@
- //Current Progress: testing allbad.c-
- //Need to get "wasUsed" warning working
- //Change error 5 to be 2 cases instead of 1: lhs and rhs
- //Make sure to remove print statements
- //check parse tree printouts!!!
+//Justin Harris 
+//CS445
+//Last Updated: 3-12-22
 //semantic.cpp
 #include <stdio.h>
 #include <string.h>

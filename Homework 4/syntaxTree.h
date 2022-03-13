@@ -1,6 +1,6 @@
 //Justin Harris 
 //CS445
-//Last Updated: 2-11-22
+//Last Updated: 3-12-22
 //syntaxTree.h
 //File containing types and function defs for building AST
 
@@ -76,8 +76,6 @@ typedef struct treeNode
     bool wasUsedErr; //track if wasUsedErr was already printed for t
     bool isIndexed; // track if an array is currently being indexed
     bool isIO;      //set to avoid IO parameter errors
-    //int memSize; //how much memory does it take up?
-    //int memOffset; //How are is ti offest from address 9999?
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
 
