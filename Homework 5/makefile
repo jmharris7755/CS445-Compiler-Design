@@ -3,7 +3,7 @@
 #Last Updated: 3-12-22
 #makefile executed to build my c-
 BIN = parser
-CC = g++
+CC = g++ -g
 
 FLES = syntaxTree.c symbolTable.cpp semantic.cpp IOinit.cpp yyerror.cpp
 SRCS = $(BIN).y  $(BIN).l

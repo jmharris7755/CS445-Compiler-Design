@@ -15,6 +15,7 @@
 
 int line=1;
 int numErrors;  //ERR err count
+extern int numWarnings;
 
 //helper function to convert lowercase keywords to uppercase
 void lowToUpper(char *str)
@@ -127,6 +128,7 @@ static int setValue(int linenum, int tokenClass, char *svalue)
             }
             //length longer than 3 and not nullChar or newLine - print error
             else{
+                numWarnings++;
                 printf("WARNING(%d): character is %d characters long and not a single character: \'%s\'.  The first char will be used.\n", line, (charLen-2), svalue);
                 yylval.tokenData->cvalue = svalue[1];
             }
@@ -250,7 +252,7 @@ DIGIT	[0-9]
 {DIGIT}+                        { return setValue(line, NUMCONST, yytext); }
 {LETTER}+({LETTER}|{DIGIT})*    { return setValue(line, ID, yytext); }
 
-\'([^\\n']|\\.)*\'              { return setValue(line, CHARCONST, yytext); }
+\'(\\.|[^\n\'])+\'              { return setValue(line, CHARCONST, yytext); }
 \"([^\\\n"]|\\.)*\"             { return setValue(line, STRINGCONST, yytext); }
 
 "++"                            { return setValue(line, INC, yytext); }
@@ -282,5 +284,6 @@ DIGIT	[0-9]
 "/"                             { return setValue(line, DIVIDE, yytext); }
 "?"                             { return setValue(line, QMARK, yytext); }        
 
+\'\'                            { printf("ERROR(%d): Empty character ''. Characters ignored.\n", line); numErrors++; }
 .                               { printf("ERROR(%d): Invalid or misplaced input character: \'%c\'. Character Ignored.\n", line, yytext[0]); numErrors++;}
 %%

@@ -77,27 +77,41 @@ decl                :       varDecl                                             
                     ;
 
 varDecl             :       typeSpec varDeclList SEMICOLON                      { $$ = $2; 
-                                                                                  convertSiblingType($$, $1); yyerrok; }
-                    |       error varDeclList SEMICOLON                         { $$ = NULL; yyerrok; }
-                    |       typeSpec error SEMICOLON                            { $$ = NULL; yyerrok; }
+                                                                                  convertSiblingType($$, $1); 
+                                                                                  yyerrok; }
+
+                    |       error varDeclList SEMICOLON                         { $$ = NULL; 
+                                                                                  yyerrok; }
+                    |       typeSpec error SEMICOLON                            { $$ = NULL; 
+                                                                                  yyerrok; }
                     ;
 
 scopedVarDecl       :       STATIC typeSpec varDeclList SEMICOLON               {$$ = $3; $$->isStatic = true; 
-                                                                                  convertSiblingType($$, $2); yyerrok; }
+                                                                                  convertSiblingType($$, $2); 
+                                                                                  yyerrok; }
 
                     |       typeSpec varDeclList SEMICOLON                      { $$ = $2; 
-                                                                                  convertSiblingType($$, $1); yyerrok; }
+                                                                                  convertSiblingType($$, $1); 
+                                                                                  yyerrok; }
                     ;
 
-varDeclList         :       varDeclList COMMA varDeclInit                       { $$ = addaSibling($1, $3); yyerrok; }
-                    |       varDeclInit                                         { $$ = $1; }
+varDeclList         :       varDeclList COMMA varDeclInit                       { $$ = addaSibling($1, $3); 
+                                                                                  yyerrok; }
+
                     |       varDeclList COMMA error                             { $$ = NULL; }
+                    |       varDeclInit                                         { $$ = $1; }
                     |       error                                               { $$ = NULL; }
                     ;
 
 varDeclInit         :       varDeclId                                           { $$ = $1; }
-                    |       varDeclId COLON simpleExp                           { $$ = $1; $$->child[0] = $3; }
-                    |       error COLON simpleExp                               { $$ = NULL; yyerrok; }
+
+                    |       varDeclId COLON simpleExp                           { $$ = $1; 
+                                                                                  if($1 != NULL){
+                                                                                      $$->child[0] = $3;
+                                                                                    } }
+
+                    |       error COLON simpleExp                               { $$ = NULL; 
+                                                                                  yyerrok; }
                     ;
                 
 varDeclId           :       ID                                                  { $$ = newDeclNode(VarK, $1); $$->attr.name = $1->tokenStrInput; } 
@@ -106,7 +120,8 @@ varDeclId           :       ID                                                  
                                                                                   $$->isArray = true;
                                                                                   $$->thisTokenData = $1; $$->expType = UndefinedType;}
                     |       ID LBRACKET error                                   { $$ = NULL; }
-                    |       error RBRACKET                                      { $$ = NULL; yyerrok;}
+                    |       error RBRACKET                                      { $$ = NULL; 
+                                                                                  yyerrok;}
                     ;
 
 typeSpec            :       BOOL                                                { $$ = Boolean; }
@@ -141,13 +156,16 @@ parms               :       parmList                                            
 
 parmList            :       parmList SEMICOLON parmTypeList                     { $$ = addaSibling($1, $3);}  //declaring multiple arguments in a function decl
                     |       parmTypeList                                        { $$ = $1 ; }
+                    |       parmList SEMICOLON error                            { $$ = NULL; }
+                    |       error                                               { $$ = NULL; }
                     ;
 
 parmTypeList        :       typeSpec parmIdList                                 { $$ = $2; convertSiblingType($$, $1); }
                     |       typeSpec error                                      { $$ = NULL; }
                     ;
 
-parmIdList          :       parmIdList COMMA parmId                             { $$ = addaSibling($1, $3); }
+parmIdList          :       parmIdList COMMA parmId                             { $$ = addaSibling($1, $3); 
+                                                                                  yyerrok; }
                     |       parmId                                              { $$ = $1; }
                     |       parmIdList COMMA error                              { $$ = NULL; }
                     |       error                                               { $$ = NULL; }
@@ -166,7 +184,8 @@ stmt                :       matchedif                                           
 
 expStmt             :       exp SEMICOLON                                       { $$ = $1; }
                     |       SEMICOLON                                           { $$ = NULL; }
-                    |       error SEMICOLON                                     { $$ = NULL; yyerrok; }
+                    |       error SEMICOLON                                     { $$ = NULL; 
+                                                                                  yyerrok; }
                     ;
 
 compoundStmt        :       START localDecls stmtList STOP                      { $$ = newStmtNode(CompoundK, $1);
@@ -190,10 +209,18 @@ matchedif           :       endStmt                                             
                                                                                   $$->child[1] = $4;
                                                                                   $$->child[2] = $6;}
 
+                    |       IF error                                             { $$ = NULL; }
+                    |       IF error ELSE matchedif                              { $$ = NULL; yyerrok; }
+                    |       IF error THEN matchedif ELSE matchedif               { $$ = NULL; yyerrok; }
+
                     |       WHILE simpleExp DO matchedif                        { $$ = newStmtNode(WhileK, $1);
                                                                                   $$->attr.name = $1->tokenStrInput;
                                                                                   $$->child[0] = $2;
                                                                                   $$->child[1] = $4;}
+
+                    |       WHILE error DO matchedif                             { $$ = NULL; 
+                                                                                   yyerrok; }
+                    |       WHILE error                                          { $$ = NULL; }
 
                     |       FOR ID ASGN iterRange DO matchedif                  { $$ = newStmtNode(ForK, $1);
                                                                                   $$->child[0] = newDeclNode(VarK, $2);
@@ -202,11 +229,6 @@ matchedif           :       endStmt                                             
                                                                                   $$->child[1] = $4;
                                                                                   $$->child[2] = $6;}
 
-                    |       IF error                                             { $$ = NULL; }
-                    |       IF error ELSE matchedif                              { $$ = NULL; yyerrok; }
-                    |       IF error THEN matchedif ELSE matchedif               { $$ = NULL; yyerrok; }
-                    |       WHILE error DO matchedif                             { $$ = NULL; yyerrok; }
-                    |       WHILE error                                          { $$ = NULL; }
                     |       FOR ID ASGN error DO matchedif                       { $$ = NULL; yyerrok; }
                     |       FOR error                                            { $$ = NULL; }
                     ;
@@ -216,10 +238,16 @@ unmatchedif         :       IF simpleExp THEN matchedif ELSE unmatchedif        
                                                                                   $$->child[1] = $4;
                                                                                   $$->child[2] = $6;}
 
+                    |       IF error THEN matchedif ELSE unmatchedif            { $$ = NULL; 
+                                                                                  yyerrok; }
+
                     |       WHILE simpleExp DO unmatchedif                      { $$ = newStmtNode(WhileK, $1);
                                                                                   $$->attr.name = $1->tokenStrInput;
                                                                                   $$->child[0] = $2;
                                                                                   $$->child[1] = $4;}
+
+                    |       WHILE error DO unmatchedif                          { $$ = NULL; 
+                                                                                  yyerrok; }
 
                     |       FOR ID ASGN iterRange DO unmatchedif                { $$ = newStmtNode(ForK, $1);
                                                                                   $$->child[0] = newDeclNode(VarK, $2);
@@ -228,12 +256,14 @@ unmatchedif         :       IF simpleExp THEN matchedif ELSE unmatchedif        
                                                                                   $$->child[1] = $4;
                                                                                   $$->child[2] = $6;}
 
+                    |       FOR ID ASGN error DO unmatchedif                    { $$ = NULL;
+                                                                                  yyerrok; }
+
                     |       IF simpleExp THEN stmt                              { $$ = newStmtNode(IfK, $1);
                                                                                   $$->child[0] = $2;
                                                                                   $$->child[1] = $4;}
 
-                    |       IF error THEN stmt                                  { $$ = NULL; yyerrok; }
-                    |       IF error THEN matchedif ELSE unmatchedif            { $$ = NULL; yyerrok; }
+                    |       IF error THEN matchedif                             { $$ = NULL; yyerrok; }
                     ;
 
 endStmt             :       expStmt                                             { $$ = $1; }
@@ -252,7 +282,8 @@ iterRange           :       simpleExp TO simpleExp                              
                                                                                   $$->child[2] = $5;}
 
                     |       simpleExp TO error                                  { $$ = NULL; }
-                    |       error BY error                                      { $$ = NULL; yyerrok; }
+                    |       error BY error                                      { $$ = NULL; 
+                                                                                  yyerrok; }
                     |       simpleExp TO simpleExp BY error                     { $$ = NULL; }
                     ;
 
@@ -265,7 +296,8 @@ returnStmt          :       RETURN SEMICOLON                                    
                                                                                   $$->child[0] = $2;
                                                                                   yyerrok; }
 
-                    |       RETURN error SEMICOLON                              { $$ = NULL; yyerrok; }
+                    |       RETURN error SEMICOLON                              { $$ = NULL; 
+                                                                                  yyerrok; }
                     ;
 
 breakStmt           :       BREAK SEMICOLON                                     { $$ = newStmtNode(BreakK, $1);
@@ -333,6 +365,8 @@ unaryRelExp         :       NOT unaryRelExp                                     
 relExp              :       sumExp relop sumExp                                 { $$  = $2;
                                                                                   $$->child[0] = $1;
                                                                                   $$->child[1] = $3; }
+
+                    |       sumExp relop error                                  { $$ = NULL; } 
 
                     |       sumExp                                              { $$ = $1 ;}
                     ;
@@ -548,10 +582,10 @@ int main(int argc, char *argv[])
     initErrorProcessing();
     yyparse();
 
-    if(printAST && !TYPES){
+    if(printAST && !TYPES && numErrors == 0){
         printTree(ast, 0, TYPES);
     }
-    else if(printAST && TYPES){
+    else if(printAST && TYPES && numErrors == 0){
         setupIO();
         semanticAnalysis(ast, numErrors, numWarnings);
         //COMMENTED OUT THIS IF STATEMENT FOR TESTING ----- CHANGE BACK***********************
