@@ -8,6 +8,7 @@
 #include "syntaxTree.h"
 #include "semantic.h"
 #include "IOinit.h"
+#include "yyerror.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,11 +28,11 @@ bool TYPES = false;
 extern SymbolTable symbolTable;
 
 #define YYERROR_VERBOSE
-void yyerror(const char *msg)
+/*void yyerror(const char *msg)
 {
     printf("ERROR(%d): %s\n", line, msg);
     numErrors++;
-}
+}*/
 
 %}
 
@@ -76,24 +77,27 @@ decl                :       varDecl                                             
                     ;
 
 varDecl             :       typeSpec varDeclList SEMICOLON                      { $$ = $2; 
-                                                                                  convertSiblingType($$, $1); }
+                                                                                  convertSiblingType($$, $1); yyerrok; }
                     |       error varDeclList SEMICOLON                         { $$ = NULL; yyerrok; }
                     |       typeSpec error SEMICOLON                            { $$ = NULL; yyerrok; }
                     ;
 
 scopedVarDecl       :       STATIC typeSpec varDeclList SEMICOLON               {$$ = $3; $$->isStatic = true; 
-                                                                                  convertSiblingType($$, $2);}
+                                                                                  convertSiblingType($$, $2); yyerrok; }
 
                     |       typeSpec varDeclList SEMICOLON                      { $$ = $2; 
-                                                                                  convertSiblingType($$, $1); }
+                                                                                  convertSiblingType($$, $1); yyerrok; }
                     ;
 
-varDeclList         :       varDeclList COMMA varDeclInit                       { $$ = addaSibling($1, $3);}
+varDeclList         :       varDeclList COMMA varDeclInit                       { $$ = addaSibling($1, $3); yyerrok; }
                     |       varDeclInit                                         { $$ = $1; }
+                    |       varDeclList COMMA error                             { $$ = NULL; }
+                    |       error                                               { $$ = NULL; }
                     ;
 
 varDeclInit         :       varDeclId                                           { $$ = $1; }
                     |       varDeclId COLON simpleExp                           { $$ = $1; $$->child[0] = $3; }
+                    |       error COLON simpleExp                               { $$ = NULL; yyerrok; }
                     ;
                 
 varDeclId           :       ID                                                  { $$ = newDeclNode(VarK, $1); $$->attr.name = $1->tokenStrInput; } 
@@ -101,6 +105,8 @@ varDeclId           :       ID                                                  
                                                                                   $$->attr.name = $1->tokenStrInput;
                                                                                   $$->isArray = true;
                                                                                   $$->thisTokenData = $1; $$->expType = UndefinedType;}
+                    |       ID LBRACKET error                                   { $$ = NULL; }
+                    |       error RBRACKET                                      { $$ = NULL; yyerrok;}
                     ;
 
 typeSpec            :       BOOL                                                { $$ = Boolean; }
@@ -115,12 +121,18 @@ funDecl             :       typeSpec ID LPAREN parms RPAREN compoundStmt        
                                                                                   $$->child[0] = $4;
                                                                                   $$->child[1] = $6; }
 
+
                     |       ID LPAREN parms RPAREN compoundStmt                 { $$ = newDeclNode(FuncK, $1);
                                                                                   $$->attr.name = strdup($1->tokenStrInput);
                                                                                   //$$->expType = $1;
                                                                                   $$->thisTokenData = $1;
                                                                                   $$->child[0] = $3;
-                                                                                  $$->child[1] = $5; }  
+                                                                                  $$->child[1] = $5; }
+
+                    |       typeSpec error                                      { $$ = NULL; }
+                    |       typeSpec ID LPAREN error                            { $$ = NULL; }
+                    |       ID LPAREN error                                     { $$ = NULL; }
+                    |       ID LPAREN parms RPAREN error                        { $$ = NULL; }  
                     ;
 
 parms               :       parmList                                            { $$ = $1 ; }
@@ -132,10 +144,13 @@ parmList            :       parmList SEMICOLON parmTypeList                     
                     ;
 
 parmTypeList        :       typeSpec parmIdList                                 { $$ = $2; convertSiblingType($$, $1); }
+                    |       typeSpec error                                      { $$ = NULL; }
                     ;
 
 parmIdList          :       parmIdList COMMA parmId                             { $$ = addaSibling($1, $3); }
                     |       parmId                                              { $$ = $1; }
+                    |       parmIdList COMMA error                              { $$ = NULL; }
+                    |       error                                               { $$ = NULL; }
                     ;
 
 parmId              :       ID                                                  { $$ = newDeclNode(ParamK, $1);$$->attr.name = strdup($1->tokenStrInput); }
@@ -151,11 +166,13 @@ stmt                :       matchedif                                           
 
 expStmt             :       exp SEMICOLON                                       { $$ = $1; }
                     |       SEMICOLON                                           { $$ = NULL; }
+                    |       error SEMICOLON                                     { $$ = NULL; yyerrok; }
                     ;
 
 compoundStmt        :       START localDecls stmtList STOP                      { $$ = newStmtNode(CompoundK, $1);
                                                                                   $$->child[0] = $2;
-                                                                                  $$->child[1] = $3; }
+                                                                                  $$->child[1] = $3; 
+                                                                                  yyerrok; }
                     ;
 
 localDecls          :       localDecls scopedVarDecl                            { $$ = addaSibling($1, $2); }
@@ -184,6 +201,14 @@ matchedif           :       endStmt                                             
                                                                                   $$->attr.name = $3->tokenStrInput;
                                                                                   $$->child[1] = $4;
                                                                                   $$->child[2] = $6;}
+
+                    |       IF error                                             { $$ = NULL; }
+                    |       IF error ELSE matchedif                              { $$ = NULL; yyerrok; }
+                    |       IF error THEN matchedif ELSE matchedif               { $$ = NULL; yyerrok; }
+                    |       WHILE error DO matchedif                             { $$ = NULL; yyerrok; }
+                    |       WHILE error                                          { $$ = NULL; }
+                    |       FOR ID ASGN error DO matchedif                       { $$ = NULL; yyerrok; }
+                    |       FOR error                                            { $$ = NULL; }
                     ;
 
 unmatchedif         :       IF simpleExp THEN matchedif ELSE unmatchedif        { $$ = newStmtNode(IfK, $1);
@@ -206,6 +231,9 @@ unmatchedif         :       IF simpleExp THEN matchedif ELSE unmatchedif        
                     |       IF simpleExp THEN stmt                              { $$ = newStmtNode(IfK, $1);
                                                                                   $$->child[0] = $2;
                                                                                   $$->child[1] = $4;}
+
+                    |       IF error THEN stmt                                  { $$ = NULL; yyerrok; }
+                    |       IF error THEN matchedif ELSE unmatchedif            { $$ = NULL; yyerrok; }
                     ;
 
 endStmt             :       expStmt                                             { $$ = $1; }
@@ -222,6 +250,10 @@ iterRange           :       simpleExp TO simpleExp                              
                                                                                   $$->child[0] = $1;
                                                                                   $$->child[1] = $3;
                                                                                   $$->child[2] = $5;}
+
+                    |       simpleExp TO error                                  { $$ = NULL; }
+                    |       error BY error                                      { $$ = NULL; yyerrok; }
+                    |       simpleExp TO simpleExp BY error                     { $$ = NULL; }
                     ;
 
 returnStmt          :       RETURN SEMICOLON                                    { $$ = newStmtNode(ReturnK, $1);
@@ -230,7 +262,10 @@ returnStmt          :       RETURN SEMICOLON                                    
                     |       RETURN exp SEMICOLON                                { $$ = newStmtNode(ReturnK, $1); 
                                                                                   $$->attr.name = $1->tokenStrInput; 
                                                                                   $$->expType = $2->expType;
-                                                                                  $$->child[0] = $2;}
+                                                                                  $$->child[0] = $2;
+                                                                                  yyerrok; }
+
+                    |       RETURN error SEMICOLON                              { $$ = NULL; yyerrok; }
                     ;
 
 breakStmt           :       BREAK SEMICOLON                                     { $$ = newStmtNode(BreakK, $1);
@@ -252,6 +287,11 @@ exp                 :       mutable assignop exp                                
                                                                                   $$->child[0] = $1; }
 
                     |       simpleExp                                           { $$ = $1; }
+                    
+                    |       error assignop exp                                  { $$ = NULL; yyerrok; }
+                    |       mutable assignop error                              { $$ = NULL; }
+                    |       error INC                                           { $$ = NULL; yyerrok; }
+                    |       error DEC                                           { $$ = NULL; yyerrok; }
                     ;
 
 assignop            :       ASGN                                                { $$ = newExpNode(AssignK, $1); $$->attr.name = $1->tokenStrInput;}
@@ -268,6 +308,7 @@ simpleExp           :       simpleExp OR andExp                                 
                                                                                   $$->child[1] = $3;}
 
                     |       andExp                                              { $$ = $1; }
+                    |       simpleExp OR error                                  { $$ = NULL; }
                     ;
 
 andExp              :       andExp AND unaryRelExp                              { $$ = newExpNode(OpK, $2);
@@ -277,6 +318,7 @@ andExp              :       andExp AND unaryRelExp                              
                                                                                   $$->child[1] = $3;}
 
                     |       unaryRelExp                                         { $$ = $1; }
+                    |       andExp AND error                                    { $$ = NULL; }
                     ;
 
 unaryRelExp         :       NOT unaryRelExp                                     { $$ = newExpNode(OpK, $1);
@@ -285,6 +327,7 @@ unaryRelExp         :       NOT unaryRelExp                                     
                                                                                   $$->child[0] = $2;}
 
                     |       relExp                                              { $$ = $1; }
+                    |       NOT error                                           { $$ = NULL; }
                     ;
 
 relExp              :       sumExp relop sumExp                                 { $$  = $2;
@@ -324,6 +367,7 @@ sumExp              :       sumExp sumop mulExp                                 
                                                                                   $$->child[1] = $3; }
 
                     |       mulExp                                              { $$ = $1; }
+                    |       sumExp sumop error                                  { $$ = NULL; }
                     ;
 
 sumop               :       PLUS                                                { $$ = newExpNode(OpK, $1) ;
@@ -340,6 +384,7 @@ mulExp              :       mulExp mulop unaryExp                               
                                                                                   $$->child[1] = $3; }
 
                     |       unaryExp                                            { $$ = $1; }
+                    |       mulExp mulop error                                  { $$ = NULL; }
                     ;
 
 mulop               :       MULT                                                { $$ = newExpNode(OpK, $1) ;
@@ -358,7 +403,8 @@ mulop               :       MULT                                                
 unaryExp            :       unaryop unaryExp                                    { $$  = $1;
                                                                                   $$->child[0] = $2; }
 
-                    |       factor                                            { $$ = $1; }
+                    |       factor                                              { $$ = $1; }
+                    |       unaryop error                                       { $$ = NULL; }
                     ;
 
 unaryop             :       MINUS                                               { $$ = newExpNode(OpK, $1) ;
@@ -389,22 +435,26 @@ mutable             :       ID                                                  
                                                                                   $$->child[1] = $3; }
                     ;
 
-immutable           :       LPAREN exp RPAREN                                   { $$ = $2; }
+immutable           :       LPAREN exp RPAREN                                   { $$ = $2; yyerrok; }
                     |       call                                                { $$ = $1; }
                     |       constant                                            { $$ = $1; }
+                    |       LPAREN error                                        { $$ = NULL; }
                     ;
 
 call                :       ID LPAREN args RPAREN                               { $$ = newExpNode(CallK, $1);
                                                                                   $$->attr.name = strdup($1->tokenStrInput);
                                                                                   $$->child[0] = $3;}
+
+                    |       error LPAREN                                        { $$ = NULL; yyerrok; }
                     ;
 
 args                :       argList                                             { $$ = $1; }
                     |       %empty                                              { $$ = NULL; }
                     ;
 
-argList             :       argList COMMA exp                                   {$$ = addaSibling($1, $3); }
+argList             :       argList COMMA exp                                   { $$ = addaSibling($1, $3); yyerrok; }
                     |       exp                                                 { $$ = $1; }
+                    |       argList COMMA error                                 { $$ = NULL; }
                     ;
 
 constant            :       NUMCONST                                            { $$ = newExpNode(ConstantK, $1);
@@ -495,6 +545,7 @@ int main(int argc, char *argv[])
         }
     }
 
+    initErrorProcessing();
     yyparse();
 
     if(printAST && !TYPES){
