@@ -2758,7 +2758,7 @@ int main(int argc, char *argv[])
     numErrors = 0;
     numWarnings = 0;
 
-    while((selOption = getopt(argc, argv, "dDpPh")) != -1){
+    while((selOption = getopt(argc, argv, "dDpPMh")) != -1){
 
         switch(selOption){
 
