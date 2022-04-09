@@ -36,6 +36,7 @@ void setupIO(){
 
    ExpType IOexpType[] = {Void, Void, Void, Integer, Boolean, Char, Void};
    ExpType IOParamExpType[] = {Integer, Boolean, Char, Void, Void, Void, Void};
+   int IOmemSizes[] = {-3, -3, -3, -2, -2, -2, -2};
 
    //set up nodes
 
@@ -51,6 +52,8 @@ void setupIO(){
        newIONode->isInit = true;
        newIONode->wasUsed = true;
        newIONode->isIO = true;
+       newIONode->mSize = IOmemSizes[i];
+       newIONode->mOffset = 0;
 
        //insert into symbolTable
        symbolTable.insert(newIONode->attr.name, (TreeNode*) newIONode);
@@ -63,6 +66,8 @@ void setupIO(){
            dummyParam->linenum = -1;
            dummyParam->expType - IOParamExpType[i];
            newIONode->child[0] = dummyParam;
+           dummyParam->mSize = 1;
+           dummyParam->mOffset = -2;
        }
        else{
            newIONode->child[0] = NULL;

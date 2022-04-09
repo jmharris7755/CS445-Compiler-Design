@@ -38,6 +38,9 @@ int rangePos = 0;
 int returnLinenum;
 int functionLine;
 
+int loffset = 0;
+int goffset = 0;
+
 char *functionName;
 
 TreeNode *curFunc = NULL;
@@ -116,6 +119,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
     //check depth to determin if global scope
     if(symbolTable.depth() == 1){
         t->isGlobal = true;
+
     }
     else{
         t->isGlobal = false;
@@ -143,6 +147,10 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                 }
             }
             t->isInit = true;
+            //track memsize and offset
+            t->mSize = 1;
+            t->mOffset = loffset;
+            loffset--;
             //declared = NULL; //reset declared
   
             break;
@@ -258,9 +266,52 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                t->isDeclared = true;
            }
 
+           //memory calculations
+           //start with memory size
+           if(t->isArray){
+
+               t->mSize = t->arrLength + 1;
+           }
+           else{
+               t->mSize = 1;
+           }
+
+           //calc memory offsets -- start with global and static checks
+           if(t->isGlobal || t->isStatic){
+
+               //check for arrays
+               if(t->isArray){
+                   t->mOffset = goffset - 1;
+               }
+               else{
+                   t->mOffset = goffset;
+               }
+
+               //adjust global offset by memory size
+               goffset -= t->mSize;
+           }
+
+           //calculate local mem offsets
+           else{
+
+               //check for arrays
+               if(t->isArray){
+
+                   t->mOffset = loffset - 1;
+               }
+               else{
+                   t->mOffset = loffset;
+               }
+
+               //adjust local offset by memory size
+               loffset -= t->mSize;
+           }
+
            break;
 
         case FuncK:
+            loffset = 0;
+            loffset -= 2;
             //set t to current function variable
             curFunc = t;
             //printf("funcK check: %s %d\n", t->attr.name, t->linenum);
@@ -325,6 +376,18 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
            //printf("funcK left check: %s %d\n", t->attr.name, t->linenum);
             //reset current function
             curFunc = NULL;
+
+            t->mSize = 0;
+            TreeNode* child0 = t->child[0];
+
+            while(child0 != NULL){
+
+                t->mSize--;
+                child0 = child0->sibling;
+            }
+
+            t->mSize -= 2;
+            t->mOffset = 0;
 
             break;
     }
@@ -603,6 +666,9 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
             //Enter a new scope, unless the flags are the beginning of a func decl
             bool keepCurScope = enterScope;
+
+            //track size of compound statement for offset
+            int cSize = loffset;
             if(keepCurScope){
                 
                 symbolTable.enter("compound");
@@ -620,6 +686,9 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 symbolTable.applyToAll(wasUsedWarn);
                 symbolTable.leave();
             }
+
+            t->mSize = loffset;
+            loffset = cSize;
 
             break;
 
@@ -1064,6 +1133,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     //set expType of t to declared expType
                     t->expType = valFound->expType;
                     t->isArray = valFound->isArray;
+                    t->mSize = valFound->mSize;
+                    t->mOffset = valFound->mOffset;
 
                     //check for int at position 1 of for loop
                     if(t->expType != Integer && rangePos >= 1)
@@ -1165,6 +1236,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     t->isArray = valFound->isArray;
                     t->isGlobal = valFound->isGlobal;
                     t->isStatic = valFound->isStatic;
+                    t->mSize = valFound->mSize;
+                    t->mOffset = valFound->mOffset;
 
                     //not used if in Range and rule out FuncK
                     //funcK should be considered used only in CallK
@@ -1223,6 +1296,8 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 t->isArray = funcFound->isArray;
                 t->isGlobal = funcFound->isGlobal;
                 t->isStatic = funcFound->isStatic;
+                t->mSize = funcFound->mSize;
+                t->mOffset = funcFound->mOffset;
                 funcFound->wasUsed = true;
 
                 //Error: is a simple variable and cannot be used as a call

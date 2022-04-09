@@ -24,6 +24,8 @@ extern int numErrors;  // ERR err count
 int numWarnings; //warning count
 static TreeNode *ast;
 bool TYPES = false;
+bool showOffsets = false;
+bool opM;
 
 extern SymbolTable symbolTable;
 
@@ -118,6 +120,7 @@ varDeclId           :       ID                                                  
                     |       ID LBRACKET NUMCONST RBRACKET                       { $$ = newDeclNode(VarK, $1); 
                                                                                   $$->attr.name = $1->tokenStrInput;
                                                                                   $$->isArray = true;
+                                                                                  $$->arrLength = $3->nvalue;
                                                                                   $$->thisTokenData = $1; $$->expType = UndefinedType;}
                     |       ID LBRACKET error                                   { $$ = NULL; }
                     |       error RBRACKET                                      { $$ = NULL; 
@@ -547,6 +550,14 @@ int main(int argc, char *argv[])
                 //print AST with type information
                 printAST = true;
                 TYPES = true;
+                break;
+
+            case 'M':
+                //case for showing mem / offset values
+                printAST = true;
+                TYPES = true;
+                opM = true;
+                showOffsets = true;
                 break;
 
             case 'h':

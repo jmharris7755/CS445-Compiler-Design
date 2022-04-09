@@ -76,6 +76,10 @@ typedef struct treeNode
     bool wasUsedErr; //track if wasUsedErr was already printed for t
     bool isIndexed; // track if an array is currently being indexed
     bool isIO;      //set to avoid IO parameter errors
+    int mSize;      //memory size for M option
+    int mOffset;    //memory offset for M option
+    VarKind memT;   //var type for M option
+    int arrLength; //track lenght of arry to calc mSize and mOffsets -- added to parser.y
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
 
@@ -99,6 +103,8 @@ void printSpaces(int);
 void printExp(ExpType t);
 
 void setInit(TreeNode*, TreeNode*);
+
+void printMemType(VarKind var);
 
 
 #endif

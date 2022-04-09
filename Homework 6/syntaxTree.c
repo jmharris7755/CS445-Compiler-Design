@@ -15,6 +15,8 @@
 
 int blankSpaces = 0;
 
+extern bool opM;
+
 TreeNode *newDeclNode(DeclKind kind, TokenData *tokenData){
     TreeNode *t = (TreeNode *)malloc(sizeof(TreeNode));
     int i;
@@ -31,6 +33,7 @@ TreeNode *newDeclNode(DeclKind kind, TokenData *tokenData){
             t->attr.name = strdup(tokenData->tokenStrInput);
             t->linenum = tokenData->linenum;
             t->expType = Void;
+            t->mSize = 1;
         }
     }
     return t;
@@ -52,6 +55,7 @@ TreeNode *newStmtNode(StmtKind kind, TokenData *tokenData){
             t->attr.name = strdup(tokenData->tokenStrInput);
             t->linenum = tokenData->linenum;
             t->expType = Void;
+            t->mSize = 1;
         }
     }
     return t;
@@ -72,6 +76,7 @@ TreeNode *newExpNode(ExpKind kind, TokenData *tokenData){
             t->subkind.exp = kind;
             t->linenum = tokenData->linenum;
             t->expType = Void;
+            t->mSize = 1;
         }
     }
     return t;
@@ -88,6 +93,7 @@ TreeNode *newDeclNodeIO(DeclKind kind){
         t->nodekind = DeclK;
         t->subkind.decl = kind;
         t->expType = Void;
+        t->mSize = 1;
     }
 
     return t;
@@ -171,6 +177,32 @@ void printExp(ExpType t){
     }
 }
 
+void printMemType(VarKind var){
+
+    switch(var){
+
+        case None:
+            printf("None");
+            break;
+
+        case Global:
+            printf("Global");
+            break;
+
+        case Local:
+            printf("Local");
+            break;
+
+        case LocalStatic:
+            printf("LocalStatic");
+            break;
+
+        case Parameter:
+            printf("Parameter");
+            break;
+    }
+}
+
 void printTree(TreeNode *t, int siblingCounter, bool w_typing){
     int i;
     int thisSibling = siblingCounter;
@@ -190,18 +222,42 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                     if(t->isArray == true){
                         printf("Var: %s is array of type ", t->attr.name);
                         printExp(t->expType);
+
+                        //display for M option
+                        if(opM){
+                            printf(" [mem: ");
+                            printMemType(t->memT);
+                            printf(" loc: %d size: %d", t->mOffset, t->mSize);
+                        }
+
                         printf(" [line: %d]\n", t->linenum);
                     }
                     else if(!TYPES){
                         if(t->isStatic == true){
                         printf("Var: %s of static type ", t->attr.name);
                         printExp(t->expType);
+
+                        //display for M option
+                        if(opM){
+                            printf(" [mem: ");
+                            printMemType(t->memT);
+                            printf(" loc: %d size: %d", t->mOffset, t->mSize);
+                        }
+
                         printf(" [line: %d]\n", t->linenum);
                         }
                     }
                     else{
                         printf("Var: %s of type ", t->attr.name);
                         printExp(t->expType);
+
+                        //display for M option
+                        if(opM){
+                            printf(" [mem: ");
+                            printMemType(t->memT);
+                            printf(" loc: %d size: %d", t->mOffset, t->mSize);
+                        }
+
                         printf(" [line: %d]\n", t->linenum);
                     }
                     break;
@@ -209,18 +265,42 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                 case FuncK:
                     printf("Func: %s returns type ", t->attr.name);
                     printExp(t->expType);
-                        printf(" [line: %d]\n", t->linenum);
+
+                    //display for M option
+                    if(opM){
+                        printf(" [mem: ");
+                        printMemType(t->memT);
+                        printf(" loc: %d size: %d", t->mOffset, t->mSize);
+                    }
+
+                    printf(" [line: %d]\n", t->linenum);
                     break;
 
                 case ParamK:
                     if(t->isArray){
                         printf("Parm: %s is array of type ", t->attr.name);
                         printExp(t->expType);
+
+                        //display for M option
+                        if(opM){
+                            printf(" [mem: ");
+                            printMemType(t->memT);
+                            printf(" loc: %d size: %d", t->mOffset, t->mSize);
+                        }
+
                         printf(" [line: %d]\n", t->linenum);
                     }
                     else{
                         printf("Parm: %s of type ", t->attr.name);
                         printExp(t->expType);
+
+                        //display for M option
+                        if(opM){
+                            printf(" [mem: ");
+                            printMemType(t->memT);
+                            printf(" loc: %d size: %d", t->mOffset, t->mSize);
+                        }
+
                         printf(" [line: %d]\n", t->linenum);
                     }
                     break;
@@ -246,11 +326,29 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                 break;
 
                 case ForK:
-                    printf("For [line: %d]\n", t->linenum);
+                    printf("For ");
+
+                    //display for M option
+                    if(opM){
+                        printf("[mem: ");
+                        printMemType(t->memT);
+                        printf(" loc: %d size: %d", t->mOffset, t->mSize);
+                    }
+
+                    printf(" [line: %d]\n", t->linenum);
                 break;
 
                 case CompoundK:
-                    printf("Compound [line: %d]\n", t->linenum);
+                    printf("Compound ");
+
+                    //display for M option
+                    if(opM){
+                        printf("[mem: ");
+                        printMemType(t->memT);
+                        printf(" loc: %d size: %d", t->mOffset, t->mSize);
+                    }
+
+                    printf(" [line: %d]\n", t->linenum);
                 break;
 
                 case ReturnK:
@@ -388,6 +486,16 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                         printf(" of type char");
                     }
 
+                    if(t->isArray){
+
+                    //display for M option
+                        if(opM){
+                            printf(" [mem: ");
+                            printMemType(t->memT);
+                            printf(" loc: %d size: %d", t->mOffset, t->mSize);
+                        }
+                    }
+
                     printf(" [line: %d]\n", t->linenum);
                 }
 
@@ -415,6 +523,13 @@ void printTree(TreeNode *t, int siblingCounter, bool w_typing){
                             printf(" of type ");
                             printExp(t->expType);
                         }
+                    }
+
+                    //display for M option
+                    if(opM){
+                        printf(" [mem: ");
+                        printMemType(t->memT);
+                        printf(" loc: %d size: %d", t->mOffset, t->mSize);
                     }
 
                     printf(" [line: %d]\n", t->linenum);
