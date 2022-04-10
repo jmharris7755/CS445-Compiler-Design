@@ -1,6 +1,6 @@
 //Justin Harris 
 //CS445
-//Last Updated: 2-11-22
+//Last Updated: 4-09-22
 //syntaxTree.c
 //File containing function logic from syntaxTree.h
 //builds the AST
