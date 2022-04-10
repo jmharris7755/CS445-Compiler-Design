@@ -37,7 +37,7 @@ int loopDepth = 1;
 int rangePos = 0;
 int returnLinenum;
 int functionLine;
-int forSize;
+//int forSize;
 
 int loffset = 0;
 int goffset = 0;
@@ -187,7 +187,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
            if(t->sibling != NULL){
                 //printf("VarK t has a sibling. %s\n", t->sibling->attr.name);
                 //also need to check if they were declared on the same line
-                if(t->isStatic && t->linenum == t->sibling->linenum){
+                if(t->isStatic && t->linenum == t->sibling->linenum && t->expType == t->sibling->expType){
                     t->sibling->isStatic = t->isStatic;
                     
                     //check for globals, assign local static if not global
@@ -410,6 +410,8 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
 //Function to check statement nodes
 void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
+    int forSize;
+
     switch(t->subkind.stmt){
         case IfK:
             inLoop = true;
@@ -558,10 +560,10 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 //check for return assignment / op "return x<-x"
                 else if(t->child[0]->child[0] != NULL){
                     if(t->child[0]->child[0]->isArray){
-                        //look for indexed arrays
-                        if(strcmp(t->child[0]->attr.name, "[")){
+                        //look for indexed arrays or returns with sizeof op
+                        if(strcmp(t->child[0]->attr.name, "[") && strcmp(t->child[0]->attr.name, "*")){
                             //cannot return array error
-                            //printf("Here %d\n", t->linenum);
+                            printf("Here %d\n", t->linenum);
                             printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
                         }
                     }
