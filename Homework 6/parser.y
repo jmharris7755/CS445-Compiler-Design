@@ -24,8 +24,10 @@ extern int numErrors;  // ERR err count
 int numWarnings; //warning count
 static TreeNode *ast;
 bool TYPES = false;
-bool showOffsets = false;
+bool printOffset = false;
 bool opM;
+
+extern int goffset;
 
 extern SymbolTable symbolTable;
 
@@ -506,6 +508,7 @@ constant            :       NUMCONST                                            
                     |       STRINGCONST                                         { $$ = newExpNode(ConstantK, $1);
                                                                                   $$->attr.string = strdup($1->svalue);
                                                                                   $$->isArray = true;
+                                                                                  $$->arrLength = $1->strLength;
                                                                                   $$->expType = CharInt; }
 
                     |       BOOLCONST                                           { $$ = newExpNode(ConstantK, $1);
@@ -557,7 +560,7 @@ int main(int argc, char *argv[])
                 printAST = true;
                 TYPES = true;
                 opM = true;
-                showOffsets = true;
+                printOffset = true;
                 break;
 
             case 'h':
@@ -603,6 +606,11 @@ int main(int argc, char *argv[])
         if(numErrors < 1)
         {
             printTree(ast, 0, TYPES);
+
+            //print offset for end of global space if option 'M'
+            if(printOffset){
+                printf("Offset for end of global space: %d\n", goffset);
+            }
         }
     }
 

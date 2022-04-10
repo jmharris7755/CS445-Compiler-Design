@@ -37,6 +37,7 @@ int loopDepth = 1;
 int rangePos = 0;
 int returnLinenum;
 int functionLine;
+int forSize;
 
 int loffset = 0;
 int goffset = 0;
@@ -117,11 +118,18 @@ void analyze(TreeNode *t, int& nErrors, int& nWarnings){
 //function to check declaration nodes
 void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
     //check depth to determin if global scope
+    //set memory type for option 'M' printouts. 
     if(symbolTable.depth() == 1){
         t->isGlobal = true;
+        t->memT = Global;
 
     }
+    else if(t->isStatic){
+        t->memT = LocalStatic;
+        t->isGlobal = false;
+    }
     else{
+        t->memT = Local;
         t->isGlobal = false;
     }
 
@@ -150,6 +158,7 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
             //track memsize and offset
             t->mSize = 1;
             t->mOffset = loffset;
+            t->memT = Parameter;
             loffset--;
             //declared = NULL; //reset declared
   
@@ -180,6 +189,11 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                 //also need to check if they were declared on the same line
                 if(t->isStatic && t->linenum == t->sibling->linenum){
                     t->sibling->isStatic = t->isStatic;
+                    
+                    //check for globals, assign local static if not global
+                    if(!t->isGlobal){
+                        t->memT = LocalStatic;
+                    }
                 //printf("VarK t isStatic: %d\n", t->isStatic);
                 }
             }
@@ -482,6 +496,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
             loopDepth++;
             symbolTable.enter(t->attr.name);
             enterScope = false;
+            forSize = loffset;
             
             for(int i = 0; i < MAXCHILDREN; i++){
                 if(t->child[i]){
@@ -505,6 +520,9 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 symbolTable.applyToAll(wasUsedWarn);
                 symbolTable.leave();
                 enterScope = true;
+                t->memT = None;
+                t->mSize = loffset;
+                loffset = forSize;
             //}
             break;
 
@@ -689,6 +707,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
 
             t->mSize = loffset;
             loffset = cSize;
+            t->memT = None;
 
             break;
 
@@ -1107,6 +1126,15 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     }
                    }
                }
+            
+            if(t->expType == CharInt){
+
+                t->memT = Global;
+                t->mOffset = goffset - 1;
+                t->mSize = t->arrLength + 1;
+                goffset -= t->mSize;
+            }
+
             break;
 
         case IdK:
@@ -1135,6 +1163,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     t->isArray = valFound->isArray;
                     t->mSize = valFound->mSize;
                     t->mOffset = valFound->mOffset;
+                    t->memT = valFound->memT;
 
                     //check for int at position 1 of for loop
                     if(t->expType != Integer && rangePos >= 1)
@@ -1238,6 +1267,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                     t->isStatic = valFound->isStatic;
                     t->mSize = valFound->mSize;
                     t->mOffset = valFound->mOffset;
+                    t->memT = valFound->memT;
 
                     //not used if in Range and rule out FuncK
                     //funcK should be considered used only in CallK
@@ -1298,6 +1328,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
                 t->isStatic = funcFound->isStatic;
                 t->mSize = funcFound->mSize;
                 t->mOffset = funcFound->mOffset;
+                t->memT = funcFound->memT;
                 funcFound->wasUsed = true;
 
                 //Error: is a simple variable and cannot be used as a call
@@ -1891,7 +1922,7 @@ void parameterErrors(TreeNode *funcFound, TreeNode *t, TreeNode *ffParm, TreeNod
     //if siblings are not null check for sibling -- doesn't show up when checking
     //for additonal children
     if(ffParm->sibling != NULL && tParm->sibling != NULL){
-    parameterErrors(funcFound, t, ffParm->sibling, tParm->sibling, paramCount);
+        parameterErrors(funcFound, t, ffParm->sibling, tParm->sibling, paramCount);
     }
 
 }
