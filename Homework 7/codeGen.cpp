@@ -1,6 +1,7 @@
 #include <string.h>
 #include "codeGen.h"
 #include "emitcode.h"
+#include "parser.tab.h"
 
 
 #define MAXCHILDREN 3
