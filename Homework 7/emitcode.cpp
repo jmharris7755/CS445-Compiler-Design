@@ -229,4 +229,3 @@ void backPatchAJumpToHere(char *cmd, int reg, int addr, char *comment)
     emitRMAbs(cmd, reg, currloc, comment);  // cmd = JZR, JNZ
     emitNewLoc(currloc);            // restore addr
 }
-
