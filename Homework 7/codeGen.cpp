@@ -32,7 +32,8 @@ void generateCode(TreeNode *t, char* infile){
 
     //emitAbout(infile);
     emitIO(t);
-    emitInput(t);
+    //emitInput(t);
+    emitStart(t);
     emitInit(t);
     fclose(code);
 
@@ -53,6 +54,10 @@ void emitInput(TreeNode* t){
         t = t->sibling;
         emitStart(t);
     }
+    /*while(t->sibling != NULL){
+        t = t->sibling;
+        emitStart(t);
+    }*/
 }
 
 //recursive function for emitting, mimic syntax tree set up
@@ -76,7 +81,9 @@ void emitStart(TreeNode* t){
             break;
         }
     }
-    emitStart(t->sibling);
+    if(t->sibling != NULL){
+        emitStart(t->sibling);
+    }
 }
 
 //emit code for nodekind Decl

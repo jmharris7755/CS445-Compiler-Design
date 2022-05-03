@@ -16,6 +16,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <getopt.h>
+#include <iostream>
+#include <fstream>
 
 
 extern int yylex();
@@ -533,6 +535,7 @@ int main(int argc, char *argv[])
     numWarnings = 0;
     char* outfile;
     extern int optind;
+    int options;
 
     while((selOption = getopt(argc, argv, "dDpPMh")) != -1){
 
@@ -549,6 +552,7 @@ int main(int argc, char *argv[])
             case 'p':
                 printAST = true;
                 TYPES = false;
+                options = 0;
                 break;
 
             case 'D':
@@ -559,6 +563,7 @@ int main(int argc, char *argv[])
                 //print AST with type information
                 printAST = true;
                 TYPES = true;
+                options = 1;
                 break;
 
             case 'M':
@@ -567,6 +572,7 @@ int main(int argc, char *argv[])
                 TYPES = true;
                 opM = true;
                 printOffset = true;
+                options = 1;
                 break;
 
             case 'h':
@@ -602,10 +608,10 @@ int main(int argc, char *argv[])
     initErrorProcessing();
     yyparse();
 
-    if(printAST && !TYPES && numErrors == 0){
+    if(printAST && options == 0 && numErrors == 0){
         printTree(ast, 0, TYPES);
     }
-    else if(printAST && TYPES && numErrors == 0){
+    else if(options == 1 && numErrors == 0){
         setupIO();
         semanticAnalysis(ast, numErrors, numWarnings);
         //COMMENTED OUT THIS IF STATEMENT FOR TESTING ----- CHANGE BACK***********************
