@@ -6,6 +6,7 @@
 //This file contains Bison Code
 #include "scanType.h" //TokenData type 
 #include "syntaxTree.h"
+#include "codeGen.h"
 #include "semantic.h"
 #include "IOinit.h"
 #include "yyerror.h"
@@ -30,6 +31,9 @@ bool opM;
 extern int goffset;
 
 extern SymbolTable symbolTable;
+
+extern FILE *code;
+FILE *fp;
 
 #define YYERROR_VERBOSE
 /*void yyerror(const char *msg)
@@ -527,6 +531,8 @@ int main(int argc, char *argv[])
     bool printAST = 0;
     numErrors = 0;
     numWarnings = 0;
+    char* outfile;
+    extern int optind;
 
     while((selOption = getopt(argc, argv, "dDpPMh")) != -1){
 
@@ -579,7 +585,7 @@ int main(int argc, char *argv[])
     }
 
 
-    if(argc >1){
+    if(argc > optind){
         if((yyin = fopen(argv[argc-1], "r"))) {
             // file open successful
         }
@@ -612,6 +618,24 @@ int main(int argc, char *argv[])
                 printf("Offset for end of global space: %d\n", goffset);
             }
         }
+    }
+
+    //codegen
+    if(numErrors == 0){
+
+        char* newFile;
+        int newFileLen;
+
+        std::string out = argv[optind];
+        newFileLen = strlen(argv[optind]);
+        newFile = (char*)malloc(strlen(argv[optind]) + 1);
+        strcpy(newFile, argv[optind]);
+        newFile[newFileLen - 2] = 't';
+        newFile[newFileLen - 1] = 'm';
+
+        setupIO();
+        generateCode(ast, newFile);
+
     }
 
     printf("Number of warnings: %d\n", numWarnings);

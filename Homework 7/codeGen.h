@@ -5,7 +5,7 @@
 #include "symbolTable.h"
 
 
-void generateCode(TreeNode *t, SymbolTable st, char* outfile, char* infile);
+void generateCode(TreeNode *t, char* infile);
 void emitAbout(char* infile);
 void emitIO(TreeNode *t);
 void emitInput(TreeNode *t);

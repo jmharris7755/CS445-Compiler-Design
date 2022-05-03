@@ -20,18 +20,16 @@ bool isUnary = true;
 int cpdSize = 0;
 int tmpIdx;
 
-void generateCode(TreeNode *t, SymbolTable st, char* outfile, char* infile){
+void generateCode(TreeNode *t, char* infile){
 
-    symbolTable = st;
+    code = fopen(infile, "w");
 
-    if(strcmp(outfile, "-") == 0){
-        code = stdout;
-    }
-    else{
-        code = fopen(outfile, "w");
-    }
+    emitComment((char*)"C- compiler version C-S21");
+    emitComment((char*)"Built: 4-22 - 5-22");
+    emitComment((char*)"Author: Justin Harris");
+    emitComment((char*)"File compiled: ", infile);
 
-    emitAbout(infile);
+    //emitAbout(infile);
     emitIO(t);
     emitInput(t);
     emitInit(t);
@@ -42,10 +40,10 @@ void generateCode(TreeNode *t, SymbolTable st, char* outfile, char* infile){
 //Emit info about compiler at beginning
 void emitAbout(char* infile){
 
-    emitComment("C- compiler version C-S21");
-    emitComment("Built: 4-22 - 5-22");
-    emitComment("Author: Justin Harris");
-    emitComment("File compiled: ", infile);
+    emitComment((char*)"C- compiler version C-S21");
+    emitComment((char*)"Built: 4-22 - 5-22");
+    emitComment((char*)"Author: Justin Harris");
+    emitComment((char*)"File compiled: ", infile);
     emitSkip(1);
 }
 
@@ -164,7 +162,7 @@ void emitDecl(TreeNode *t){
 
 void emitStmt(TreeNode* t){
 
-    int thenLoc, elseLoc, whileLoc, whileSkp, breakLoc, tmpBLoc;
+    int thenLoc, elseLoc, whileLoc, whileSkp, breakLoc, tmpBLoc, ldaLoc;
 
     switch(t->subkind.stmt){
 
@@ -196,7 +194,7 @@ void emitStmt(TreeNode* t){
 
             }
 
-            emitComment("END IF");
+            emitComment((char*)"END IF");
 
             break;
 
@@ -214,8 +212,8 @@ void emitStmt(TreeNode* t){
 
             emitComment((char*)("DO"));
             emitStart(t->child[1]);
-            emitRM("LDA", 7, whileLoc - emitSkip(0) - 1, 7, (char*)("go to the beginning of the loop"));
-            int ldaLoc = emitSkip(0);
+            emitRM((char*)"LDA", 7, whileLoc - emitSkip(0) - 1, 7, (char*)("go to the beginning of the loop"));
+            ldaLoc = emitSkip(0);
             backPatchAJumpToHere(whileSkp, (char *)("Jump past loop [backpatch]"));
             breakLoc = tmpBLoc;
             emitNewLoc(ldaLoc);
@@ -291,12 +289,14 @@ void emitExp(TreeNode *t){
 
     switch(t->subkind.exp){
 
+        //Look up assignment op
+        TreeNode* askOp;
+
         case AssignK:
 
             emitComment((char*)("ASSIGNMENT EXPRESSION"));
 
-            //Look up assignment op
-            TreeNode* askOp = (TreeNode*)symbolTable.lookup(t->attr.name);
+            askOp = (TreeNode*)symbolTable.lookup(t->attr.name);
 
             //check for standard assignment -- like syntaxTree
             if(strcmp(askOp->attr.name, "<-")){
@@ -441,10 +441,10 @@ void emitExp(TreeNode *t){
                 //move past index in use
                 tmpIdx--; 
 
-                emitRM("ST", 3, tmpIdx, 1, (char*)("Save the left side"));
+                emitRM((char*)"ST", 3, tmpIdx, 1, (char*)("Save the left side"));
                 emitStart(t->child[1]);
 
-                emitRM("LD", 4, tmpIdx, 1, (char*)("Load Left into 1"));
+                emitRM((char*)"LD", 4, tmpIdx, 1, (char*)("Load Left into 1"));
                 tmpIdx++;
 
                 if(!strcmp(t->attr.name, "AND")){
@@ -602,7 +602,7 @@ void emitExp(TreeNode *t){
             
                 int tmpIdx;
 
-                emitComment("CALL EXPRESSION");
+                emitComment((char*)("CALL EXPRESSION"));
 
                 //track param count and if call has params(children)
                 int pCount = 0;
@@ -764,7 +764,7 @@ void emitIO(TreeNode *t){
     emitSkip(1);
 	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
 	emitComment((char *)("FUNCTION input"));
-	TreeNode *curIO = (TreeNode*)symbolTable.lookup((char *) "input");
+	TreeNode *curIO = (TreeNode*)symbolTable.lookup((char *)("input"));
 	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
 	curIO->linenum = emitSkip(0)-1;
 	curIO->attr.name = (char *) "input";
@@ -777,7 +777,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
 
 	emitComment((char *)("FUNCTION output"));
-	TreeNode *curIO = (TreeNode*)symbolTable.lookup((char *) "output");
+	curIO = (TreeNode*)symbolTable.lookup((char *)("output"));
 	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
 	curIO->linenum = emitSkip(0)-1;
 	curIO->attr.name = (char *) "output";
@@ -790,7 +790,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
 
     emitComment((char *)("FUNCTION output"));
-	TreeNode *curIO = (TreeNode*)symbolTable.lookup((char *) "output");
+	curIO = (TreeNode*)symbolTable.lookup((char *)("output"));
 	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
 	curIO->linenum = emitSkip(0)-1;
 	curIO->attr.name = (char *) "output";
@@ -804,7 +804,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
 
     emitComment((char *)("FUNCTION inputb"));
-	curIO = (TreeNode*)symbolTable.lookup((char *) "inputb");
+	curIO = (TreeNode*)symbolTable.lookup((char *)("inputb"));
 	emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
 	curIO->linenum = emitSkip(0)-1;
 	curIO->attr.name = (char *) "inputb";
@@ -817,7 +817,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
 
 	emitComment((char *)("FUNCTION outputb"));
-	curIO = (TreeNode*)symbolTable.lookup((char *) "outputb");
+	curIO = (TreeNode*)symbolTable.lookup((char *)("outputb"));
 	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
 	curIO->linenum = emitSkip(0)-1;
 	curIO->attr.name = (char *) "outputb";
@@ -831,7 +831,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
 
 	emitComment((char *)("FUNCTION inputc"));
-	curIO = (TreeNode*)symbolTable.lookup((char *) "inputc");
+	curIO = (TreeNode*)symbolTable.lookup((char *)("inputc"));
 	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
 	curIO->linenum = emitSkip(0)-1;
 	curIO->attr.name = (char *) "inputc";
@@ -844,7 +844,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
 
 	emitComment((char *)("FUNCTION outputc"));
-	curIO = (TreeNode*)symbolTable.lookup((char *) "outputc");//
+	curIO = (TreeNode*)symbolTable.lookup((char *)("outputc"));
 	emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
 	curIO->linenum = emitSkip(0)-1;
 	curIO->attr.name = (char *) "outputc";
@@ -858,7 +858,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
 
 	emitComment((char *)("FUNCTION outnl"));
-	curIO = (TreeNode*)symbolTable.lookup((char *) "outnl");
+	curIO = (TreeNode*)symbolTable.lookup((char *)("outnl"));
 	emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
 	curIO->linenum = emitSkip(0)-1;
 	curIO->attr.name = (char *) "outnl";
