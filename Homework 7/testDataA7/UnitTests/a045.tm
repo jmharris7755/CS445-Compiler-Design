@@ -1,8 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  a045.c-
-* 
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/a045.tm
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
   1:     ST  3,-1(1)	Store return address 
@@ -71,28 +70,20 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
-* EXPRESSION
+* CALL EXPRESSION
 * CALL outputc
- 40:     ST  1,-2(1)	Store fp in ghost frame for outputc
-* TOFF dec: -3
-* TOFF dec: -4
+ 40:     ST  1,0(1)	1 Store fp in ghost frame for outputc
 * Param 1
- 41:    LDC  3,89(6)	Load char constant 
- 42:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+ 41:    LDC  3,16(6)	Load Character constant 
+ 42:     ST  3,-3(1)	Push parameter 
 * Param end outputc
- 43:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 43:    LDA  1,0(1)	Ghost frame becomes new active frame 
  44:    LDA  3,1(7)	Return address in ac 
  45:    JMP  7,-18(7)	CALL outputc
  46:    LDA  3,0(2)	Save the result in ac 
-* Call end outputc
-* TOFF set: -2
-* TOFF set: -2
+* CALL end outputc
 * END COMPOUND
 * Add standard closing in case there is no return statement
  47:    LDC  2,0(6)	Set return value to 0 
@@ -107,6 +98,6 @@
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
  53:    LDA  3,1(7)	Return address in ac 
- 54:    JMP  7,-16(7)	Jump to main 
+ 54:    JMP  7,-53(7)	Jump to main 
  55:   HALT  0,0,0	DONE! 
 * END INIT

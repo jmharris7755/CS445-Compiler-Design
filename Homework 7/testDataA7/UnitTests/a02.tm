@@ -1,8 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  a02.c-
-* 
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/a02.tm
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
   1:     ST  3,-1(1)	Store return address 
@@ -71,40 +70,29 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -3
-* Compound Body
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 40:     ST  1,-3(1)	Store fp in ghost frame for output
-* TOFF dec: -4
-* TOFF dec: -5
-* Param 1
+ 40:     ST  1,0(1)	2 Store fp in ghost frame for output
  41:    LDC  3,982(6)	Load integer constant 
- 42:     ST  3,-5(1)	Push parameter 
-* TOFF dec: -6
+ 42:     ST  3,-2(1)	Push parameter 
 * Param end output
- 43:    LDA  1,-3(1)	Ghost frame becomes new active frame 
+ 43:    LDA  1,0(1)	Ghost frame becomes new active frame 
  44:    LDA  3,1(7)	Return address in ac 
  45:    JMP  7,-40(7)	CALL output
  46:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -3
-* EXPRESSION
+* CALL end output
+* CALL EXPRESSION
 * CALL outnl
- 47:     ST  1,-3(1)	Store fp in ghost frame for outnl
-* TOFF dec: -4
-* TOFF dec: -5
+ 47:     ST  1,0(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
- 48:    LDA  1,-3(1)	Ghost frame becomes new active frame 
+ 48:    LDA  1,0(1)	Ghost frame becomes new active frame 
  49:    LDA  3,1(7)	Return address in ac 
  50:    JMP  7,-17(7)	CALL outnl
  51:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -3
-* TOFF set: -2
+* CALL end outnl
+* Compound Body
 * END COMPOUND
 * Add standard closing in case there is no return statement
  52:    LDC  2,0(6)	Set return value to 0 
@@ -119,6 +107,6 @@
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
  58:    LDA  3,1(7)	Return address in ac 
- 59:    JMP  7,-21(7)	Jump to main 
+ 59:    JMP  7,-58(7)	Jump to main 
  60:   HALT  0,0,0	DONE! 
 * END INIT

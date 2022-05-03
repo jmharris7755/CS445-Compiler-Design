@@ -50,14 +50,16 @@ void emitAbout(char* infile){
 }
 
 void emitInput(TreeNode* t){
-    for(int i = 0; i < 7; i++){
-        t = t->sibling;
+    /*for(int i = 0; i < 7; i++){
+        
+        if(t->sibling != NULL){
+            emitStart(t);
+        }
+    }*/
+    while(t->sibling != NULL){
+        //t = t->sibling;
         emitStart(t);
     }
-    /*while(t->sibling != NULL){
-        t = t->sibling;
-        emitStart(t);
-    }*/
 }
 
 //recursive function for emitting, mimic syntax tree set up
@@ -267,13 +269,18 @@ void emitStmt(TreeNode* t){
 
         case CompoundK:
 
-            cpdSize = t->mSize;
+            cpdSize = tempOffset;
             emitComment((char*)("COMPOUND"));
             for(int i = 0; i < MAXCHILDREN; i++){
-                if(t->child[i] != NULL){
+                
+                //maybe only t here instead of t->child[i]?
+                if(t != NULL){
                     emitStart(t->child[i]);
                 }
             }
+            emitComment((char*)("Compound Body"));
+            tempOffset = cpdSize;
+
             
             emitComment((char*)("END COMPOUND"));
             break;
@@ -498,13 +505,21 @@ void emitExp(TreeNode *t){
         case ConstantK:
 
             if(t->expType == Integer){
-                emitRM((char *)"LDC", 3, t->attr.value, 6,(char *)"Load integer constant");
+                emitRM((char *)"LDC", 3, t->attr.value, 6,(char *)"Load Integer constant");
             }
+            //printing out weird values when using t->attr.value in Boolean
+            //trying to fix by manually setting
             else if(t->expType == Boolean){
-                emitRM((char *)"LDC", 3, t->attr.value, 6,(char *)"Load boolean constant");
+
+                if(!strcmp(t->attr.name, "true")){
+                    emitRM((char *)"LDC", 3, 1, 6,(char *)"Load Boolean constant");
+                }
+                else{
+                   emitRM((char *)"LDC", 3, 0, 6,(char *)"Load Boolean constant"); 
+                }
             }
             else if(t->expType == Char){
-                emitRM((char *)"LDC", 3, t->attr.cvalue, 6,(char *)"Load character constant");
+                emitRM((char *)"LDC", 3, t->attr.cvalue, 6,(char *)"Load Character constant");
             }
             /*else if(t->expType == CharInt){
                 char strName = t->attr.string;
@@ -606,7 +621,7 @@ void emitExp(TreeNode *t){
 
             break;
 
-            case CallK:
+            case CallK:{
             
                 int tmpIdx;
 
@@ -628,10 +643,12 @@ void emitExp(TreeNode *t){
                     hasChild = true;
                     TreeNode* getParams = t->child[0];
 
-                    while(getParams){
+                    for(int i = 0; i < MAXCHILDREN; i++){
+                        if(getParams != NULL){
 
-                        getParams = t->sibling;
-                        pCount++;
+                            getParams = t->sibling;
+                            pCount++;
+                        }
                     }
 
                     //check single parameter
@@ -653,11 +670,12 @@ void emitExp(TreeNode *t){
                         emitRM((char *)"ST", 3, tempOffset, 1,(char *)"Push parameter");
                         emitComment((char *)("Param end"), t->attr.name);
                         emitRM((char *)"LDA", 1, tmpIdx, 1,(char *)"Ghost frame becomes new active frame");
+                        
                     }
 
                     //more than 1 parameter
                     else{
-                        //set base number of parms
+                                                //set base number of parms
                         int parmIterator = 1;
 
                         emitRM((char *)"ST", 1, tempOffset, 1, (char *)("2 Store fp in ghost frame for"), (char *)t->attr.name);
@@ -710,7 +728,12 @@ void emitExp(TreeNode *t){
                                     emitRM((char *)"LDC", 3, curChild->attr.value, 6, (char *)"Load integer constant");
                                 }
                                 else if(curChild->expType == Boolean){
-                                    emitRM((char *)"LDC", 3, curChild->attr.value, 6, (char *)"Load boolean constant");
+                                    if(!strcmp(curChild->attr.name, "true")){
+                                        emitRM((char *)"LDC", 3, 1, 6, (char *)"Load boolean constant");
+                                    }
+                                    else{
+                                        emitRM((char *)"LDC", 3, 0, 6, (char *)"Load boolean constant");
+                                    }
                                 }
                                 else if(curChild->expType == Char){
                                     emitRM((char *)"LDC", 3, curChild->attr.value, 6, (char *)"Load character constant");
@@ -720,7 +743,9 @@ void emitExp(TreeNode *t){
 
                             //increment parmiterator
                             parmIterator++;
-                            curChild = curChild->sibling;
+                            if(t->sibling != NULL){
+                                curChild = curChild->sibling;
+                            }
                         }
                         emitComment((char *)("Param end"), t->attr.name);
 					    emitRM((char *)"LDA", 1, tmpIdx, 1,(char *)"Ghost frame becomes new active frame");
@@ -745,6 +770,7 @@ void emitExp(TreeNode *t){
                 tempOffset = tmpIdx;
 
                 break;
+            }
     }
 }
 
@@ -781,19 +807,6 @@ void emitIO(TreeNode *t){
 	emitRM((char *)"LD", 1, 0, 1, (char *)("Adjust fp"));
 	emitRM((char *)"JMP", 7, 0, 3,(char *)("Return"));
 	emitComment((char *)("END FUNCTION input"));
-	emitComment((char *)(""));
-	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
-
-	emitComment((char *)("FUNCTION output"));
-	curIO = (TreeNode*)symbolTable.lookup((char *)("output"));
-	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
-	curIO->linenum = emitSkip(0)-1;
-	curIO->attr.name = (char *) "output";
-	emitRO((char *)"IN", 2, 2, 2,(char *)("Grab int input"));
-	emitRM((char *)"LD", 3, -1, 1, (char *)("Load return address"));
-	emitRM((char *)"LD", 1, 0, 1, (char *)("Adjust fp"));
-	emitRM((char *)"JMP", 7, 0, 3,(char *)("Return"));
-	emitComment((char *)("END FUNCTION output"));
 	emitComment((char *)(""));
 	emitComment((char *)("** ** ** ** ** ** ** ** ** ** ** **"));
 

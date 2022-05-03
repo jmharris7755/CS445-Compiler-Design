@@ -29,6 +29,7 @@ static TreeNode *ast;
 bool TYPES = false;
 bool printOffset = false;
 bool opM;
+bool onlyM = false;
 
 extern int goffset;
 
@@ -536,6 +537,7 @@ int main(int argc, char *argv[])
     char* outfile;
     extern int optind;
     int options;
+    bool doCode = true;
 
     while((selOption = getopt(argc, argv, "dDpPMh")) != -1){
 
@@ -553,6 +555,7 @@ int main(int argc, char *argv[])
                 printAST = true;
                 TYPES = false;
                 options = 0;
+                doCode = false;
                 break;
 
             case 'D':
@@ -564,6 +567,7 @@ int main(int argc, char *argv[])
                 printAST = true;
                 TYPES = true;
                 options = 1;
+                doCode = false;
                 break;
 
             case 'M':
@@ -573,6 +577,8 @@ int main(int argc, char *argv[])
                 opM = true;
                 printOffset = true;
                 options = 1;
+                doCode = false;
+                onlyM = true;
                 break;
 
             case 'h':
@@ -588,6 +594,12 @@ int main(int argc, char *argv[])
             default:
                 exit(1);
         }
+    }
+
+    if(doCode == true){
+        options = 1;
+        opM = true;
+        TYPES = true;
     }
 
 
@@ -615,14 +627,9 @@ int main(int argc, char *argv[])
         setupIO();
         semanticAnalysis(ast, numErrors, numWarnings);
         //COMMENTED OUT THIS IF STATEMENT FOR TESTING ----- CHANGE BACK***********************
-        if(numErrors < 1)
+        if(numErrors < 1 && onlyM)
         {
             printTree(ast, 0, TYPES);
-
-            //print offset for end of global space if option 'M'
-            if(printOffset){
-                printf("Offset for end of global space: %d\n", goffset);
-            }
         }
     }
 
@@ -644,6 +651,10 @@ int main(int argc, char *argv[])
 
     }
 
+    //print offset for end of global space if option 'M'
+    if(printOffset){
+        printf("Offset for end of global space: %d\n", goffset);
+    }
     printf("Number of warnings: %d\n", numWarnings);
     printf("Number of errors: %d\n", numErrors);
 

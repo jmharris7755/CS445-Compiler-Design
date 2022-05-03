@@ -44,6 +44,8 @@ int goffset = 0;
 
 char *functionName;
 
+extern bool onlyM;
+
 TreeNode *curFunc = NULL;
 
 ExpType functionReturnType;
@@ -84,7 +86,9 @@ void semanticAnalysis(TreeNode *t, int& errors, int& warnings){
         }
     }
 
-    printErrors();
+    if(onlyM){
+        printErrors();
+    }
     errors = nErrors;
     warnings = nWarnings;
 }
@@ -1374,6 +1378,7 @@ void checkExp(TreeNode *t, int& nErrors, int& nWarnings){
 
              for(int i = 0; i < MAXCHILDREN; i++){
                 analyze(t->child[i], nErrors, nWarnings);
+
                 }
 
             if(funcFound != NULL){

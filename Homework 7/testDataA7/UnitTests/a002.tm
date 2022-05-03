@@ -1,8 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  a002.c-
-* 
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/a002.tm
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
   1:     ST  3,-1(1)	Store return address 
@@ -71,16 +70,12 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
 * RETURN
  40:     LD  3,-1(1)	Load return address 
  41:     LD  1,0(1)	Adjust fp 
- 42:    JMP  7,0(3)	Return 
-* TOFF set: -2
+ 42:    LDA  7,0(3)	Return 
 * END COMPOUND
 * Add standard closing in case there is no return statement
  43:    LDC  2,0(6)	Set return value to 0 
@@ -95,6 +90,6 @@
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
  49:    LDA  3,1(7)	Return address in ac 
- 50:    JMP  7,-12(7)	Jump to main 
+ 50:    JMP  7,-49(7)	Jump to main 
  51:   HALT  0,0,0	DONE! 
 * END INIT
