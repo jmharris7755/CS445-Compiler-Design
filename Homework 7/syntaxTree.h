@@ -81,6 +81,7 @@ typedef struct treeNode
     VarKind memT;   //var type for M option
     int arrLength; //track lenght of arry to calc mSize and mOffsets -- added to parser.y
     int emitLoc;
+    int codeLine;
     // even more semantic stuff will go here in later assignments.
 } TreeNode;
 

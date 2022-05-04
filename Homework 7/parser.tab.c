@@ -99,7 +99,7 @@ static TreeNode *ast;
 bool TYPES = false;
 bool printOffset = false;
 bool opM;
-bool onlyM = false;
+bool onlyM;
 
 extern int goffset;
 
@@ -645,7 +645,7 @@ static const yytype_int16 yyrline[] =
      411,   415,   416,   419,   423,   428,   432,   433,   436,   440,
      444,   449,   452,   453,   456,   460,   464,   469,   470,   473,
      476,   484,   485,   486,   487,   490,   494,   497,   498,   501,
-     502,   503,   506,   510,   515,   521
+     502,   503,   506,   510,   516,   522
 };
 #endif
 
@@ -2538,31 +2538,32 @@ yyreduce:
                                                                                 { (yyval.tree) = newExpNode(ConstantK, (yyvsp[0].tokenData));
                                                                                   (yyval.tree)->attr.name = (yyvsp[0].tokenData)->tokenStrInput;
                                                                                   (yyval.tree)->thisTokenData = (yyvsp[0].tokenData);
-                                                                                  (yyval.tree)->expType = Char; }
-#line 2543 "parser.tab.c"
+                                                                                  (yyval.tree)->expType = Char;
+                                                                                  (yyval.tree)->attr.cvalue = (yyvsp[0].tokenData)->cvalue; }
+#line 2544 "parser.tab.c"
     break;
 
   case 154: /* constant: STRINGCONST  */
-#line 515 "parser.y"
+#line 516 "parser.y"
                                                                                 { (yyval.tree) = newExpNode(ConstantK, (yyvsp[0].tokenData));
                                                                                   (yyval.tree)->attr.string = strdup((yyvsp[0].tokenData)->svalue);
                                                                                   (yyval.tree)->isArray = true;
                                                                                   (yyval.tree)->arrLength = (yyvsp[0].tokenData)->strLength;
                                                                                   (yyval.tree)->expType = CharInt; }
-#line 2553 "parser.tab.c"
+#line 2554 "parser.tab.c"
     break;
 
   case 155: /* constant: BOOLCONST  */
-#line 521 "parser.y"
+#line 522 "parser.y"
                                                                                 { (yyval.tree) = newExpNode(ConstantK, (yyvsp[0].tokenData));
                                                                                   (yyval.tree)->attr.value = (yyvsp[0].tokenData)->nvalue;
                                                                                   (yyval.tree)->attr.name = (yyvsp[0].tokenData)->tokenStrInput;
                                                                                   (yyval.tree)->expType = Boolean; }
-#line 2562 "parser.tab.c"
+#line 2563 "parser.tab.c"
     break;
 
 
-#line 2566 "parser.tab.c"
+#line 2567 "parser.tab.c"
 
       default: break;
     }
@@ -2756,7 +2757,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 527 "parser.y"
+#line 528 "parser.y"
 
 
 extern int yydebug;
@@ -2833,6 +2834,7 @@ int main(int argc, char *argv[])
         options = 1;
         opM = true;
         TYPES = true;
+        onlyM = false;
     }
 
 
@@ -2879,7 +2881,6 @@ int main(int argc, char *argv[])
         newFile[newFileLen - 2] = 't';
         newFile[newFileLen - 1] = 'm';
 
-        setupIO();
         generateCode(ast, newFile);
 
     }

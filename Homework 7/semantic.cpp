@@ -44,8 +44,6 @@ int goffset = 0;
 
 char *functionName;
 
-extern bool onlyM;
-
 TreeNode *curFunc = NULL;
 
 ExpType functionReturnType;
@@ -86,9 +84,7 @@ void semanticAnalysis(TreeNode *t, int& errors, int& warnings){
         }
     }
 
-    if(onlyM){
-        printErrors();
-    }
+    printErrors();
     errors = nErrors;
     warnings = nWarnings;
 }

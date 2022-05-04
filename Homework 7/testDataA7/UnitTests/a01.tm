@@ -2,6 +2,7 @@
 * Built: 4-22 - 5-22
 * Author: Justin Harris
 * File compiled:  ./testDataA7/UnitTests/a01.tm
+* 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
   1:     ST  3,-1(1)	Store return address 
@@ -74,14 +75,14 @@
 * COMPOUND
 * CALL EXPRESSION
 * CALL output
- 40:     ST  1,0(1)	1 Store fp in ghost frame for output
+ 40:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
  41:    LDC  3,987(6)	Load Integer constant 
- 42:     ST  3,-3(1)	Push parameter 
+ 42:     ST  3,-4(1)	Push parameter 
 * Param end output
- 43:    LDA  1,0(1)	Ghost frame becomes new active frame 
+ 43:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  44:    LDA  3,1(7)	Return address in ac 
- 45:    JMP  7,-40(7)	CALL output
+ 45:    JMP  7,-40(7)	CALL OUTPUT output
  46:    LDA  3,0(2)	Save the result in ac 
 * CALL end output
 * Compound Body
@@ -99,6 +100,6 @@
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
  53:    LDA  3,1(7)	Return address in ac 
- 54:    JMP  7,-53(7)	Jump to main 
+ 54:    JMP  7,-16(7)	Jump to main 
  55:   HALT  0,0,0	DONE! 
 * END INIT

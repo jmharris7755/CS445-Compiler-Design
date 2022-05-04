@@ -71,3 +71,70 @@
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
  39:     ST  3,-1(1)	Store return address 
+* COMPOUND
+* ASSIGNMENT EXPRESSION
+ 40:    LDC  3,1(6)	Load Boolean constant 
+ 41:     LD  4,0(0)	1 load lhs variable x
+ 42:     ST  3,0(0)	Store variable x
+* ASSIGNMENT EXPRESSION
+ 43:    LDC  3,0(6)	Load Boolean constant 
+ 44:     LD  4,-2(1)	2 load lhs variable y
+ 45:     ST  3,-2(1)	Store variable y
+* CALL EXPRESSION
+* CALL outputb
+ 46:     ST  1,0(1)	2 Store fp in ghost frame for outputb
+ 47:    LDC  3,0(6)	Load boolean constant 
+ 48:     ST  3,-2(1)	Push parameter 
+* Param end outputb
+ 49:    LDA  1,0(1)	Ghost frame becomes new active frame 
+ 50:    LDA  3,1(7)	Return address in ac 
+ 51:    JMP  7,-35(7)	CALL outputb
+ 52:    LDA  3,0(2)	Save the result in ac 
+* CALL end outputb
+* CALL EXPRESSION
+* CALL outnl
+ 53:     ST  1,0(1)	3 Store fp in ghost frame for outnl
+* Param end outnl
+ 54:    LDA  1,0(1)	Ghost frame becomes new active frame 
+ 55:    LDA  3,1(7)	Return address in ac 
+ 56:    JMP  7,-23(7)	CALL outnl
+ 57:    LDA  3,0(2)	Save the result in ac 
+* CALL end outnl
+* CALL EXPRESSION
+* CALL outputb
+ 58:     ST  1,0(1)	2 Store fp in ghost frame for outputb
+ 59:    LDC  3,0(6)	Load boolean constant 
+ 60:     ST  3,-2(1)	Push parameter 
+* Param end outputb
+ 61:    LDA  1,0(1)	Ghost frame becomes new active frame 
+ 62:    LDA  3,1(7)	Return address in ac 
+ 63:    JMP  7,-47(7)	CALL outputb
+ 64:    LDA  3,0(2)	Save the result in ac 
+* CALL end outputb
+* CALL EXPRESSION
+* CALL outnl
+ 65:     ST  1,0(1)	3 Store fp in ghost frame for outnl
+* Param end outnl
+ 66:    LDA  1,0(1)	Ghost frame becomes new active frame 
+ 67:    LDA  3,1(7)	Return address in ac 
+ 68:    JMP  7,-35(7)	CALL outnl
+ 69:    LDA  3,0(2)	Save the result in ac 
+* CALL end outnl
+* Compound Body
+* END COMPOUND
+* Add standard closing in case there is no return statement
+ 70:    LDC  2,0(6)	Set return value to 0 
+ 71:     LD  3,-1(1)	Load return address 
+ 72:     LD  1,0(1)	Adjust fp 
+ 73:    JMP  7,0(3)	Return 
+* END FUNCTION main
+  0:    JMP  7,73(7)	Jump to init [backpatch] 
+* INIT
+ 74:    LDA  1,-1(0)	set first frame at end of globals 
+ 75:     ST  1,0(1)	store old fp (point to self) 
+* INIT GLOBALS AND STATICS
+* END INIT GLOBALS AND STATICS
+ 76:    LDA  3,1(7)	Return address in ac 
+ 77:    JMP  7,4(7)	Jump to main 
+ 78:   HALT  0,0,0	DONE! 
+* END INIT

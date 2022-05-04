@@ -71,3 +71,38 @@
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
  39:     ST  3,-1(1)	Store return address 
+* COMPOUND
+* ASSIGNMENT EXPRESSION
+ 40:    LDC  3,273(6)	Load Integer constant 
+ 41:     LD  4,0(0)	1 load lhs variable x
+ 42:     ST  3,0(0)	Store variable x
+* CALL EXPRESSION
+* CALL output
+ 43:     ST  1,0(1)	1 Store fp in ghost frame for output
+* Param 1
+ 44:     LD  3,0(0)	1 Load variable x
+ 45:     ST  3,-3(1)	Push parameter 
+* Param end output
+ 46:    LDA  1,0(1)	Ghost frame becomes new active frame 
+ 47:    LDA  3,1(7)	Return address in ac 
+ 48:    JMP  7,-43(7)	CALL output
+ 49:    LDA  3,0(2)	Save the result in ac 
+* CALL end output
+* Compound Body
+* END COMPOUND
+* Add standard closing in case there is no return statement
+ 50:    LDC  2,0(6)	Set return value to 0 
+ 51:     LD  3,-1(1)	Load return address 
+ 52:     LD  1,0(1)	Adjust fp 
+ 53:    JMP  7,0(3)	Return 
+* END FUNCTION main
+  0:    JMP  7,53(7)	Jump to init [backpatch] 
+* INIT
+ 54:    LDA  1,-1(0)	set first frame at end of globals 
+ 55:     ST  1,0(1)	store old fp (point to self) 
+* INIT GLOBALS AND STATICS
+* END INIT GLOBALS AND STATICS
+ 56:    LDA  3,1(7)	Return address in ac 
+ 57:    JMP  7,4(7)	Jump to main 
+ 58:   HALT  0,0,0	DONE! 
+* END INIT

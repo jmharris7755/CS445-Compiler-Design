@@ -29,7 +29,7 @@ static TreeNode *ast;
 bool TYPES = false;
 bool printOffset = false;
 bool opM;
-bool onlyM = false;
+bool onlyM;
 
 extern int goffset;
 
@@ -510,7 +510,8 @@ constant            :       NUMCONST                                            
                     |       CHARCONST                                           { $$ = newExpNode(ConstantK, $1);
                                                                                   $$->attr.name = $1->tokenStrInput;
                                                                                   $$->thisTokenData = $1;
-                                                                                  $$->expType = Char; }
+                                                                                  $$->expType = Char;
+                                                                                  $$->attr.cvalue = $1->cvalue; }
 
                     |       STRINGCONST                                         { $$ = newExpNode(ConstantK, $1);
                                                                                   $$->attr.string = strdup($1->svalue);
@@ -600,6 +601,7 @@ int main(int argc, char *argv[])
         options = 1;
         opM = true;
         TYPES = true;
+        onlyM = false;
     }
 
 
@@ -646,7 +648,6 @@ int main(int argc, char *argv[])
         newFile[newFileLen - 2] = 't';
         newFile[newFileLen - 1] = 'm';
 
-        setupIO();
         generateCode(ast, newFile);
 
     }

@@ -99,6 +99,6 @@
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
  53:    LDA  3,1(7)	Return address in ac 
- 54:    JMP  7,-53(7)	Jump to main 
+ 54:    JMP  7,2(7)	Jump to main 
  55:   HALT  0,0,0	DONE! 
 * END INIT
