@@ -502,7 +502,7 @@ void emitExp(TreeNode *t){
                     if(leftSide->isArray){
 
                         if(leftSide->memT == Global){
-                             emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)"1 Load address of base of array", (char*)leftSide->attr.name);
+                             emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)"1 Load address of base of array 505", (char*)leftSide->attr.name);
                         }
                         else{
                             emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)"2 Load address of base of array", (char*)leftSide->attr.name);
@@ -532,10 +532,10 @@ void emitExp(TreeNode *t){
                         tempOffset++;
 
                         if(leftSide->memT == Global){
-                             emitRM((char *)"LDA", 5, leftSide->mOffset, 0, (char *)"1 Load address of base of array", (char*)leftSide->attr.name);
+                             emitRM((char *)"LDA", 5, leftSide->mOffset, 0, (char *)"1 Load address of base of array 535", (char*)leftSide->attr.name);
                         }
                         else{
-                            emitRM((char *)"LDA", 5, leftSide->mOffset, 1, (char *)"2 Load address of base of array", (char*)leftSide->attr.name);
+                            emitRM((char *)"LDA", 5, leftSide->mOffset, 1, (char *)"2 Load address of base of array 538", (char*)leftSide->attr.name);
                         }
 
                         emitRO((char *)"SUB", 5, 5, 3, (char *)"Compute location from index");
@@ -668,7 +668,7 @@ void emitExp(TreeNode *t){
                     if(isUnary){
                         
                         if(t->isArray){
-                            emitRM((char *)" LDA", 3, t->mOffset, 0, (char *)("1 Load address of base of array"), t->attr.name);
+                            emitRM((char *)" LDA", 3, t->mOffset, 0, (char *)("1 Load address of base of array 671"), t->attr.name);
                             tempOffset--;
                         }
                         else{

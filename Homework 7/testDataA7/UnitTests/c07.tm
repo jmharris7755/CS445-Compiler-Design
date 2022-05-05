@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  c07.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/c07.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,84 +71,70 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -11
- 40:    LDC  3,3(6)	load size of array x
- 41:     ST  3,-2(1)	save size of array x
- 42:    LDC  3,4(6)	load size of array y
- 43:     ST  3,-6(1)	save size of array y
-* Compound Body
-* EXPRESSION
- 44:    LDC  3,2(6)	Load integer constant 
+* TOFF:  -11
+ 40:    LDC  3,3(6)	load array size x
+ 41:     ST  3,-2(1)	save array size x
+ 42:    LDC  3,4(6)	load array size y
+ 43:     ST  3,-6(1)	save array size y
+* ASSIGNMENT EXPRESSION
+ 44:    LDC  3,2(6)	Load Integer constant 
  45:     ST  3,-11(1)	Push index 
-* TOFF dec: -12
  46:    LDC  3,1(6)	Load Boolean constant 
-* TOFF inc: -11
  47:     LD  4,-11(1)	Pop index 
  48:    LDA  5,-3(1)	Load address of base of array x
  49:    SUB  5,5,4	Compute offset of value 
  50:     ST  3,0(5)	Store variable x
-* EXPRESSION
- 51:    LDC  3,1(6)	Load integer constant 
+* ASSIGNMENT EXPRESSION
+ 51:    LDC  3,1(6)	Load Integer constant 
  52:     ST  3,-11(1)	Push index 
-* TOFF dec: -12
  53:    LDC  3,0(6)	Load Boolean constant 
-* TOFF inc: -11
  54:     LD  4,-11(1)	Pop index 
  55:    LDA  5,-7(1)	Load address of base of array y
  56:    SUB  5,5,4	Compute offset of value 
  57:     ST  3,0(5)	Store variable y
-* EXPRESSION
+* CALL EXPRESSION
 * CALL outputb
- 58:     ST  1,-11(1)	Store fp in ghost frame for outputb
-* TOFF dec: -12
-* TOFF dec: -13
+ 58:     ST  1,-11(1)	1 Store fp in ghost frame for outputb
 * Param 1
- 59:    LDA  3,-3(1)	Load address of base of array x
+* TOFF: -13
+* OP EXPRESSION
+* OP EXPRESSION
+ 59:    LDA  3,-3(1)	2 Load address of base of array x
  60:     ST  3,-13(1)	Push left side 
-* TOFF dec: -14
- 61:    LDC  3,2(6)	Load integer constant 
-* TOFF inc: -13
+ 61:    LDC  3,2(6)	Load Integer constant 
  62:     LD  4,-13(1)	Pop left into ac1 
- 63:    SUB  3,4,3	compute location from index 
+ 63:    SUB  3,4,3	Compute location from index 
  64:     LD  3,0(3)	Load array element 
- 65:     ST  3,-13(1)	Push left side 
-* TOFF dec: -14
- 66:    LDA  3,-7(1)	Load address of base of array y
+ 65:     ST  3,-13(1)	Push the left side 
+* OP EXPRESSION
+ 66:    LDA  3,-7(1)	2 Load address of base of array y
  67:     ST  3,-14(1)	Push left side 
-* TOFF dec: -15
- 68:    LDC  3,1(6)	Load integer constant 
-* TOFF inc: -14
+ 68:    LDC  3,1(6)	Load Integer constant 
  69:     LD  4,-14(1)	Pop left into ac1 
- 70:    SUB  3,4,3	compute location from index 
+ 70:    SUB  3,4,3	Compute location from index 
  71:     LD  3,0(3)	Load array element 
-* TOFF inc: -13
- 72:     LD  4,-13(1)	Pop left into ac1 
- 73:     OR  3,4,3	Op OR 
+ 72:     LD  4,-13(1)	Load Left into 1 
+ 73:     OR  3,4,3	Op OR or
  74:     ST  3,-13(1)	Push parameter 
-* TOFF dec: -14
 * Param end outputb
- 75:    LDA  1,-11(1)	Ghost frame becomes new active frame 
+ 75:    LDA  1,-11(1)	1 Ghost frame becomes new active frame 
  76:    LDA  3,1(7)	Return address in ac 
- 77:    JMP  7,-61(7)	CALL outputb
+ 77:    JMP  7,-61(7)	CALL OUTPUT outputb
  78:    LDA  3,0(2)	Save the result in ac 
-* Call end outputb
-* TOFF set: -11
-* EXPRESSION
+* CALL end outputb
+* CALL EXPRESSION
 * CALL outnl
- 79:     ST  1,-11(1)	Store fp in ghost frame for outnl
-* TOFF dec: -12
-* TOFF dec: -13
+ 79:     ST  1,-11(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
  80:    LDA  1,-11(1)	Ghost frame becomes new active frame 
  81:    LDA  3,1(7)	Return address in ac 
- 82:    JMP  7,-49(7)	CALL outnl
+ 82:    JMP  7,-49(7)	CALL OUTPUT outnl
  83:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -11
-* TOFF set: -2
+* CALL end outnl
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
  84:    LDC  2,0(6)	Set return value to 0 
