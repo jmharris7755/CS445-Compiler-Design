@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  b08.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/b08.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,72 +71,57 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
-* EXPRESSION
+* CALL EXPRESSION
 * CALL outputb
- 40:     ST  1,-2(1)	Store fp in ghost frame for outputb
-* TOFF dec: -3
-* TOFF dec: -4
+ 40:     ST  1,-2(1)	1 Store fp in ghost frame for outputb
 * Param 1
+* OP EXPRESSION
  41:    LDC  3,1(6)	Load Boolean constant 
  42:    LDC  4,1(6)	Load 1 
  43:    XOR  3,3,4	Op XOR to get logical not 
  44:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
 * Param end outputb
- 45:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 45:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  46:    LDA  3,1(7)	Return address in ac 
- 47:    JMP  7,-31(7)	CALL outputb
+ 47:    JMP  7,-31(7)	CALL OUTPUT outputb
  48:    LDA  3,0(2)	Save the result in ac 
-* Call end outputb
-* TOFF set: -2
-* EXPRESSION
+* CALL end outputb
+* CALL EXPRESSION
 * CALL outnl
- 49:     ST  1,-2(1)	Store fp in ghost frame for outnl
-* TOFF dec: -3
-* TOFF dec: -4
+ 49:     ST  1,-2(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
  50:    LDA  1,-2(1)	Ghost frame becomes new active frame 
  51:    LDA  3,1(7)	Return address in ac 
- 52:    JMP  7,-19(7)	CALL outnl
+ 52:    JMP  7,-19(7)	CALL OUTPUT outnl
  53:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -2
-* EXPRESSION
+* CALL end outnl
+* CALL EXPRESSION
 * CALL outputb
- 54:     ST  1,-2(1)	Store fp in ghost frame for outputb
-* TOFF dec: -3
-* TOFF dec: -4
+ 54:     ST  1,-2(1)	1 Store fp in ghost frame for outputb
 * Param 1
+* OP EXPRESSION
  55:    LDC  3,0(6)	Load Boolean constant 
  56:    LDC  4,1(6)	Load 1 
  57:    XOR  3,3,4	Op XOR to get logical not 
  58:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
 * Param end outputb
- 59:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 59:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  60:    LDA  3,1(7)	Return address in ac 
- 61:    JMP  7,-45(7)	CALL outputb
+ 61:    JMP  7,-45(7)	CALL OUTPUT outputb
  62:    LDA  3,0(2)	Save the result in ac 
-* Call end outputb
-* TOFF set: -2
-* EXPRESSION
+* CALL end outputb
+* CALL EXPRESSION
 * CALL outnl
- 63:     ST  1,-2(1)	Store fp in ghost frame for outnl
-* TOFF dec: -3
-* TOFF dec: -4
+ 63:     ST  1,-2(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
  64:    LDA  1,-2(1)	Ghost frame becomes new active frame 
  65:    LDA  3,1(7)	Return address in ac 
- 66:    JMP  7,-33(7)	CALL outnl
+ 66:    JMP  7,-33(7)	CALL OUTPUT outnl
  67:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -2
-* TOFF set: -2
+* CALL end outnl
+* Compound Body
 * END COMPOUND
 * Add standard closing in case there is no return statement
  68:    LDC  2,0(6)	Set return value to 0 

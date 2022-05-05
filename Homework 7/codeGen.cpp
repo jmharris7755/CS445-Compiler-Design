@@ -20,6 +20,7 @@ bool stFlag = false;
 bool isUnary = true;
 int cpdSize = 0;
 int tmpIdx;
+bool opKarr;
 
 void generateCode(TreeNode *t, char* infile){
 
@@ -32,8 +33,10 @@ void generateCode(TreeNode *t, char* infile){
     emitComment((char*)"");
 
     //emitAbout(infile);
+    //emitSkip(1);
     emitIO(t);
     //emitInput(t);
+    //emitSkip(0);
     emitStart(t);
     emitInit(t);
     fclose(code);
@@ -168,7 +171,7 @@ void emitDecl(TreeNode *t){
 			emitComment((char *)("END FUNCTION"), (char *) t->attr.name);
 
             //tempOffset = 0;
-            tmpIdx = tempOffset;
+            tempOffset = tmpIdx;
             break;
 
     }
@@ -276,6 +279,8 @@ void emitStmt(TreeNode* t){
 
             cpdSize = tempOffset;
             emitComment((char*)("COMPOUND"));
+            tempOffset = t->mSize;
+            emitComment((char*)"TOFF: ", tempOffset);
             for(int i = 0; i < MAXCHILDREN; i++){
                 
                 //maybe only t here instead of t->child[i]?
@@ -285,6 +290,7 @@ void emitStmt(TreeNode* t){
             }
             emitComment((char*)("Compound Body"));
             tempOffset = cpdSize;
+            emitComment((char*)"TOFF: ", tempOffset);
 
             
             emitComment((char*)("END COMPOUND"));
@@ -295,16 +301,24 @@ void emitStmt(TreeNode* t){
 
 void emitExp(TreeNode *t){
 
+    //shorthands for checking child 0 and child1 in AssignK and OpK
     TreeNode *leftSide;
     TreeNode *rightSide;
 
+    //setup leftSide and rightSide of AssignKs and OpKs
     if(t->child[0] != NULL){
 
         leftSide = t->child[0];
     }
+    else{
+        leftSide = NULL;
+    }
     if(t->child[1] != NULL){
 
         rightSide = t->child[1];
+    }
+    else{
+        rightSide = NULL;
     }
 
     switch(t->subkind.exp){
@@ -323,10 +337,10 @@ void emitExp(TreeNode *t){
             //askOp = (TreeNode*)symbolTable.lookup(t->attr.name);
 
             //check for standard assignment -- like syntaxTree
-            if(strcmp(t->attr.name, "<-")){
+            if(!strcmp(t->attr.name, "<-")){
 
                 //check for arrays
-                if(!strcmp(t->attr.name, "[")){
+                if(!strcmp(t->child[0]->attr.name, "[")){
 
                     emitStart(leftSide->child[1]);
                     emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index"));
@@ -383,31 +397,33 @@ void emitExp(TreeNode *t){
                 emitStart(leftSide);
 
                 //check for each other assignment operator
-                if(!strcmp(t->attr.name, "+="))
-				{
-					emitRO((char *)"ADD", 3, 4, 3, (char *)("op"), (char *)t->attr.name);
+                if(!strcmp(t->attr.name, "+=")){
+
+                    emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
+					emitRO((char *)"ADD", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
 				}
-				else if(!strcmp(t->attr.name, "-="))
-				{
-					emitRO((char *)"SUB", 3, 4, 3, (char *)("op"), (char *)t->attr.name);
+				else if(!strcmp(t->attr.name, "-=")){
+                    emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
+					emitRO((char *)"SUB", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
 				}
-				else if(!strcmp(t->attr.name, "*="))
-				{
-					emitRO((char *)"MUL", 3, 4, 3, (char *)("op"), (char *)t->attr.name);
+				else if(!strcmp(t->attr.name, "*=")){
+                    emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
+					emitRO((char *)"MUL", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
 				}
-				else if(!strcmp(t->attr.name, "/="))
-				{
-					emitRO((char *)"DIV", 3, 4, 3, (char *)("op"), (char *)t->attr.name);
+				else if(!strcmp(t->attr.name, "/=")){
+                    emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
+					emitRO((char *)"DIV", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
 				}
 				
                 //check mem types
-				if(leftSide->memT == Global)
-				{
+				if(leftSide->memT == Global){
+
 					emitRM((char *)"ST", 3, leftSide->mOffset, 0, (char *)("Store variable"), (char *)leftSide->attr.name);
 				}
-				else
-				{
+				else{
+
 					emitRM((char *)"ST", 3, leftSide->mOffset, 1, (char *)("Store variable"), (char *)leftSide->attr.name);
+                    
 				}
                 //reset unary flag
 				isUnary = true;
@@ -418,6 +434,7 @@ void emitExp(TreeNode *t){
         case OpK:
 
             emitComment((char*)("OP EXPRESSION"));
+            
 
             //Check Unary ops
             if(rightSide == NULL){
@@ -446,9 +463,9 @@ void emitExp(TreeNode *t){
 
                 else if(!strcmp(t->attr.name, "?")){
 
-                    emitRO((char *)"RND", 3, 3, 3, (char *)("Op unary"), (char *)t->attr.name);
+                    emitRO((char *)"RND", 3, 3, 6, (char *)("Op unary"), (char *)t->attr.name);
                 }
-                else if(!strcmp(t->attr.name, "NOT")){
+                else if(!strcmp(t->attr.name, "NOT") || !strcmp(t->attr.name, "not")){
 
                     emitRM((char *)"LDC", 4, 1, 6, (char *)("Load 1"));
 					emitRO((char *)"XOR", 3, 3, 4, (char *)("Op XOR to get logical not"));
@@ -457,24 +474,60 @@ void emitExp(TreeNode *t){
             //binary checks
             else{
 
-                emitStart(t->child[0]);
-
-                //save temp index from where we are
-                tmpIdx = tempOffset;  
+                
+                stFlag = false;
 
                 //move past index in use
-                tmpIdx--; 
+                //tmpIdx--; 
 
-                emitRM((char*)"ST", 3, tmpIdx, 1, (char*)("Save the left side"));
-                emitStart(t->child[1]);
+                if(!strcmp(t->attr.name, "[")){
 
-                emitRM((char*)"LD", 4, tmpIdx, 1, (char*)("Load Left into 1"));
-                tmpIdx++;
+                    //tmpIdx = tempOffset;
 
-                if(!strcmp(t->attr.name, "AND")){
+                    if(leftSide->isArray){
+
+                        if(leftSide->memT == Global){
+                             emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)"Load address of base of array", (char*)leftSide->attr.name);
+                        }
+                        else{
+                            emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)"Load address of base of array", (char*)leftSide->attr.name);
+                        }
+
+                        emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
+                        tempOffset--;
+
+                        emitStart(t->child[1]);
+
+                        tempOffset++;
+
+                        emitRM((char *)"LD", 4, tempOffset, 1, (char *)"Pop left into ac1");
+                        emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
+                        emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
+
+                    }
+                }
+                else{
+
+                    emitStart(t->child[0]);
+
+                    //save temp index from where we are
+                    //tmpIdx = tempOffset;  
+
+                    emitRM((char*)"ST", 3, tempOffset, 1, (char*)("Push the left side"));
+                    tempOffset--;
+
+
+                    emitStart(t->child[1]);
+
+                    tempOffset++;
+                    emitRM((char*)"LD", 4, tempOffset, 1, (char*)("Load Left into 1"));
+                }
+                
+
+                if(!strcmp(t->attr.name, "AND") || !strcmp(t->attr.name, "and")){
                     emitRO((char *)"AND", 3, 4, 3, (char *)("Op AND"), (char *)t->attr.name);
                 }
-                else if(!strcmp(t->attr.name, "OR")){
+                else if(!strcmp(t->attr.name, "OR") || !strcmp(t->attr.name, "or")){
                     emitRO((char *)"OR", 3, 4, 3, (char *)("Op OR"), (char *)t->attr.name);
                 }
                 else if(!strcmp(t->attr.name, ">")){
@@ -489,7 +542,7 @@ void emitExp(TreeNode *t){
                 else if(!strcmp(t->attr.name, "<=")){
                     emitRO((char *)"TLE", 3, 4, 3, (char *)("Op <="), (char *)t->attr.name);
                 }
-                else if(!strcmp(t->attr.name, "==")){
+                else if(!strcmp(t->attr.name, "=")){
                     emitRO((char *)"TEQ", 3, 4, 3, (char *)("Op =="), (char *)t->attr.name);
                 }
                 else if(!strcmp(t->attr.name, "!=")){
@@ -510,8 +563,13 @@ void emitExp(TreeNode *t){
                 else if(!strcmp(t->attr.name, "*")){
                     emitRO((char *)"MUL", 3, 4, 3, (char *)("Op %"), (char *)t->attr.name);
                 }
+                //additional check for array here?
+                else if(!strcmp(t->attr.name, "[")){
+                    
+                }
 
             }
+            //tempOffset = tmpIdx;
             break;
 
         case ConstantK:
@@ -523,12 +581,15 @@ void emitExp(TreeNode *t){
             //trying to fix by manually setting
             else if(t->expType == Boolean){
 
+                int boolVal;
+
                 if(!strcmp(t->attr.name, "true")){
-                    emitRM((char *)"LDC", 3, 1, 6,(char *)"Load Boolean constant");
+                    boolVal = 1;
                 }
                 else{
-                   emitRM((char *)"LDC", 3, 0, 6,(char *)"Load Boolean constant"); 
+                    boolVal = 0;
                 }
+                emitRM((char *)"LDC", 3, boolVal, 6,(char *)"Load Boolean constant");
             }
             else if(t->expType == Char){
                 emitRM((char *)"LDC", 3, t->attr.cvalue, 6,(char *)"Load Character constant");
@@ -567,7 +628,7 @@ void emitExp(TreeNode *t){
                     if(isUnary){
                         
                         if(t->isArray){
-                            emitRM((char *)" LD", 3, t->mOffset, 0, (char *)("1 Load address of base of array"), t->attr.name);
+                            emitRM((char *)" LDA", 3, t->mOffset, 0, (char *)("1 Load address of base of array"), t->attr.name);
                             tempOffset--;
                         }
                         else{
@@ -584,7 +645,7 @@ void emitExp(TreeNode *t){
                     if(isUnary){
                         
                         if(t->isArray){
-                            emitRM((char *)" LD", 3, t->mOffset, 1, (char *)("2 Load address of base of array"), t->attr.name);
+                            emitRM((char *)" LDA", 3, t->mOffset, 1, (char *)("2 Load address of base of array"), t->attr.name);
                             tempOffset--;
                         }
                         else{
@@ -601,7 +662,7 @@ void emitExp(TreeNode *t){
                     if(isUnary){
                         
                         if(t->isArray){
-                            emitRM((char *)" LD", 3, t->mOffset, 0, (char *)("3 Load address of base of array"), t->attr.name);
+                            emitRM((char *)" LDA", 3, t->mOffset, 0, (char *)("3 Load address of base of array"), t->attr.name);
                             tempOffset--;
                         }
                         else{
@@ -618,7 +679,7 @@ void emitExp(TreeNode *t){
                     if(isUnary){
                         
                         if(t->isArray){
-                            emitRM((char *)" LD", 3, t->mOffset, 1, (char *)("4 Load address of base of array"), t->attr.name);
+                            emitRM((char *)" LDA", 3, t->mOffset, 1, (char *)("4 Load address of base of array"), t->attr.name);
                             tempOffset--;
                         }
                         else{
@@ -662,22 +723,28 @@ void emitExp(TreeNode *t){
                         }
                     }
 
+                    //printf("pCount: %d\n", pCount);
+
                     //tempOffset -= pCount;
 
                     //check single parameter
                     if(pCount == 1){
+
+                        //printf("%s\n", t->child[0]->attr.name);
 
                         if(t->child[0]->subkind.exp == IdK){
                             tempOffset--;
                             tmpIdx--;
                         }
 
+                        //tempOffset -= pCount;
+
 
                         emitRM((char *)"ST", 1, tempOffset, 1, (char *)("1 Store fp in ghost frame for"), (char *)t->attr.name);
 
                         emitComment((char*)"Param 1");
 
-                        tempOffset--;
+                        tempOffset-= pCount;
 
                         //if not array, adjust temp offset
                         if(!t->child[0]->isArray){
@@ -685,6 +752,8 @@ void emitExp(TreeNode *t){
                             tempOffset -= pCount;
                             stFlag = false;
                         }
+
+                        emitComment((char*)"TOFF:", tempOffset);
                         
                         emitStart(t->child[0]);
 
@@ -696,7 +765,7 @@ void emitExp(TreeNode *t){
 
                     //more than 1 parameter
                     else if(pCount > 1){
-                                                //set base number of parms
+                        //set base number of parms
                         int parmIterator = 1;
                         TreeNode *curChild;
                         tempOffset++;
@@ -756,12 +825,16 @@ void emitExp(TreeNode *t){
                                     emitRM((char *)"LDC", 3, curChild->attr.value, 6, (char *)"Load integer constant");
                                 }
                                 else if(curChild->expType == Boolean){
-                                    if(!strcmp(curChild->attr.name, "true")){
-                                        emitRM((char *)"LDC", 3, 1, 6, (char *)"Load boolean constant");
+                                    
+                                    int boolVal;
+
+                                    if(!strcmp(t->attr.name, "true")){
+                                        boolVal = 1;
                                     }
                                     else{
-                                        emitRM((char *)"LDC", 3, 0, 6, (char *)"Load boolean constant");
+                                        boolVal = 0;
                                     }
+                                    emitRM((char *)"LDC", 3, boolVal, 6,(char *)"Load Boolean constant");
                                 }
                                 else if(curChild->expType == Char){
                                     emitRM((char *)"LDC", 3, curChild->attr.value, 6, (char *)"Load character constant");
@@ -806,7 +879,7 @@ void emitGlobAndStats(TreeNode* t){
 
     if(t != NULL){
 
-        if(t->subkind.decl == VarK){
+        if(t->nodekind == DeclK && t->subkind.decl == VarK){
 
             if(t->memT == Global){
 
@@ -815,7 +888,21 @@ void emitGlobAndStats(TreeNode* t){
                     emitRM((char *)"LDC", 3, t->mSize - 1, 6,(char *)"load size of array", (char *) t->attr.name);
 				    emitRM((char *)"ST", 3, t->mOffset + 1, 0,(char *)"save size of array", (char *) t->attr.name);
                 }
+                else{
+
+                    if(t->child[0] != NULL){
+                    emitStart(t->child[0]);
+                    emitRM((char *)"ST", 3, t->mOffset, 0,(char *)"Store variable",(char *)t->attr.name);
+                    }
+                }
             }
+        }
+
+        for(int i = 0; i < MAXCHILDREN; i++){
+            emitGlobAndStats(t->child[i]);
+        }
+        if(t->sibling != NULL){
+            emitGlobAndStats(t->sibling);
         }
     }
     

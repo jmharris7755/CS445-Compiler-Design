@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  c09.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/c09.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,72 +71,62 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
-* EXPRESSION
- 40:    LDC  3,753(6)	Load integer constant 
+* TOFF:  -2
+* ASSIGNMENT EXPRESSION
+ 40:    LDC  3,753(6)	Load Integer constant 
  41:     ST  3,0(0)	Store variable x
-* EXPRESSION
- 42:    LDC  3,444(6)	Load integer constant 
+* ASSIGNMENT EXPRESSION
+ 42:    LDC  3,444(6)	Load Integer constant 
  43:     ST  3,-1(0)	Store variable y
-* EXPRESSION
- 44:     LD  3,-1(0)	Load variable y
- 45:     LD  4,0(0)	load lhs variable x
- 46:    ADD  3,4,3	op += 
+* ASSIGNMENT EXPRESSION
+ 44:     LD  3,-1(0)	1 Load variable y
+ 45:     LD  4,0(0)	Load LHS var 
+ 46:    ADD  3,4,3	Op +=
  47:     ST  3,0(0)	Store variable x
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 48:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 48:     ST  1,-3(1)	1 Store fp in ghost frame for output
 * Param 1
- 49:     LD  3,0(0)	Load variable x
- 50:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -5
+ 49:     LD  3,0(0)	1 Load variable x
+ 50:     ST  3,-5(1)	Push parameter 
 * Param end output
- 51:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 51:    LDA  1,-3(1)	1 Ghost frame becomes new active frame 
  52:    LDA  3,1(7)	Return address in ac 
- 53:    JMP  7,-48(7)	CALL output
+ 53:    JMP  7,-48(7)	CALL OUTPUT output
  54:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
-* EXPRESSION
- 55:     LD  3,0(0)	Load variable x
- 56:     LD  4,-1(0)	load lhs variable y
- 57:    SUB  3,4,3	op -= 
+* CALL end output
+* ASSIGNMENT EXPRESSION
+ 55:     LD  3,0(0)	1 Load variable x
+ 56:     LD  4,-1(0)	Load LHS var 
+ 57:    SUB  3,4,3	Op -=
  58:     ST  3,-1(0)	Store variable y
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 59:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 59:     ST  1,-4(1)	1 Store fp in ghost frame for output
 * Param 1
- 60:     LD  3,-1(0)	Load variable y
- 61:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -6
+ 60:     LD  3,-1(0)	1 Load variable y
+ 61:     ST  3,-6(1)	Push parameter 
 * Param end output
- 62:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 62:    LDA  1,-4(1)	1 Ghost frame becomes new active frame 
  63:    LDA  3,1(7)	Return address in ac 
- 64:    JMP  7,-59(7)	CALL output
+ 64:    JMP  7,-59(7)	CALL OUTPUT output
  65:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
-* EXPRESSION
+* CALL end output
+* CALL EXPRESSION
 * CALL outnl
- 66:     ST  1,-2(1)	Store fp in ghost frame for outnl
-* TOFF dec: -3
-* TOFF dec: -4
+ 66:     ST  1,-4(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
- 67:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 67:    LDA  1,-4(1)	Ghost frame becomes new active frame 
  68:    LDA  3,1(7)	Return address in ac 
- 69:    JMP  7,-36(7)	CALL outnl
+ 69:    JMP  7,-36(7)	CALL OUTPUT outnl
  70:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -2
-* TOFF set: -2
+* CALL end outnl
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
  71:    LDC  2,0(6)	Set return value to 0 

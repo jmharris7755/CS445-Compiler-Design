@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  c01.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/c01.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,52 +71,44 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -4
-* Compound Body
-* EXPRESSION
- 40:    LDC  3,73(6)	Load integer constant 
+* TOFF:  -4
+* ASSIGNMENT EXPRESSION
+ 40:    LDC  3,73(6)	Load Integer constant 
  41:     ST  3,-2(1)	Store variable x
-* EXPRESSION
- 42:    LDC  3,211(6)	Load integer constant 
+* ASSIGNMENT EXPRESSION
+ 42:    LDC  3,211(6)	Load Integer constant 
  43:     ST  3,-3(1)	Store variable y
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 44:     ST  1,-4(1)	Store fp in ghost frame for output
-* TOFF dec: -5
-* TOFF dec: -6
+ 44:     ST  1,-4(1)	1 Store fp in ghost frame for output
 * Param 1
- 45:     LD  3,-2(1)	Load variable x
- 46:     ST  3,-6(1)	Push left side 
-* TOFF dec: -7
- 47:     LD  3,-3(1)	Load variable y
-* TOFF inc: -6
- 48:     LD  4,-6(1)	Pop left into ac1 
- 49:    ADD  3,4,3	Op + 
+* TOFF: -6
+* OP EXPRESSION
+ 45:     LD  3,-2(1)	2 Load variable x
+ 46:     ST  3,-6(1)	Push the left side 
+ 47:     LD  3,-3(1)	2 Load variable y
+ 48:     LD  4,-6(1)	Load Left into 1 
+ 49:    ADD  3,4,3	Op + +
  50:     ST  3,-6(1)	Push parameter 
-* TOFF dec: -7
 * Param end output
- 51:    LDA  1,-4(1)	Ghost frame becomes new active frame 
+ 51:    LDA  1,-4(1)	1 Ghost frame becomes new active frame 
  52:    LDA  3,1(7)	Return address in ac 
- 53:    JMP  7,-48(7)	CALL output
+ 53:    JMP  7,-48(7)	CALL OUTPUT output
  54:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -4
-* EXPRESSION
+* CALL end output
+* CALL EXPRESSION
 * CALL outnl
- 55:     ST  1,-4(1)	Store fp in ghost frame for outnl
-* TOFF dec: -5
-* TOFF dec: -6
+ 55:     ST  1,-4(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
  56:    LDA  1,-4(1)	Ghost frame becomes new active frame 
  57:    LDA  3,1(7)	Return address in ac 
- 58:    JMP  7,-25(7)	CALL outnl
+ 58:    JMP  7,-25(7)	CALL OUTPUT outnl
  59:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -4
-* TOFF set: -2
+* CALL end outnl
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
  60:    LDC  2,0(6)	Set return value to 0 

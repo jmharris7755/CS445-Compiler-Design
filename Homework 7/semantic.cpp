@@ -1951,8 +1951,13 @@ void parameterErrors(TreeNode *funcFound, TreeNode *t, TreeNode *ffParm, TreeNod
         //Error 25: "ERROR(%d): Expecting %s in parameter %d of call to '%s' declared on line %d but got %s.\n"
         if(ffParm->expType != tParm->expType && !tParm->declErr && !funcFound->isIO){
             //printf("Parameter Errors made it here %s %s\n", conExpType(ffParm->expType), conExpType(tParm->expType));
-            printError(25, t->linenum, funcFound->linenum, funcFound->attr.name, conExpType(ffParm->expType), conExpType(tParm->expType), paramCount);
-            //printf("is the issue the printError?\n");
+            if(ffParm->expType == Char && tParm->expType == CharInt){
+                ;
+            }
+            else{
+                printError(25, t->linenum, funcFound->linenum, funcFound->attr.name, conExpType(ffParm->expType), conExpType(tParm->expType), paramCount);
+                //printf("is the issue the printError?\n");
+            }
 
              //Error 36: "ERROR(%d): Not expecting array in parameter %d of call to '%s' declared on line %d.\n"
             if(!ffParm->isArray && tParm->isArray){
