@@ -23,6 +23,7 @@ int tmpIdx;
 bool opKarr;
 int thenLoc = 0, elseLoc = 0, breakLoc = 0;
 int nestThen = 0;
+bool mpCall = false;
 
 
 void generateCode(TreeNode *t, char* infile){
@@ -90,7 +91,7 @@ void emitStart(TreeNode* t){
             break;
         }
     }
-    if(t->sibling != NULL){
+    if(t->sibling != NULL && !mpCall){
         emitStart(t->sibling);
     }
 }
@@ -589,15 +590,17 @@ void emitExp(TreeNode *t){
                             emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
                             tempOffset--;
                             emitComment((char*)"TOFF:", tempOffset);
-
+                            
+                            
                             emitStart(t->child[1]);
+                            
 
                             tempOffset++;
                             emitComment((char*)"TOFF:", tempOffset);
 
-                            emitRM((char *)"LD", 4, tempOffset, 1, (char *)"Pop left into ac1");
-                            emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
-                            emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
+                            emitRM((char *)"LD", 4, tempOffset, 1, (char *)"1 Pop left into ac1");
+                            emitRO((char *)"SUB", 3, 4, 3, (char *)"1 Compute location from index");
+                            emitRM((char *)"LD", 3, 0, 3, (char *)"1 Load array element");
 
                         }
                     }
@@ -623,8 +626,8 @@ void emitExp(TreeNode *t){
                             emitRM((char *)"LDA", 5, leftSide->mOffset, 1, (char *)"3 Load address of base of array 543", (char*)leftSide->attr.name);
                         }
 
-                        emitRO((char *)"SUB", 5, 5, 3, (char *)"Compute location from index");
-                        emitRM((char *)"LD", 3, 0, 5, (char *)"Load array element");
+                        emitRO((char *)"SUB", 5, 5, 3, (char *)"2 Compute location from index");
+                        emitRM((char *)"LD", 3, 0, 5, (char *)"2 Load array element");
 
                         }
 
@@ -647,7 +650,7 @@ void emitExp(TreeNode *t){
 
                     tempOffset++;
                     emitComment((char*)"TOFF:", tempOffset);
-                    emitRM((char*)"LD", 4, tempOffset, 1, (char*)("Load Left into 1"));
+                    emitRM((char*)"LD", 4, tempOffset, 1, (char*)("Load Left into 1"), (char*)t->attr.name);
                 }
                 
 
@@ -688,7 +691,7 @@ void emitExp(TreeNode *t){
                     emitRO((char *)"MOD", 3, 4, 3, (char *)("Op %"), (char *)t->attr.name);
                 }
                 else if(!strcmp(t->attr.name, "*")){
-                    emitRO((char *)"MUL", 3, 4, 3, (char *)("Op %"), (char *)t->attr.name);
+                    emitRO((char *)"MUL", 3, 4, 3, (char *)("Op *"), (char *)t->attr.name);
                 }
                 //additional check for array here?
                 //else if(!strcmp(t->attr.name, "[")){
@@ -870,10 +873,12 @@ void emitExp(TreeNode *t){
 
                         //printf("%s\n", t->child[0]->attr.name);
 
-                        if(t->child[0]->subkind.exp == IdK && t->child[0]->isArray){
+                        if(t->child[0]->subkind.exp == IdK && !t->child[0]->isArray){
+                            if(t->child[0]->isInit){
                             tempOffset--;
                             tmpIdx--;
                             emitComment((char*)"TOFF:", tempOffset);
+                            }
                         }
                         
 
@@ -922,13 +927,19 @@ void emitExp(TreeNode *t){
                         //set base number of parms
                         int parmIterator = 1;
                         TreeNode *curChild;
-                        tempOffset++;
+                        //tempOffset++;
                         emitComment((char*)"TOFF:", tempOffset);
 
                         emitRM((char *)"ST", 1, tempOffset, 1, (char *)("2 Store fp in ghost frame for"), (char *)t->attr.name);
 
                         if(t->child[0]->subkind.exp == IdK || t->child[0]->subkind.exp == OpK){
+
                             curChild = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
+
+                            //check for array
+                            /*if(!strcmp(t->child[0]->attr.name, "[")){
+                                printf("Open Bracket %s\n", t->child[0]->attr.name);
+                            }*/
                         }
                         else{
                             curChild = t->child[0];
@@ -936,16 +947,54 @@ void emitExp(TreeNode *t){
                         tempOffset--;
                         emitComment((char*)"TOFF:", tempOffset);
 
+                        //check for arrays
+                        if(t->child[0]->subkind.exp != ConstantK && !strcmp(t->child[0]->attr.name, "[")){
+                            
+                            if(t->child[0] != NULL){
+                                
+                                mpCall = true;
+                                tempOffset--;
+                                emitComment((char*)"TOFF:", tempOffset);
+                                emitComment((char *)("Param"), parmIterator);
+
+                                /*if(t->child[0]->child[0]->isArray){
+                                    
+                                    if(t->child[0]->child[0]->memT == Global){
+                                        emitRM((char *)"LDA", 3, t->child[0]->child[0]->mOffset, 0, (char *)("MP: Load address of base of array"));
+                                    }
+                                    else{
+                                        emitRM((char *)"LDA", 3, t->child[0]->child[0]->mOffset, 1, (char *)("MP: Load address of base of array"));
+                                    }
+                                    emitRM((char *)"ST", 3, tempOffset, 1,(char *)("Push parameter"));
+                                    emitRM((char *)"LD", 4, tempOffset, 1, (char *)"1 Pop left into ac1");
+                                    emitRO((char *)"SUB", 3, 4, 3, (char *)"1 Compute location from index");
+                                    emitRM((char *)"LD", 3, 0, 3, (char *)"1 Load array element");
+                                }*/
+                                emitStart(t->child[0]);
+                                emitRM((char *)"ST", 3, tempOffset, 1,(char *)("Push parameter"));
+                                t->codeLine -= 1;
+
+                                if(t->child[0]->sibling != NULL){
+                                    curChild = t->child[0]->sibling;
+                                }
+                                parmIterator++;
+                                mpCall = false;
+
+
+                            }
+                        }
+
                         //loop through all children (parameters)
                         while(curChild != NULL){
 
+                            //printf("Here %d\n", parmIterator);
+
                             tempOffset--;
                             emitComment((char*)"TOFF:", tempOffset);
+                            emitComment((char *)("Param"), parmIterator);
 
                             //check for arrays
                             if(curChild->isArray){
-                                
-                                emitComment((char *)("Param"), parmIterator);
 
                                 //check mem types
                                 if(curChild->memT == Global){
@@ -996,12 +1045,12 @@ void emitExp(TreeNode *t){
                                 else if(curChild->expType == Char){
                                     emitRM((char *)"LDC", 3, curChild->attr.value, 6, (char *)"Load character constant");
                                 }
-                                emitRM((char *)"ST", 3, tempOffset, 1,(char *)"Push parameter");
+                                emitRM((char *)"ST", 3, tempOffset, 1,(char *)"3 Push parameter");
                             }
 
                             //increment parmiterator
                             parmIterator++;
-                            if(t->sibling != NULL){
+                            if(curChild->sibling != NULL){
                                 curChild = curChild->sibling;
                             }
                             else{
