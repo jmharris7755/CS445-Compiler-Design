@@ -21,7 +21,8 @@ bool isUnary = false;
 int cpdSize = 0;
 int tmpIdx;
 bool opKarr;
-int thenLoc = 0, elseLoc = 0, whileLoc = 0, whileSkp = 0, breakLoc = 0, tmpBLoc = 0, ldaLoc = 0;
+int thenLoc = 0, elseLoc = 0, breakLoc = 0;
+int nestThen = 0;
 
 
 void generateCode(TreeNode *t, char* infile){
@@ -150,6 +151,7 @@ void emitDecl(TreeNode *t){
                 if(!(t->child[1]->nodekind == StmtK && t->child[1]->subkind.stmt == CompoundK)){
 
                     tempOffset -= pcount + 2;
+                    emitComment((char*)"TOFF:", tempOffset);
                 }
             }
 
@@ -174,6 +176,7 @@ void emitDecl(TreeNode *t){
 
             //tempOffset = 0;
             tempOffset = tmpIdx;
+            emitComment((char*)"TOFF:", tempOffset);
             break;
 
     }
@@ -181,6 +184,8 @@ void emitDecl(TreeNode *t){
 }
 
 void emitStmt(TreeNode* t){
+
+    int whileLoc = 0, tmpBloc = 0, whileSkp = 0, ldaLoc = 0;
 
     switch(t->subkind.stmt){
 
@@ -197,6 +202,9 @@ void emitStmt(TreeNode* t){
             //set else location and then location
             elseLoc = 0;
             thenLoc = emitSkip(1);
+            if(t->child[1]->subkind.stmt == IfK){
+                nestThen = thenLoc--;
+            }            
 
             //start analyzing child1
             emitStart(t->child[1]);
@@ -207,15 +215,23 @@ void emitStmt(TreeNode* t){
                 elseLoc = emitSkip(1);
             }
 
+            if(t->child[1]->subkind.stmt != IfK){
             //go back to then section
+            //nestThen -= 2;
             backPatchAJumpToHere((char*)"JZR", 3, thenLoc, (char *)("Jump around the THEN if false [backpatch]"));
+            }
+            else{
+                
+                backPatchAJumpToHere((char*)"JZR", 3, nestThen, (char *)("Jump around the THEN if false [backpatch]"));
+            }
 
             //if there is an else statement, analyze child2 jump the else
             if(t->child[2] != NULL){
 
                 emitComment((char*)"ELSE");
                 emitStart(t->child[2]);
-                backPatchAJumpToHere((char*)"JZR", 3, elseLoc, (char *)("Jump around the ELSE [backpatch]"));
+                backPatchAJumpToHere((char*)"JMP", 7, elseLoc, (char *)("Jump around the ELSE [backpatch]"));
+                
 
             }
 
@@ -230,20 +246,19 @@ void emitStmt(TreeNode* t){
             whileLoc = emitSkip(0);
             stFlag = false;
             emitComment((char*)("WHILE"));
+            
             emitStart(t->child[0]);
-            tmpBLoc = breakLoc;
+            tmpBloc = breakLoc;
             breakLoc = emitSkip(0);
             emitRM((char *)"JNZ", 3, 1, 7, (char *)("Jump to while part"));
-            
-            
-
             emitComment((char*)("DO"));
             whileSkp = emitSkip(1);
+            
             emitStart(t->child[1]);
             emitRM((char*)"JMP", 7, whileLoc - emitSkip(0) - 1, 7, (char*)("go to the beginning of the loop"));
             ldaLoc = emitSkip(0);
             backPatchAJumpToHere(whileSkp, (char *)("Jump past loop [backpatch]"));
-            breakLoc = tmpBLoc;
+            breakLoc = tmpBloc;
             emitNewLoc(ldaLoc);
             emitComment((char*)("END WHILE"));
 
@@ -355,9 +370,11 @@ void emitExp(TreeNode *t){
                     emitStart(leftSide->child[1]);
                     emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index"));
                     tempOffset--;
+                    emitComment((char*)"TOFF:", tempOffset);
 
                     emitStart(rightSide);
                     tempOffset++;
+                    emitComment((char*)"TOFF:", tempOffset);
                     emitRM((char *)"LD", 4, tempOffset, 1,(char *)("Pop index")); 
 
                     if(leftSide->child[0]->memT == Global){
@@ -422,6 +439,7 @@ void emitExp(TreeNode *t){
                    emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index"));
 
                    tempOffset--;
+                   emitComment((char*)"TOFF:", tempOffset);
 
                    emitRM((char *)"LDA", 3, rightSide->child[0]->mOffset, 0, (char *)("Load address of base of array"), (char *)rightSide->child[0]->attr.name);
                    emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
@@ -432,6 +450,7 @@ void emitExp(TreeNode *t){
                    emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
 
                    tempOffset++;
+                   emitComment((char*)"TOFF:", tempOffset);
 
                    emitRM((char *)"LD", 4, tempOffset, 1, (char *)("Pop index"));
                    emitRM((char *)"LDA", 5, leftSide->child[0]->mOffset, 0, (char *)("Load address of base of array"), (char *)leftSide->child[0]->attr.name);
@@ -569,10 +588,12 @@ void emitExp(TreeNode *t){
 
                             emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
                             tempOffset--;
+                            emitComment((char*)"TOFF:", tempOffset);
 
                             emitStart(t->child[1]);
 
                             tempOffset++;
+                            emitComment((char*)"TOFF:", tempOffset);
 
                             emitRM((char *)"LD", 4, tempOffset, 1, (char *)"Pop left into ac1");
                             emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
@@ -585,10 +606,12 @@ void emitExp(TreeNode *t){
                         if(leftSide->isArray){
 
                         tempOffset--;
+                        emitComment((char*)"TOFF:", tempOffset);
 
                         emitStart(rightSide);
 
                         tempOffset++;
+                        emitComment((char*)"TOFF:", tempOffset);
 
                         if(leftSide->memT == Global){
                              emitRM((char *)"LDA", 5, leftSide->mOffset, 0, (char *)"1 Load address of base of array 535", (char*)leftSide->attr.name);
@@ -617,11 +640,13 @@ void emitExp(TreeNode *t){
 
                     emitRM((char*)"ST", 3, tempOffset, 1, (char*)("Push the left side"));
                     tempOffset--;
+                    emitComment((char*)"TOFF:", tempOffset);
 
 
                     emitStart(t->child[1]);
 
                     tempOffset++;
+                    emitComment((char*)"TOFF:", tempOffset);
                     emitRM((char*)"LD", 4, tempOffset, 1, (char*)("Load Left into 1"));
                 }
                 
@@ -720,6 +745,10 @@ void emitExp(TreeNode *t){
                         stFlag = false;
                     }
                 }
+                else if(t->memT == Parameter){
+                    emitRM((char *)"ST", 3, t->mOffset, 1, (char *)("Store variable"), t->attr.name);
+                    stFlag = false;
+                }
 
             }
             //load
@@ -732,6 +761,7 @@ void emitExp(TreeNode *t){
                         if(t->isArray){
                             emitRM((char *)" LDA", 3, t->mOffset, 0, (char *)("1 Load address of base of array 671"), t->attr.name);
                             tempOffset--;
+                            emitComment((char*)"TOFF:", tempOffset);
                         }
                         else{
                             emitRM((char *)"LD", 3, t->mOffset, 0, (char *)("1 Load variable"), t->attr.name);
@@ -749,6 +779,7 @@ void emitExp(TreeNode *t){
                         if(t->isArray){
                             emitRM((char *)" LDA", 3, t->mOffset, 1, (char *)("2 Load address of base of array"), t->attr.name);
                             tempOffset--;
+                            emitComment((char*)"TOFF:", tempOffset);
                         }
                         else{
                             emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("2 Load variable"), t->attr.name);
@@ -766,6 +797,7 @@ void emitExp(TreeNode *t){
                         if(t->isArray){
                             emitRM((char *)" LDA", 3, t->mOffset, 0, (char *)("3 Load address of base of array"), t->attr.name);
                             tempOffset--;
+                            emitComment((char*)"TOFF:", tempOffset);
                         }
                         else{
                             emitRM((char *)"LD", 3, t->mOffset, 0, (char *)("3 Load variable"), t->attr.name);
@@ -783,12 +815,16 @@ void emitExp(TreeNode *t){
                         if(t->isArray){
                             emitRM((char *)" LDA", 3, t->mOffset, 1, (char *)("4 Load address of base of array"), t->attr.name);
                             tempOffset--;
+                            emitComment((char*)"TOFF:", tempOffset);
                         }
                         else{
                             emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("4 Load variable"), t->attr.name);
                         }
                     }
                     else{
+                        if(!t->isInit){
+                            emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("1 load variable"), t->attr.name);
+                        }
                         //emitRM((char *)"LD", 4, t->mOffset, 1, (char *)("4 load lhs variable"), t->attr.name);
                     }
                 }
@@ -834,10 +870,12 @@ void emitExp(TreeNode *t){
 
                         //printf("%s\n", t->child[0]->attr.name);
 
-                        if(t->child[0]->subkind.exp == IdK){
+                        if(t->child[0]->subkind.exp == IdK && t->child[0]->isArray){
                             tempOffset--;
                             tmpIdx--;
+                            emitComment((char*)"TOFF:", tempOffset);
                         }
+                        
 
                         //tempOffset -= pCount;
 
@@ -846,7 +884,19 @@ void emitExp(TreeNode *t){
 
                         emitComment((char*)"Param 1");
 
+                        if(t->child[0]->subkind.exp == IdK && !t->child[0]->isInit){
+
+                            if(t->child[0]->memT == Global){
+                            
+                            emitRM((char *)"LD", 3, t->child[0]->mOffset, 0, (char *)("1 variable"), t->child[0]->attr.name);
+                            }
+                            else if(t->child[0]->memT == Parameter){
+                                emitRM((char *)"LD", 3, t->child[0]->mOffset, 1, (char *)("2 variable"), t->child[0]->attr.name);
+                            }
+                        }
+
                         tempOffset-= pCount;
+                        emitComment((char*)"TOFF:", tempOffset);
 
                         //if not array, adjust temp offset
                         if(!t->child[0]->isArray){
@@ -873,21 +923,24 @@ void emitExp(TreeNode *t){
                         int parmIterator = 1;
                         TreeNode *curChild;
                         tempOffset++;
+                        emitComment((char*)"TOFF:", tempOffset);
 
                         emitRM((char *)"ST", 1, tempOffset, 1, (char *)("2 Store fp in ghost frame for"), (char *)t->attr.name);
 
-                        if(t->child[0]->attr.name != NULL){
+                        if(t->child[0]->subkind.exp == IdK || t->child[0]->subkind.exp == OpK){
                             curChild = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
                         }
                         else{
                             curChild = t->child[0];
                         }
                         tempOffset--;
+                        emitComment((char*)"TOFF:", tempOffset);
 
                         //loop through all children (parameters)
                         while(curChild != NULL){
 
                             tempOffset--;
+                            emitComment((char*)"TOFF:", tempOffset);
 
                             //check for arrays
                             if(curChild->isArray){
@@ -975,6 +1028,7 @@ void emitExp(TreeNode *t){
                 emitComment((char *)("CALL end"), t->attr.name);
 
                 tempOffset = tmpIdx;
+                emitComment((char*)"TOFF:", tempOffset);
 
                 break;
             }

@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  b05.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/b05.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,46 +71,43 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
-* EXPRESSION
+* TOFF:  -2
+* CALL EXPRESSION
 * CALL output
- 40:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 40:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 41:    LDC  3,50(6)	Load integer constant 
- 42:     ST  3,-4(1)	Push left side 
-* TOFF dec: -5
- 43:    LDC  3,13(6)	Load integer constant 
-* TOFF inc: -4
- 44:     LD  4,-4(1)	Pop left into ac1 
- 45:    SUB  3,4,3	Op - 
+* TOFF: -3
+* TOFF: -4
+* OP EXPRESSION
+ 41:    LDC  3,50(6)	Load Integer constant 
+ 42:     ST  3,-4(1)	Push the left side 
+* TOFF: -5
+ 43:    LDC  3,13(6)	Load Integer constant 
+* TOFF: -4
+ 44:     LD  4,-4(1)	Load Left into 1 
+ 45:    SUB  3,4,3	Op - -
  46:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
 * Param end output
- 47:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 47:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  48:    LDA  3,1(7)	Return address in ac 
- 49:    JMP  7,-44(7)	CALL output
+ 49:    JMP  7,-44(7)	CALL OUTPUT output
  50:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
-* EXPRESSION
+* CALL end output
+* TOFF: -2
+* CALL EXPRESSION
 * CALL outnl
- 51:     ST  1,-2(1)	Store fp in ghost frame for outnl
-* TOFF dec: -3
-* TOFF dec: -4
+ 51:     ST  1,-2(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
  52:    LDA  1,-2(1)	Ghost frame becomes new active frame 
  53:    LDA  3,1(7)	Return address in ac 
- 54:    JMP  7,-21(7)	CALL outnl
+ 54:    JMP  7,-21(7)	CALL OUTPUT outnl
  55:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -2
-* TOFF set: -2
+* CALL end outnl
+* TOFF: -2
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
  56:    LDC  2,0(6)	Set return value to 0 
@@ -118,6 +115,7 @@
  58:     LD  1,0(1)	Adjust fp 
  59:    JMP  7,0(3)	Return 
 * END FUNCTION main
+* TOFF: -2
   0:    JMP  7,59(7)	Jump to init [backpatch] 
 * INIT
  60:    LDA  1,0(0)	set first frame at end of globals 

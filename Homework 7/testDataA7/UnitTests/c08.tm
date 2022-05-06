@@ -92,28 +92,28 @@
  53:     ST  3,0(5)	Store variable y
 * CALL EXPRESSION
 * CALL outputb
- 54:     ST  1,-2(1)	1 Store fp in ghost frame for outputb
+ 54:     ST  1,-3(1)	1 Store fp in ghost frame for outputb
 * Param 1
-* TOFF: -4
+* TOFF: -5
 * OP EXPRESSION
 * OP EXPRESSION
- 55:    LDA  3,-1(0)	1 Load address of base of array x
- 56:     ST  3,-4(1)	Push left side 
+ 55:    LDA  3,-1(0)	1 Load address of base of array 507 x
+ 56:     ST  3,-5(1)	Push left side 
  57:    LDC  3,2(6)	Load Integer constant 
- 58:     LD  4,-4(1)	Pop left into ac1 
+ 58:     LD  4,-5(1)	Pop left into ac1 
  59:    SUB  3,4,3	Compute location from index 
  60:     LD  3,0(3)	Load array element 
- 61:     ST  3,-4(1)	Push the left side 
+ 61:     ST  3,-5(1)	Push the left side 
 * OP EXPRESSION
- 62:    LDA  3,-5(0)	1 Load address of base of array y
- 63:     ST  3,-5(1)	Push left side 
+ 62:    LDA  3,-5(0)	1 Load address of base of array 507 y
+ 63:     ST  3,-6(1)	Push left side 
  64:    LDC  3,1(6)	Load Integer constant 
- 65:     LD  4,-5(1)	Pop left into ac1 
+ 65:     LD  4,-6(1)	Pop left into ac1 
  66:    SUB  3,4,3	Compute location from index 
  67:     LD  3,0(3)	Load array element 
- 68:     LD  4,-4(1)	Load Left into 1 
+ 68:     LD  4,-5(1)	Load Left into 1 
  69:     OR  3,4,3	Op OR or
- 70:     ST  3,-4(1)	Push parameter 
+ 70:     ST  3,-5(1)	Push parameter 
 * Param end outputb
  71:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  72:    LDA  3,1(7)	Return address in ac 

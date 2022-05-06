@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  e07.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/e07.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,89 +71,79 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -3
-* Compound Body
-* EXPRESSION
- 40:    LDC  3,0(6)	Load integer constant 
+* TOFF:  -3
+* ASSIGNMENT EXPRESSION
+ 40:    LDC  3,0(6)	Load Integer constant 
  41:     ST  3,-2(1)	Store variable x
 * WHILE
- 42:     LD  3,-2(1)	Load variable x
- 43:     ST  3,-3(1)	Push left side 
-* TOFF dec: -4
- 44:    LDC  3,10(6)	Load integer constant 
-* TOFF inc: -3
- 45:     LD  4,-3(1)	Pop left into ac1 
- 46:    TLT  3,4,3	Op < 
+* OP EXPRESSION
+ 42:     LD  3,-2(1)	2 Load variable x
+ 43:     ST  3,-3(1)	Push the left side 
+ 44:    LDC  3,10(6)	Load Integer constant 
+ 45:     LD  4,-3(1)	Load Left into 1 
+ 46:    TLT  3,4,3	Op < <
  47:    JNZ  3,1(7)	Jump to while part 
 * DO
 * COMPOUND
-* TOFF set: -3
-* Compound Body
-* EXPRESSION
+* TOFF:  -3
+* CALL EXPRESSION
 * CALL output
- 49:     ST  1,-3(1)	Store fp in ghost frame for output
-* TOFF dec: -4
-* TOFF dec: -5
+ 49:     ST  1,-4(1)	1 Store fp in ghost frame for output
 * Param 1
- 50:     LD  3,-2(1)	Load variable x
- 51:     ST  3,-5(1)	Push parameter 
-* TOFF dec: -6
+* TOFF: -6
+ 50:     LD  3,-2(1)	2 Load variable x
+ 51:     ST  3,-6(1)	Push parameter 
 * Param end output
- 52:    LDA  1,-3(1)	Ghost frame becomes new active frame 
+ 52:    LDA  1,-4(1)	1 Ghost frame becomes new active frame 
  53:    LDA  3,1(7)	Return address in ac 
- 54:    JMP  7,-49(7)	CALL output
+ 54:    JMP  7,-49(7)	CALL OUTPUT output
  55:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -3
+* CALL end output
 * IF
- 56:     LD  3,-2(1)	Load variable x
- 57:     ST  3,-3(1)	Push left side 
-* TOFF dec: -4
- 58:    LDC  3,5(6)	Load integer constant 
-* TOFF inc: -3
- 59:     LD  4,-3(1)	Pop left into ac1 
- 60:    TEQ  3,4,3	Op = 
+* OP EXPRESSION
+ 56:     LD  3,-2(1)	2 Load variable x
+ 57:     ST  3,-4(1)	Push the left side 
+ 58:    LDC  3,5(6)	Load Integer constant 
+ 59:     LD  4,-4(1)	Load Left into 1 
+ 60:    TEQ  3,4,3	Op == =
 * THEN
 * BREAK
  62:    JMP  7,-15(7)	break 
  61:    JZR  3,2(7)	Jump around the THEN if false [backpatch] 
 * ELSE
-* EXPRESSION
- 64:     LD  3,-2(1)	Load variable x
- 65:     ST  3,-3(1)	Push left side 
-* TOFF dec: -4
- 66:    LDC  3,1(6)	Load integer constant 
-* TOFF inc: -3
- 67:     LD  4,-3(1)	Pop left into ac1 
- 68:    ADD  3,4,3	Op + 
+* ASSIGNMENT EXPRESSION
+* OP EXPRESSION
+ 64:     LD  3,-2(1)	2 Load variable x
+ 65:     ST  3,-4(1)	Push the left side 
+ 66:    LDC  3,1(6)	Load Integer constant 
+ 67:     LD  4,-4(1)	Load Left into 1 
+ 68:    ADD  3,4,3	Op + +
  69:     ST  3,-2(1)	Store variable x
- 63:    JMP  7,6(7)	Jump around the ELSE [backpatch] 
+ 63:    JZR  3,6(7)	Jump around the ELSE [backpatch] 
 * END IF
-* TOFF set: -3
+* Compound Body
+* TOFF:  -3
 * END COMPOUND
- 70:    JMP  7,-29(7)	go to beginning of loop 
+ 70:    JMP  7,-29(7)	go to the beginning of the loop 
  48:    JMP  7,22(7)	Jump past loop [backpatch] 
 * END WHILE
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 71:     ST  1,-3(1)	Store fp in ghost frame for output
-* TOFF dec: -4
-* TOFF dec: -5
+ 71:     ST  1,-3(1)	1 Store fp in ghost frame for output
 * Param 1
- 72:    LDC  3,666(6)	Load integer constant 
+* TOFF: -5
+ 72:    LDC  3,666(6)	Load Integer constant 
  73:     ST  3,-5(1)	Push parameter 
-* TOFF dec: -6
 * Param end output
- 74:    LDA  1,-3(1)	Ghost frame becomes new active frame 
+ 74:    LDA  1,-3(1)	1 Ghost frame becomes new active frame 
  75:    LDA  3,1(7)	Return address in ac 
- 76:    JMP  7,-71(7)	CALL output
+ 76:    JMP  7,-71(7)	CALL OUTPUT output
  77:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -3
-* TOFF set: -2
+* CALL end output
+* Compound Body
+* TOFF:  -3
 * END COMPOUND
 * Add standard closing in case there is no return statement
  78:    LDC  2,0(6)	Set return value to 0 
