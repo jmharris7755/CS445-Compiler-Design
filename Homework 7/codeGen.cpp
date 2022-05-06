@@ -24,6 +24,7 @@ bool opKarr;
 int thenLoc = 0, elseLoc = 0, breakLoc = 0;
 int nestThen = 0;
 bool mpCall = false;
+bool nestCall = false;
 
 
 void generateCode(TreeNode *t, char* infile){
@@ -575,16 +576,16 @@ void emitExp(TreeNode *t){
                         if(leftSide->isArray){
 
                             if(leftSide->memT == Global){
-                                emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)"1 Load address of base of array 507", (char*)leftSide->attr.name);
+                                emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)"1 Load address of base of array 578", (char*)leftSide->attr.name);
                             }
                             //might need to add this later
-                            /*
-                            else if(mem->memT == Parameter){
-                                emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)"2 Load address of base of array", (char*)leftSide->attr.name);
+                            
+                            else if(leftSide->memT == Parameter){
+                                emitRM((char *)"LD", 3, leftSide->mOffset, 1, (char *)"2 Load address of base of array 583", (char*)leftSide->attr.name);
                             }
-                            */
+                            
                             else{
-                                emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)"2 Load address of base of array", (char*)leftSide->attr.name);
+                                emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)"2 Load address of base of array 587", (char*)leftSide->attr.name);
                             }
 
                             emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
@@ -617,13 +618,13 @@ void emitExp(TreeNode *t){
                         emitComment((char*)"TOFF:", tempOffset);
 
                         if(leftSide->memT == Global){
-                             emitRM((char *)"LDA", 5, leftSide->mOffset, 0, (char *)"1 Load address of base of array 535", (char*)leftSide->attr.name);
+                             emitRM((char *)"LDA", 5, leftSide->mOffset, 0, (char *)"1 Load address of base of array 620", (char*)leftSide->attr.name);
                         }
                         else if(leftSide->memT == Parameter){
-                            emitRM((char *)"LD", 5, leftSide->mOffset, 1, (char *)"2 Load address of base of array 538", (char*)leftSide->attr.name);
+                            emitRM((char *)"LD", 5, leftSide->mOffset, 1, (char *)"2 Load address of base of array 623", (char*)leftSide->attr.name);
                         }
                         else{
-                            emitRM((char *)"LDA", 5, leftSide->mOffset, 1, (char *)"3 Load address of base of array 543", (char*)leftSide->attr.name);
+                            emitRM((char *)"LDA", 5, leftSide->mOffset, 1, (char *)"3 Load address of base of array 626", (char*)leftSide->attr.name);
                         }
 
                         emitRO((char *)"SUB", 5, 5, 3, (char *)"2 Compute location from index");
@@ -780,7 +781,7 @@ void emitExp(TreeNode *t){
                     if(isUnary){
                         
                         if(t->isArray){
-                            emitRM((char *)" LDA", 3, t->mOffset, 1, (char *)("2 Load address of base of array"), t->attr.name);
+                            emitRM((char *)" LDA", 3, t->mOffset, 1, (char *)("2 Load address of base of array 783"), t->attr.name);
                             tempOffset--;
                             emitComment((char*)"TOFF:", tempOffset);
                         }
@@ -880,7 +881,6 @@ void emitExp(TreeNode *t){
                             emitComment((char*)"TOFF:", tempOffset);
                             }
                         }
-                        
 
                         //tempOffset -= pCount;
 
@@ -909,10 +909,22 @@ void emitExp(TreeNode *t){
                             tempOffset -= pCount;
                             stFlag = false;
                         }
+                        else if(nestCall){
+                            emitRM((char *)"LDA", 3, t->child[0]->mOffset, 1, (char *)("Load address of base of array"));
+                            tempOffset-=pCount;
+                            nestCall = false;
+                        }
+                        
 
                         emitComment((char*)"TOFF:", tempOffset);
+
+                        if(t->child[0]->subkind.exp == CallK){
+                            nestCall = true;
+                        }
                         
                         emitStart(t->child[0]);
+                        
+                        
 
                         //printf("%d\n", isUnary);
 
@@ -936,10 +948,18 @@ void emitExp(TreeNode *t){
 
                             curChild = (TreeNode*)symbolTable.lookup(t->child[0]->attr.name);
 
+                            //printf("Here: %s %d", curChild->attr.name, t->linenum);
+
                             //check for array
                             /*if(!strcmp(t->child[0]->attr.name, "[")){
                                 printf("Open Bracket %s\n", t->child[0]->attr.name);
                             }*/
+
+                            if(curChild == NULL){
+
+                            curChild = t->child[0];
+                            }
+
                         }
                         else{
                             curChild = t->child[0];
@@ -987,7 +1007,7 @@ void emitExp(TreeNode *t){
                         //loop through all children (parameters)
                         while(curChild != NULL){
 
-                            //printf("Here %d\n", parmIterator);
+                            //printf("Here %d %d\n", parmIterator, t->linenum);
 
                             tempOffset--;
                             emitComment((char*)"TOFF:", tempOffset);

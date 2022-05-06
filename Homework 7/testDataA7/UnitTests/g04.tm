@@ -122,11 +122,11 @@
 * TOFF: -6
 * Param 1
  60:    LDC  3,33(6)	Load integer constant 
- 61:     ST  3,-6(1)	Push parameter 
+ 61:     ST  3,-6(1)	3 Push parameter 
 * TOFF: -7
 * Param 2
  62:    LDC  3,911(6)	Load integer constant 
- 63:     ST  3,-7(1)	Push parameter 
+ 63:     ST  3,-7(1)	3 Push parameter 
 * Param end cat
  64:    LDA  1,-4(1)	Ghost frame becomes new active frame 
  65:    LDA  3,1(7)	Return address in ac 

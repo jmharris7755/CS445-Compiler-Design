@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  g02.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/g02.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,112 +71,108 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION cat
-* TOFF set: -3
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -3
+* TOFF:  -3
+* CALL EXPRESSION
+* CALL output
+ 40:     ST  1,-3(1)	1 Store fp in ghost frame for output
+* Param 1
+ 41:     LD  3,-2(1)	2 variable z
+* TOFF: -4
+* TOFF: -5
+ 42:     LD  3,-2(1)	1 load variable z
+ 43:     ST  3,-5(1)	Push parameter 
+* Param end output
+ 44:    LDA  1,-3(1)	1 Ghost frame becomes new active frame 
+ 45:    LDA  3,1(7)	Return address in ac 
+ 46:    JMP  7,-41(7)	CALL OUTPUT output
+ 47:    LDA  3,0(2)	Save the result in ac 
+* CALL end output
+* TOFF: -3
+* ASSIGNMENT EXPRESSION
+ 48:    LDC  3,122(6)	Load Integer constant 
+ 49:     ST  3,-2(1)	Store variable z
+* CALL EXPRESSION
+* CALL output
+ 50:     ST  1,-3(1)	1 Store fp in ghost frame for output
+* Param 1
+ 51:     LD  3,-2(1)	2 variable z
+* TOFF: -4
+* TOFF: -5
+ 52:     LD  3,-2(1)	4 Load variable z
+ 53:     ST  3,-5(1)	Push parameter 
+* Param end output
+ 54:    LDA  1,-3(1)	1 Ghost frame becomes new active frame 
+ 55:    LDA  3,1(7)	Return address in ac 
+ 56:    JMP  7,-51(7)	CALL OUTPUT output
+ 57:    LDA  3,0(2)	Save the result in ac 
+* CALL end output
+* TOFF: -3
 * Compound Body
-* EXPRESSION
-* CALL output
- 40:     ST  1,-3(1)	Store fp in ghost frame for output
-* TOFF dec: -4
-* TOFF dec: -5
-* Param 1
- 41:     LD  3,-2(1)	Load variable z
- 42:     ST  3,-5(1)	Push parameter 
-* TOFF dec: -6
-* Param end output
- 43:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 44:    LDA  3,1(7)	Return address in ac 
- 45:    JMP  7,-40(7)	CALL output
- 46:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -3
-* EXPRESSION
- 47:    LDC  3,122(6)	Load integer constant 
- 48:     ST  3,-2(1)	Store variable z
-* EXPRESSION
-* CALL output
- 49:     ST  1,-3(1)	Store fp in ghost frame for output
-* TOFF dec: -4
-* TOFF dec: -5
-* Param 1
- 50:     LD  3,-2(1)	Load variable z
- 51:     ST  3,-5(1)	Push parameter 
-* TOFF dec: -6
-* Param end output
- 52:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 53:    LDA  3,1(7)	Return address in ac 
- 54:    JMP  7,-49(7)	CALL output
- 55:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -3
-* TOFF set: -3
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 56:    LDC  2,0(6)	Set return value to 0 
- 57:     LD  3,-1(1)	Load return address 
- 58:     LD  1,0(1)	Adjust fp 
- 59:    JMP  7,0(3)	Return 
+ 58:    LDC  2,0(6)	Set return value to 0 
+ 59:     LD  3,-1(1)	Load return address 
+ 60:     LD  1,0(1)	Adjust fp 
+ 61:    JMP  7,0(3)	Return 
 * END FUNCTION cat
-* 
-* ** ** ** ** ** ** ** ** ** ** ** **
+* TOFF: -2
 * FUNCTION main
-* TOFF set: -2
- 60:     ST  3,-1(1)	Store return address 
+ 62:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -3
-* Compound Body
-* EXPRESSION
- 61:    LDC  3,637(6)	Load integer constant 
- 62:     ST  3,-2(1)	Store variable z
-* EXPRESSION
+* TOFF:  -3
+* ASSIGNMENT EXPRESSION
+ 63:    LDC  3,637(6)	Load Integer constant 
+ 64:     ST  3,-2(1)	Store variable z
+* CALL EXPRESSION
 * CALL cat
- 63:     ST  1,-3(1)	Store fp in ghost frame for cat
-* TOFF dec: -4
-* TOFF dec: -5
+ 65:     ST  1,-3(1)	1 Store fp in ghost frame for cat
 * Param 1
- 64:     LD  3,-2(1)	Load variable z
- 65:     ST  3,-5(1)	Push parameter 
-* TOFF dec: -6
+* TOFF: -4
+* TOFF: -5
+ 66:     LD  3,-2(1)	2 Load variable z
+ 67:     ST  3,-5(1)	Push parameter 
 * Param end cat
- 66:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 67:    LDA  3,1(7)	Return address in ac 
- 68:    JMP  7,-30(7)	CALL cat
- 69:    LDA  3,0(2)	Save the result in ac 
-* Call end cat
-* TOFF set: -3
-* EXPRESSION
+ 68:    LDA  1,-3(1)	1 Ghost frame becomes new active frame 
+ 69:    LDA  3,1(7)	Return address in ac 
+ 70:    JMP  7,-32(7)	CALL OUTPUT cat
+ 71:    LDA  3,0(2)	Save the result in ac 
+* CALL end cat
+* TOFF: -3
+* CALL EXPRESSION
 * CALL output
- 70:     ST  1,-3(1)	Store fp in ghost frame for output
-* TOFF dec: -4
-* TOFF dec: -5
+ 72:     ST  1,-3(1)	1 Store fp in ghost frame for output
 * Param 1
- 71:     LD  3,-2(1)	Load variable z
- 72:     ST  3,-5(1)	Push parameter 
-* TOFF dec: -6
+* TOFF: -4
+* TOFF: -5
+ 73:     LD  3,-2(1)	2 Load variable z
+ 74:     ST  3,-5(1)	Push parameter 
 * Param end output
- 73:    LDA  1,-3(1)	Ghost frame becomes new active frame 
- 74:    LDA  3,1(7)	Return address in ac 
- 75:    JMP  7,-70(7)	CALL output
- 76:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -3
-* TOFF set: -2
+ 75:    LDA  1,-3(1)	1 Ghost frame becomes new active frame 
+ 76:    LDA  3,1(7)	Return address in ac 
+ 77:    JMP  7,-72(7)	CALL OUTPUT output
+ 78:    LDA  3,0(2)	Save the result in ac 
+* CALL end output
+* TOFF: -3
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 77:    LDC  2,0(6)	Set return value to 0 
- 78:     LD  3,-1(1)	Load return address 
- 79:     LD  1,0(1)	Adjust fp 
- 80:    JMP  7,0(3)	Return 
+ 79:    LDC  2,0(6)	Set return value to 0 
+ 80:     LD  3,-1(1)	Load return address 
+ 81:     LD  1,0(1)	Adjust fp 
+ 82:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,80(7)	Jump to init [backpatch] 
+* TOFF: -2
+  0:    JMP  7,82(7)	Jump to init [backpatch] 
 * INIT
- 81:    LDA  1,-1(0)	set first frame at end of globals 
- 82:     ST  1,0(1)	store old fp (point to self) 
+ 83:    LDA  1,-1(0)	set first frame at end of globals 
+ 84:     ST  1,0(1)	store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 83:    LDA  3,1(7)	Return address in ac 
- 84:    JMP  7,-25(7)	Jump to main 
- 85:   HALT  0,0,0	DONE! 
+ 85:    LDA  3,1(7)	Return address in ac 
+ 86:    JMP  7,-25(7)	Jump to main 
+ 87:   HALT  0,0,0	DONE! 
 * END INIT

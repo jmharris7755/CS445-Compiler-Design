@@ -76,7 +76,7 @@
 * TOFF:  -3
 * RETURN
 * OP EXPRESSION
- 40:     LD  3,-2(1)	2 Load address of base of array 584 z
+ 40:     LD  3,-2(1)	2 Load address of base of array 583 z
  41:     ST  3,-3(1)	Push left side 
 * TOFF: -4
  42:    LDC  3,3(6)	Load Integer constant 
@@ -124,10 +124,10 @@
 * CALL cat
  65:     ST  1,-15(1)	1 Store fp in ghost frame for cat
 * Param 1
- 66:    LDA  3,-3(1)	SPArr: Load address of base of array 
+* TOFF: -16
+ 66:    LDA  3,-3(1)	Load address of base of array 
 * TOFF: -17
-* TOFF: -17
- 67:     ST  3,-17(1)	1 Push parameter 
+ 67:     ST  3,-17(1)	Push parameter 
 * Param end cat
  68:    LDA  1,-15(1)	1 Ghost frame becomes new active frame 
  69:    LDA  3,1(7)	Return address in ac 
@@ -135,7 +135,7 @@
  71:    LDA  3,0(2)	Save the result in ac 
 * CALL end cat
 * TOFF: -15
- 72:     ST  3,-15(1)	1 Push parameter 
+ 72:     ST  3,-15(1)	Push parameter 
 * Param end output
  73:    LDA  1,-13(1)	1 Ghost frame becomes new active frame 
  74:    LDA  3,1(7)	Return address in ac 
