@@ -108,13 +108,13 @@
 * OP EXPRESSION
 * OP EXPRESSION
  63:     LD  3,-12(1)	2 Load variable zz
- 64:    LDA  5,-3(1)	2 Load address of base of array x
+ 64:    LDA  5,-3(1)	3 Load address of base of array 543 x
  65:    SUB  5,5,3	Compute location from index 
  66:     LD  3,0(5)	Load array element 
  67:     ST  3,-15(1)	Push the left side 
 * OP EXPRESSION
  68:     LD  3,-11(1)	2 Load variable z
- 69:    LDA  5,-7(1)	2 Load address of base of array y
+ 69:    LDA  5,-7(1)	3 Load address of base of array 543 y
  70:    SUB  5,5,3	Compute location from index 
  71:     LD  3,0(5)	Load array element 
  72:     LD  4,-15(1)	Load Left into 1 

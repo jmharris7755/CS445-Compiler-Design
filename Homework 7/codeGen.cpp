@@ -21,6 +21,8 @@ bool isUnary = false;
 int cpdSize = 0;
 int tmpIdx;
 bool opKarr;
+int thenLoc = 0, elseLoc = 0, whileLoc = 0, whileSkp = 0, breakLoc = 0, tmpBLoc = 0, ldaLoc = 0;
+
 
 void generateCode(TreeNode *t, char* infile){
 
@@ -180,8 +182,6 @@ void emitDecl(TreeNode *t){
 
 void emitStmt(TreeNode* t){
 
-    int thenLoc, elseLoc, whileLoc, whileSkp, breakLoc, tmpBLoc, ldaLoc;
-
     switch(t->subkind.stmt){
 
         case IfK:
@@ -223,14 +223,16 @@ void emitStmt(TreeNode* t){
             stFlag = false;
             emitComment((char*)("WHILE"));
             emitStart(t->child[0]);
-            emitRM((char *)"JNZ", 3, 1, 7, (char *)("Jump to while part"));
-            whileSkp = emitSkip(1);
             tmpBLoc = breakLoc;
             breakLoc = emitSkip(0);
+            emitRM((char *)"JNZ", 3, 1, 7, (char *)("Jump to while part"));
+            
+            
 
             emitComment((char*)("DO"));
+            whileSkp = emitSkip(1);
             emitStart(t->child[1]);
-            emitRM((char*)"LDA", 7, whileLoc - emitSkip(0) - 1, 7, (char*)("go to the beginning of the loop"));
+            emitRM((char*)"JMP", 7, whileLoc - emitSkip(0) - 1, 7, (char*)("go to the beginning of the loop"));
             ldaLoc = emitSkip(0);
             backPatchAJumpToHere(whileSkp, (char *)("Jump past loop [backpatch]"));
             breakLoc = tmpBLoc;
@@ -264,14 +266,14 @@ void emitStmt(TreeNode* t){
             }
             emitRM((char *)"LD", 3, -1, 1, (char *)("Load return address"));
 			emitRM((char *)"LD", 1, 0, 1, (char *)("Adjust fp"));
-			emitRM((char *)"LDA", 7, 0, 3, (char *)("Return"));
+			emitRM((char *)"JMP", 7, 0, 3, (char *)("Return"));
 
             break;
 
         case BreakK:
 
             emitComment((char*)("BREAK"));
-            emitRM((char *)"LDA", 7, breakLoc -emitSkip(0) - 2, 7, (char *)("break"));
+            emitRM((char *)"JMP", 7, breakLoc - emitSkip(0), 7, (char *)("break"));
             break;
 
 
@@ -403,43 +405,86 @@ void emitExp(TreeNode *t){
 
             else{
 
-                stFlag = false;
+                //check for array, need to do unique stuff
+                //for an array version
+                //load address of base of array will probably need global checks
+                if(!strcmp(leftSide->attr.name, "[")){
 
-                emitStart(rightSide);
-                isUnary = false;
-                emitStart(leftSide);
+                   emitStart(leftSide->child[1]);
+                   emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index"));
 
-                //check for each other assignment operator
-                if(!strcmp(t->attr.name, "+=")){
+                   tempOffset--;
 
-                    emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
-					emitRO((char *)"ADD", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
-				}
-				else if(!strcmp(t->attr.name, "-=")){
-                    emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
-					emitRO((char *)"SUB", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
-				}
-				else if(!strcmp(t->attr.name, "*=")){
-                    emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
-					emitRO((char *)"MUL", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
-				}
-				else if(!strcmp(t->attr.name, "/=")){
-                    emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
-					emitRO((char *)"DIV", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
-				}
+                   emitRM((char *)"LDA", 3, rightSide->child[0]->mOffset, 0, (char *)("Load address of base of array"), (char *)rightSide->child[0]->attr.name);
+                   emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
+                   emitStart(rightSide->child[1]);
+                   emitRM((char *)"LD", 4, tempOffset, 1, (char *)"Pop left into ac1");
+                   emitStart(rightSide->child[0]);
+                   emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
+                   emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
+
+                   tempOffset++;
+
+                   emitRM((char *)"LD", 4, tempOffset, 1, (char *)("Pop index"));
+                   emitRM((char *)"LDA", 5, leftSide->child[0]->mOffset, 0, (char *)("Load address of base of array"), (char *)leftSide->child[0]->attr.name);
+                   emitRO((char *)"SUB", 5, 5, 4, (char *)"Compute offset of value");
+                   emitRM((char *)"LD", 4, 0, 5, (char *) "Load LHS variable");
+                   
+                    if(!strcmp(t->attr.name, "+=")){
+
+                        emitRO((char *)"ADD", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
+                    }
+                    else if(!strcmp(t->attr.name, "-=")){
+                        emitRO((char *)"SUB", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
+                    }
+                        else if(!strcmp(t->attr.name, "*=")){
+                        emitRO((char *)"MUL", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
+                    }
+                        else if(!strcmp(t->attr.name, "/=")){
+                        emitRO((char *)"DIV", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
+                    }
+                            emitRM((char *)"ST", 3, leftSide->mOffset, 5, (char *)("Store variable"),(char *)leftSide->attr.name);
+                }
+                else{
+
+                    stFlag = false;
+                    emitStart(rightSide);
+                    isUnary = false;
+                    emitStart(leftSide);
+
+                    //check for each other assignment operator
+                    if(!strcmp(t->attr.name, "+=")){
+
+                        emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
+                        emitRO((char *)"ADD", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
+                    }
+                    else if(!strcmp(t->attr.name, "-=")){
+                        emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
+                        emitRO((char *)"SUB", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
+                    }
+                    else if(!strcmp(t->attr.name, "*=")){
+                        emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
+                        emitRO((char *)"MUL", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
+                    }
+                    else if(!strcmp(t->attr.name, "/=")){
+                        emitRM((char *)"LD", 4, leftSide->mOffset, 0, (char *) "Load LHS var");
+                        emitRO((char *)"DIV", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
+                    }
+                
 				
-                //check mem types
-				if(leftSide->memT == Global){
+                    //check mem types
+                    if(leftSide->memT == Global){
 
-					emitRM((char *)"ST", 3, leftSide->mOffset, 0, (char *)("Store variable"), (char *)leftSide->attr.name);
-				}
-				else{
+                        emitRM((char *)"ST", 3, leftSide->mOffset, 0, (char *)("Store variable"), (char *)leftSide->attr.name);
+                    }
+                    else{
 
-					emitRM((char *)"ST", 3, leftSide->mOffset, 1, (char *)("Store variable"), (char *)leftSide->attr.name);
-                    
-				}
-                //reset unary flag
-				isUnary = true;
+                        emitRM((char *)"ST", 3, leftSide->mOffset, 1, (char *)("Store variable"), (char *)leftSide->attr.name);
+                        
+                    }
+                    //reset unary flag
+                    isUnary = true;
+                }
             }
 
             break;
@@ -499,27 +544,33 @@ void emitExp(TreeNode *t){
 
                     //tmpIdx = tempOffset;
                     if(isUnary == false){
-                    if(leftSide->isArray){
+                        if(leftSide->isArray){
 
-                        if(leftSide->memT == Global){
-                             emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)"1 Load address of base of array 505", (char*)leftSide->attr.name);
+                            if(leftSide->memT == Global){
+                                emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)"1 Load address of base of array 507", (char*)leftSide->attr.name);
+                            }
+                            //might need to add this later
+                            /*
+                            else if(mem->memT == Parameter){
+                                emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)"2 Load address of base of array", (char*)leftSide->attr.name);
+                            }
+                            */
+                            else{
+                                emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)"2 Load address of base of array", (char*)leftSide->attr.name);
+                            }
+
+                            emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
+                            tempOffset--;
+
+                            emitStart(t->child[1]);
+
+                            tempOffset++;
+
+                            emitRM((char *)"LD", 4, tempOffset, 1, (char *)"Pop left into ac1");
+                            emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
+                            emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
+
                         }
-                        else{
-                            emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)"2 Load address of base of array", (char*)leftSide->attr.name);
-                        }
-
-                        emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
-                        tempOffset--;
-
-                        emitStart(t->child[1]);
-
-                        tempOffset++;
-
-                        emitRM((char *)"LD", 4, tempOffset, 1, (char *)"Pop left into ac1");
-                        emitRO((char *)"SUB", 3, 4, 3, (char *)"Compute location from index");
-                        emitRM((char *)"LD", 3, 0, 3, (char *)"Load array element");
-
-                    }
                     }
                     else{
 
@@ -534,8 +585,11 @@ void emitExp(TreeNode *t){
                         if(leftSide->memT == Global){
                              emitRM((char *)"LDA", 5, leftSide->mOffset, 0, (char *)"1 Load address of base of array 535", (char*)leftSide->attr.name);
                         }
+                        else if(leftSide->memT == Parameter){
+                            emitRM((char *)"LD", 5, leftSide->mOffset, 1, (char *)"2 Load address of base of array 538", (char*)leftSide->attr.name);
+                        }
                         else{
-                            emitRM((char *)"LDA", 5, leftSide->mOffset, 1, (char *)"2 Load address of base of array 538", (char*)leftSide->attr.name);
+                            emitRM((char *)"LDA", 5, leftSide->mOffset, 1, (char *)"3 Load address of base of array 543", (char*)leftSide->attr.name);
                         }
 
                         emitRO((char *)"SUB", 5, 5, 3, (char *)"Compute location from index");
@@ -889,6 +943,9 @@ void emitExp(TreeNode *t){
                             if(t->sibling != NULL){
                                 curChild = curChild->sibling;
                             }
+                            else{
+                                curChild = NULL;
+                            }
                         }
                         emitComment((char *)("Param end"), t->attr.name);
 					    emitRM((char *)"LDA", 1, tmpIdx, 1,(char *)"Ghost frame becomes new active frame");
@@ -905,8 +962,7 @@ void emitExp(TreeNode *t){
                 curFunc = (TreeNode*)symbolTable.lookup(t->attr.name);
                 emitRM((char *)"LDA", 3, 1, 7,(char *)"Return address in ac");
                 int backpatch = emitSkip(0);
-                emitRM((char *)"JMP",7, curFunc->linenum - backpatch - 1, 7, (char *)("CALL OUTPUT"), t->attr.name);
-                
+                emitRM((char *)"JMP",7, curFunc->codeLine - backpatch - 1, 7, (char *)("CALL OUTPUT"), t->attr.name);       
                 emitRM((char *)"LDA", 3, 0, 2,(char *)"Save the result in ac");
                 emitComment((char *)("CALL end"), t->attr.name);
 
@@ -957,7 +1013,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("FUNCTION input"));
 	TreeNode *curIO = (TreeNode*)symbolTable.lookup((char *)("input"));
 	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
-	curIO->linenum = emitSkip(0)-1;
+	curIO->codeLine = emitSkip(0)-1;
 	curIO->attr.name = (char *) "input";
 	emitRO((char *)"IN", 2, 2, 2,(char *)("Grab int input"));
 	emitRM((char *)"LD", 3, -1, 1, (char *)("Load return address"));
@@ -970,7 +1026,7 @@ void emitIO(TreeNode *t){
     emitComment((char *)("FUNCTION output"));
 	curIO = (TreeNode*)symbolTable.lookup((char *)("output"));
 	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
-	curIO->linenum = emitSkip(0)-1;
+	curIO->codeLine = emitSkip(0)-1;
 	curIO->attr.name = (char *) "output";
 	emitRM((char *)"LD", 3, -2, 1,(char *)("Load parameter"));
     emitRO((char *)"OUT",3,3,3,(char *)("Output integer"));
@@ -984,7 +1040,7 @@ void emitIO(TreeNode *t){
     emitComment((char *)("FUNCTION inputb"));
 	curIO = (TreeNode*)symbolTable.lookup((char *)("inputb"));
 	emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
-	curIO->linenum = emitSkip(0)-1;
+	curIO->codeLine = emitSkip(0)-1;
 	curIO->attr.name = (char *) "inputb";
 	emitRO((char *)"INB", 2, 2, 2, (char *)("Grab bool input"));
 	emitRM((char *)"LD", 3, -1, 1, (char *)("Load return address"));
@@ -997,7 +1053,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("FUNCTION outputb"));
 	curIO = (TreeNode*)symbolTable.lookup((char *)("outputb"));
 	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
-	curIO->linenum = emitSkip(0)-1;
+	curIO->codeLine = emitSkip(0)-1;
 	curIO->attr.name = (char *) "outputb";
 	emitRM((char *)"LD", 3, -2, 1,(char *)("Load parameter"));
 	emitRO((char *)"OUTB", 3, 3, 3, (char *)("Output bool"));
@@ -1011,7 +1067,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("FUNCTION inputc"));
 	curIO = (TreeNode*)symbolTable.lookup((char *)("inputc"));
 	emitRM((char *)"ST", 3, -1, 1,(char *)"Store return address");
-	curIO->linenum = emitSkip(0)-1;
+	curIO->codeLine = emitSkip(0)-1;
 	curIO->attr.name = (char *) "inputc";
 	emitRO((char *)"INC", 2, 2, 2, (char *)("Grab char input"));
 	emitRM((char *)"LD", 3, -1, 1, (char *)("Load return address"));
@@ -1024,7 +1080,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("FUNCTION outputc"));
 	curIO = (TreeNode*)symbolTable.lookup((char *)("outputc"));
 	emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
-	curIO->linenum = emitSkip(0)-1;
+	curIO->codeLine = emitSkip(0)-1;
 	curIO->attr.name = (char *) "outputc";
 	emitRM((char *)"LD", 3, -2, 1, (char *)("Load parameter"));
 	emitRO((char *)"OUTC", 3, 3, 3, (char *)("Output char"));
@@ -1038,7 +1094,7 @@ void emitIO(TreeNode *t){
 	emitComment((char *)("FUNCTION outnl"));
 	curIO = (TreeNode*)symbolTable.lookup((char *)("outnl"));
 	emitRM((char *)"ST", 3, -1, 1, (char *)"Store return address");
-	curIO->linenum = emitSkip(0)-1;
+	curIO->codeLine = emitSkip(0)-1;
 	curIO->attr.name = (char *) "outnl";
 	emitRO((char *)"OUTNL", 3, 3, 3, (char *)("Output a newline"));
 	emitRM((char *)"LD", 3, -1, 1, (char *)("Load return address"));

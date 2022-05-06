@@ -94,7 +94,7 @@
 * TOFF: -306
 * OP EXPRESSION
  52:     LD  3,-303(1)	2 Load variable z
- 53:    LDA  5,-3(1)	2 Load address of base of array x
+ 53:    LDA  5,-3(1)	3 Load address of base of array 543 x
  54:    SUB  5,5,3	Compute location from index 
  55:     LD  3,0(5)	Load array element 
  56:     ST  3,-306(1)	Push parameter 
@@ -142,7 +142,7 @@
 * TOFF: -306
 * OP EXPRESSION
  85:     LD  3,-303(1)	2 Load variable z
- 86:    LDA  5,-3(1)	2 Load address of base of array x
+ 86:    LDA  5,-3(1)	3 Load address of base of array 543 x
  87:    SUB  5,5,3	Compute location from index 
  88:     LD  3,0(5)	Load array element 
  89:     ST  3,-306(1)	Push parameter 
@@ -169,10 +169,10 @@
 * OP EXPRESSION
 * OP EXPRESSION
 100:     LD  3,-303(1)	2 Load variable z
-101:    LDA  5,-3(1)	2 Load address of base of array x
+101:    LDA  5,-3(1)	3 Load address of base of array 543 x
 102:    SUB  5,5,3	Compute location from index 
 103:     LD  3,0(5)	Load array element 
-104:    LDA  5,-3(1)	2 Load address of base of array x
+104:    LDA  5,-3(1)	3 Load address of base of array 543 x
 105:    SUB  5,5,3	Compute location from index 
 106:     LD  3,0(5)	Load array element 
 107:     ST  3,-306(1)	Push parameter 
@@ -200,13 +200,13 @@
 * OP EXPRESSION
 * OP EXPRESSION
 118:     LD  3,-303(1)	2 Load variable z
-119:    LDA  5,-3(1)	2 Load address of base of array x
+119:    LDA  5,-3(1)	3 Load address of base of array 543 x
 120:    SUB  5,5,3	Compute location from index 
 121:     LD  3,0(5)	Load array element 
-122:    LDA  5,-3(1)	2 Load address of base of array x
+122:    LDA  5,-3(1)	3 Load address of base of array 543 x
 123:    SUB  5,5,3	Compute location from index 
 124:     LD  3,0(5)	Load array element 
-125:    LDA  5,-3(1)	2 Load address of base of array x
+125:    LDA  5,-3(1)	3 Load address of base of array 543 x
 126:    SUB  5,5,3	Compute location from index 
 127:     LD  3,0(5)	Load array element 
 128:     ST  3,-306(1)	Push parameter 
@@ -235,16 +235,16 @@
 * OP EXPRESSION
 * OP EXPRESSION
 139:     LD  3,-303(1)	2 Load variable z
-140:    LDA  5,-3(1)	2 Load address of base of array x
+140:    LDA  5,-3(1)	3 Load address of base of array 543 x
 141:    SUB  5,5,3	Compute location from index 
 142:     LD  3,0(5)	Load array element 
-143:    LDA  5,-3(1)	2 Load address of base of array x
+143:    LDA  5,-3(1)	3 Load address of base of array 543 x
 144:    SUB  5,5,3	Compute location from index 
 145:     LD  3,0(5)	Load array element 
-146:    LDA  5,-3(1)	2 Load address of base of array x
+146:    LDA  5,-3(1)	3 Load address of base of array 543 x
 147:    SUB  5,5,3	Compute location from index 
 148:     LD  3,0(5)	Load array element 
-149:    LDA  5,-3(1)	2 Load address of base of array x
+149:    LDA  5,-3(1)	3 Load address of base of array 543 x
 150:    SUB  5,5,3	Compute location from index 
 151:     LD  3,0(5)	Load array element 
 152:     ST  3,-306(1)	Push parameter 
@@ -274,19 +274,19 @@
 * OP EXPRESSION
 * OP EXPRESSION
 163:     LD  3,-303(1)	2 Load variable z
-164:    LDA  5,-3(1)	2 Load address of base of array x
+164:    LDA  5,-3(1)	3 Load address of base of array 543 x
 165:    SUB  5,5,3	Compute location from index 
 166:     LD  3,0(5)	Load array element 
-167:    LDA  5,-3(1)	2 Load address of base of array x
+167:    LDA  5,-3(1)	3 Load address of base of array 543 x
 168:    SUB  5,5,3	Compute location from index 
 169:     LD  3,0(5)	Load array element 
-170:    LDA  5,-3(1)	2 Load address of base of array x
+170:    LDA  5,-3(1)	3 Load address of base of array 543 x
 171:    SUB  5,5,3	Compute location from index 
 172:     LD  3,0(5)	Load array element 
-173:    LDA  5,-3(1)	2 Load address of base of array x
+173:    LDA  5,-3(1)	3 Load address of base of array 543 x
 174:    SUB  5,5,3	Compute location from index 
 175:     LD  3,0(5)	Load array element 
-176:    LDA  5,-3(1)	2 Load address of base of array x
+176:    LDA  5,-3(1)	3 Load address of base of array 543 x
 177:    SUB  5,5,3	Compute location from index 
 178:     LD  3,0(5)	Load array element 
 179:     ST  3,-306(1)	Push parameter 
@@ -317,22 +317,22 @@
 * OP EXPRESSION
 * OP EXPRESSION
 190:     LD  3,-303(1)	2 Load variable z
-191:    LDA  5,-3(1)	2 Load address of base of array x
+191:    LDA  5,-3(1)	3 Load address of base of array 543 x
 192:    SUB  5,5,3	Compute location from index 
 193:     LD  3,0(5)	Load array element 
-194:    LDA  5,-3(1)	2 Load address of base of array x
+194:    LDA  5,-3(1)	3 Load address of base of array 543 x
 195:    SUB  5,5,3	Compute location from index 
 196:     LD  3,0(5)	Load array element 
-197:    LDA  5,-3(1)	2 Load address of base of array x
+197:    LDA  5,-3(1)	3 Load address of base of array 543 x
 198:    SUB  5,5,3	Compute location from index 
 199:     LD  3,0(5)	Load array element 
-200:    LDA  5,-3(1)	2 Load address of base of array x
+200:    LDA  5,-3(1)	3 Load address of base of array 543 x
 201:    SUB  5,5,3	Compute location from index 
 202:     LD  3,0(5)	Load array element 
-203:    LDA  5,-3(1)	2 Load address of base of array x
+203:    LDA  5,-3(1)	3 Load address of base of array 543 x
 204:    SUB  5,5,3	Compute location from index 
 205:     LD  3,0(5)	Load array element 
-206:    LDA  5,-3(1)	2 Load address of base of array x
+206:    LDA  5,-3(1)	3 Load address of base of array 543 x
 207:    SUB  5,5,3	Compute location from index 
 208:     LD  3,0(5)	Load array element 
 209:     ST  3,-306(1)	Push parameter 
@@ -364,25 +364,25 @@
 * OP EXPRESSION
 * OP EXPRESSION
 220:     LD  3,-303(1)	2 Load variable z
-221:    LDA  5,-3(1)	2 Load address of base of array x
+221:    LDA  5,-3(1)	3 Load address of base of array 543 x
 222:    SUB  5,5,3	Compute location from index 
 223:     LD  3,0(5)	Load array element 
-224:    LDA  5,-3(1)	2 Load address of base of array x
+224:    LDA  5,-3(1)	3 Load address of base of array 543 x
 225:    SUB  5,5,3	Compute location from index 
 226:     LD  3,0(5)	Load array element 
-227:    LDA  5,-3(1)	2 Load address of base of array x
+227:    LDA  5,-3(1)	3 Load address of base of array 543 x
 228:    SUB  5,5,3	Compute location from index 
 229:     LD  3,0(5)	Load array element 
-230:    LDA  5,-3(1)	2 Load address of base of array x
+230:    LDA  5,-3(1)	3 Load address of base of array 543 x
 231:    SUB  5,5,3	Compute location from index 
 232:     LD  3,0(5)	Load array element 
-233:    LDA  5,-3(1)	2 Load address of base of array x
+233:    LDA  5,-3(1)	3 Load address of base of array 543 x
 234:    SUB  5,5,3	Compute location from index 
 235:     LD  3,0(5)	Load array element 
-236:    LDA  5,-3(1)	2 Load address of base of array x
+236:    LDA  5,-3(1)	3 Load address of base of array 543 x
 237:    SUB  5,5,3	Compute location from index 
 238:     LD  3,0(5)	Load array element 
-239:    LDA  5,-3(1)	2 Load address of base of array x
+239:    LDA  5,-3(1)	3 Load address of base of array 543 x
 240:    SUB  5,5,3	Compute location from index 
 241:     LD  3,0(5)	Load array element 
 242:     ST  3,-306(1)	Push parameter 
@@ -415,28 +415,28 @@
 * OP EXPRESSION
 * OP EXPRESSION
 253:     LD  3,-303(1)	2 Load variable z
-254:    LDA  5,-3(1)	2 Load address of base of array x
+254:    LDA  5,-3(1)	3 Load address of base of array 543 x
 255:    SUB  5,5,3	Compute location from index 
 256:     LD  3,0(5)	Load array element 
-257:    LDA  5,-3(1)	2 Load address of base of array x
+257:    LDA  5,-3(1)	3 Load address of base of array 543 x
 258:    SUB  5,5,3	Compute location from index 
 259:     LD  3,0(5)	Load array element 
-260:    LDA  5,-3(1)	2 Load address of base of array x
+260:    LDA  5,-3(1)	3 Load address of base of array 543 x
 261:    SUB  5,5,3	Compute location from index 
 262:     LD  3,0(5)	Load array element 
-263:    LDA  5,-3(1)	2 Load address of base of array x
+263:    LDA  5,-3(1)	3 Load address of base of array 543 x
 264:    SUB  5,5,3	Compute location from index 
 265:     LD  3,0(5)	Load array element 
-266:    LDA  5,-3(1)	2 Load address of base of array x
+266:    LDA  5,-3(1)	3 Load address of base of array 543 x
 267:    SUB  5,5,3	Compute location from index 
 268:     LD  3,0(5)	Load array element 
-269:    LDA  5,-3(1)	2 Load address of base of array x
+269:    LDA  5,-3(1)	3 Load address of base of array 543 x
 270:    SUB  5,5,3	Compute location from index 
 271:     LD  3,0(5)	Load array element 
-272:    LDA  5,-3(1)	2 Load address of base of array x
+272:    LDA  5,-3(1)	3 Load address of base of array 543 x
 273:    SUB  5,5,3	Compute location from index 
 274:     LD  3,0(5)	Load array element 
-275:    LDA  5,-3(1)	2 Load address of base of array x
+275:    LDA  5,-3(1)	3 Load address of base of array 543 x
 276:    SUB  5,5,3	Compute location from index 
 277:     LD  3,0(5)	Load array element 
 278:     ST  3,-306(1)	Push parameter 
@@ -470,31 +470,31 @@
 * OP EXPRESSION
 * OP EXPRESSION
 289:     LD  3,-303(1)	2 Load variable z
-290:    LDA  5,-3(1)	2 Load address of base of array x
+290:    LDA  5,-3(1)	3 Load address of base of array 543 x
 291:    SUB  5,5,3	Compute location from index 
 292:     LD  3,0(5)	Load array element 
-293:    LDA  5,-3(1)	2 Load address of base of array x
+293:    LDA  5,-3(1)	3 Load address of base of array 543 x
 294:    SUB  5,5,3	Compute location from index 
 295:     LD  3,0(5)	Load array element 
-296:    LDA  5,-3(1)	2 Load address of base of array x
+296:    LDA  5,-3(1)	3 Load address of base of array 543 x
 297:    SUB  5,5,3	Compute location from index 
 298:     LD  3,0(5)	Load array element 
-299:    LDA  5,-3(1)	2 Load address of base of array x
+299:    LDA  5,-3(1)	3 Load address of base of array 543 x
 300:    SUB  5,5,3	Compute location from index 
 301:     LD  3,0(5)	Load array element 
-302:    LDA  5,-3(1)	2 Load address of base of array x
+302:    LDA  5,-3(1)	3 Load address of base of array 543 x
 303:    SUB  5,5,3	Compute location from index 
 304:     LD  3,0(5)	Load array element 
-305:    LDA  5,-3(1)	2 Load address of base of array x
+305:    LDA  5,-3(1)	3 Load address of base of array 543 x
 306:    SUB  5,5,3	Compute location from index 
 307:     LD  3,0(5)	Load array element 
-308:    LDA  5,-3(1)	2 Load address of base of array x
+308:    LDA  5,-3(1)	3 Load address of base of array 543 x
 309:    SUB  5,5,3	Compute location from index 
 310:     LD  3,0(5)	Load array element 
-311:    LDA  5,-3(1)	2 Load address of base of array x
+311:    LDA  5,-3(1)	3 Load address of base of array 543 x
 312:    SUB  5,5,3	Compute location from index 
 313:     LD  3,0(5)	Load array element 
-314:    LDA  5,-3(1)	2 Load address of base of array x
+314:    LDA  5,-3(1)	3 Load address of base of array 543 x
 315:    SUB  5,5,3	Compute location from index 
 316:     LD  3,0(5)	Load array element 
 317:     ST  3,-306(1)	Push parameter 
@@ -529,34 +529,34 @@
 * OP EXPRESSION
 * OP EXPRESSION
 328:     LD  3,-303(1)	2 Load variable z
-329:    LDA  5,-3(1)	2 Load address of base of array x
+329:    LDA  5,-3(1)	3 Load address of base of array 543 x
 330:    SUB  5,5,3	Compute location from index 
 331:     LD  3,0(5)	Load array element 
-332:    LDA  5,-3(1)	2 Load address of base of array x
+332:    LDA  5,-3(1)	3 Load address of base of array 543 x
 333:    SUB  5,5,3	Compute location from index 
 334:     LD  3,0(5)	Load array element 
-335:    LDA  5,-3(1)	2 Load address of base of array x
+335:    LDA  5,-3(1)	3 Load address of base of array 543 x
 336:    SUB  5,5,3	Compute location from index 
 337:     LD  3,0(5)	Load array element 
-338:    LDA  5,-3(1)	2 Load address of base of array x
+338:    LDA  5,-3(1)	3 Load address of base of array 543 x
 339:    SUB  5,5,3	Compute location from index 
 340:     LD  3,0(5)	Load array element 
-341:    LDA  5,-3(1)	2 Load address of base of array x
+341:    LDA  5,-3(1)	3 Load address of base of array 543 x
 342:    SUB  5,5,3	Compute location from index 
 343:     LD  3,0(5)	Load array element 
-344:    LDA  5,-3(1)	2 Load address of base of array x
+344:    LDA  5,-3(1)	3 Load address of base of array 543 x
 345:    SUB  5,5,3	Compute location from index 
 346:     LD  3,0(5)	Load array element 
-347:    LDA  5,-3(1)	2 Load address of base of array x
+347:    LDA  5,-3(1)	3 Load address of base of array 543 x
 348:    SUB  5,5,3	Compute location from index 
 349:     LD  3,0(5)	Load array element 
-350:    LDA  5,-3(1)	2 Load address of base of array x
+350:    LDA  5,-3(1)	3 Load address of base of array 543 x
 351:    SUB  5,5,3	Compute location from index 
 352:     LD  3,0(5)	Load array element 
-353:    LDA  5,-3(1)	2 Load address of base of array x
+353:    LDA  5,-3(1)	3 Load address of base of array 543 x
 354:    SUB  5,5,3	Compute location from index 
 355:     LD  3,0(5)	Load array element 
-356:    LDA  5,-3(1)	2 Load address of base of array x
+356:    LDA  5,-3(1)	3 Load address of base of array 543 x
 357:    SUB  5,5,3	Compute location from index 
 358:     LD  3,0(5)	Load array element 
 359:     ST  3,-306(1)	Push parameter 

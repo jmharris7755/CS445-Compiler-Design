@@ -97,7 +97,7 @@
 * TOFF: -4
 * OP EXPRESSION
 * OP EXPRESSION
- 55:    LDA  3,-1(0)	1 Load address of base of array x
+ 55:    LDA  3,-1(0)	1 Load address of base of array 505 x
  56:     ST  3,-4(1)	Push left side 
  57:    LDC  3,2(6)	Load Integer constant 
  58:     LD  4,-4(1)	Pop left into ac1 
@@ -105,7 +105,7 @@
  60:     LD  3,0(3)	Load array element 
  61:     ST  3,-4(1)	Push the left side 
 * OP EXPRESSION
- 62:    LDA  3,-5(0)	1 Load address of base of array y
+ 62:    LDA  3,-5(0)	1 Load address of base of array 505 y
  63:     ST  3,-5(1)	Push left side 
  64:    LDC  3,1(6)	Load Integer constant 
  65:     LD  4,-5(1)	Pop left into ac1 

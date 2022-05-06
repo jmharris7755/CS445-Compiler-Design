@@ -119,7 +119,7 @@
 * TOFF: -22
 * OP EXPRESSION
  74:    LDC  3,5(6)	Load Integer constant 
- 75:    LDA  5,-3(1)	2 Load address of base of array x
+ 75:    LDA  5,-3(1)	3 Load address of base of array 543 x
  76:    SUB  5,5,3	Compute location from index 
  77:     LD  3,0(5)	Load array element 
  78:     ST  3,-22(1)	Push parameter 
@@ -132,7 +132,7 @@
 * ASSIGNMENT EXPRESSION
 * OP EXPRESSION
  83:    LDC  3,5(6)	Load Integer constant 
- 84:    LDA  5,-3(1)	2 Load address of base of array x
+ 84:    LDA  5,-3(1)	3 Load address of base of array 543 x
  85:    SUB  5,5,3	Compute location from index 
  86:     LD  3,0(5)	Load array element 
 * OP EXPRESSION
@@ -152,7 +152,7 @@
 * TOFF: -22
 * OP EXPRESSION
  97:    LDC  3,7(6)	Load Integer constant 
- 98:    LDA  5,-11(1)	2 Load address of base of array y
+ 98:    LDA  5,-11(1)	3 Load address of base of array 543 y
  99:    SUB  5,5,3	Compute location from index 
 100:     LD  3,0(5)	Load array element 
 101:     ST  3,-22(1)	Push parameter 

@@ -82,7 +82,7 @@
 * ASSIGNMENT EXPRESSION
 * OP EXPRESSION
  41:    LDC  3,3(6)	Load Integer constant 
- 42:    LDA  5,-2(1)	2 Load address of base of array 538 x
+ 42:     LD  5,-2(1)	2 Load address of base of array 538 x
  43:    SUB  5,5,3	Compute location from index 
  44:     LD  3,0(5)	Load array element 
  45:    LDA  3,1(3)	increment value of x
@@ -110,7 +110,7 @@
 * TOFF: -5
 * OP EXPRESSION
  58:    LDC  3,3(6)	Load Integer constant 
- 59:    LDA  5,-2(1)	2 Load address of base of array 538 x
+ 59:     LD  5,-2(1)	2 Load address of base of array 538 x
  60:    SUB  5,5,3	Compute location from index 
  61:     LD  3,0(5)	Load array element 
  62:     ST  3,-5(1)	Push parameter 
@@ -137,7 +137,7 @@
 * ASSIGNMENT EXPRESSION
 * OP EXPRESSION
  73:    LDC  3,3(6)	Load Integer constant 
- 74:    LDA  5,-2(1)	2 Load address of base of array 538 x
+ 74:     LD  5,-2(1)	2 Load address of base of array 538 x
  75:    SUB  5,5,3	Compute location from index 
  76:     LD  3,0(5)	Load array element 
  77:    LDA  3,-1(3)	decrement value of x
@@ -165,7 +165,7 @@
 * TOFF: -5
 * OP EXPRESSION
  90:    LDC  3,3(6)	Load Integer constant 
- 91:    LDA  5,-2(1)	2 Load address of base of array 538 x
+ 91:     LD  5,-2(1)	2 Load address of base of array 538 x
  92:    SUB  5,5,3	Compute location from index 
  93:     LD  3,0(5)	Load array element 
  94:     ST  3,-5(1)	Push parameter 
@@ -217,7 +217,7 @@
 * Param end dog
 121:    LDA  1,-11(1)	1 Ghost frame becomes new active frame 
 122:    LDA  3,1(7)	Return address in ac 
-123:    JMP  7,-122(7)	CALL OUTPUT dog
+123:    JMP  7,-85(7)	CALL OUTPUT dog
 124:    LDA  3,0(2)	Save the result in ac 
 * CALL end dog
 * CALL EXPRESSION
@@ -227,7 +227,7 @@
 * TOFF: -13
 * OP EXPRESSION
 126:    LDC  3,3(6)	Load Integer constant 
-127:    LDA  5,-3(1)	2 Load address of base of array 538 x
+127:    LDA  5,-3(1)	3 Load address of base of array 543 x
 128:    SUB  5,5,3	Compute location from index 
 129:     LD  3,0(5)	Load array element 
 130:     ST  3,-13(1)	Push parameter 
