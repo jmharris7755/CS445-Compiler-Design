@@ -186,32 +186,40 @@ void emitStmt(TreeNode* t){
 
         case IfK:
 
+            //start if statement
             emitComment((char*)("IF"));
             stFlag = false;
 
+            //analyze child0
             emitStart(t->child[0]);
             emitComment((char*)("THEN"));
 
+            //set else location and then location
             elseLoc = 0;
             thenLoc = emitSkip(1);
 
+            //start analyzing child1
             emitStart(t->child[1]);
 
+            //if there is an else statement updated location
             if(t->child[2] != NULL){
 
                 elseLoc = emitSkip(1);
             }
 
+            //go back to then section
             backPatchAJumpToHere((char*)"JZR", 3, thenLoc, (char *)("Jump around the THEN if false [backpatch]"));
 
+            //if there is an else statement, analyze child2 jump the else
             if(t->child[2] != NULL){
 
                 emitComment((char*)"ELSE");
                 emitStart(t->child[2]);
-                backPatchAJumpToHere((char*)"JZR", 3, thenLoc, (char *)("Jump around the ELSE [backpatch]"));
+                backPatchAJumpToHere((char*)"JZR", 3, elseLoc, (char *)("Jump around the ELSE [backpatch]"));
 
             }
 
+            //done
             emitComment((char*)"END IF");
 
             break;
