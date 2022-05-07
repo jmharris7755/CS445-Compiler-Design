@@ -130,3 +130,97 @@
 * ASSIGNMENT EXPRESSION
  68:    LDC  3,3(6)	Load Integer constant 
  69:     ST  3,-3(1)	Push index 
+* TOFF: -4
+ 70:    LDC  3,1(6)	Load Integer constant 
+* TOFF: -3
+ 71:     LD  4,-3(1)	Pop index 
+ 72:     LD  5,-2(1)	Load address of base of array 458 x
+ 73:    SUB  5,5,4	Compute offset of value 
+ 74:     LD  4,0(5)	Load LHS variable 
+ 75:    SUB  3,4,3	Op -=
+ 76:     ST  3,0(5)	Store variable x
+* CALL EXPRESSION
+* CALL cat
+ 77:     ST  1,-3(1)	1 Store fp in ghost frame for cat
+* Param 1
+* TOFF: -4
+* TOFF: -4
+ 78:     LD  3,-2(1)	load address of base of array 836 x
+ 79:     ST  3,-5(1)	Push parameter 
+* Param end cat
+ 80:    LDA  1,-3(1)	1 Ghost frame becomes new active frame 
+ 81:    LDA  3,1(7)	Return address in ac 
+ 82:    JMP  7,-44(7)	CALL OUTPUT cat
+ 83:    LDA  3,0(2)	Save the result in ac 
+* CALL end cat
+* TOFF: -3
+* Compound Body
+* TOFF:  -3
+* END COMPOUND
+ 67:    JZR  3,16(7)	Jump around the THEN if false [backpatch] 
+* END IF
+* RETURN
+ 84:     LD  3,-1(1)	Load return address 
+ 85:     LD  1,0(1)	Adjust fp 
+ 86:    JMP  7,0(3)	Return 
+* Compound Body
+* TOFF:  -3
+* END COMPOUND
+* Add standard closing in case there is no return statement
+ 87:    LDC  2,0(6)	Set return value to 0 
+ 88:     LD  3,-1(1)	Load return address 
+ 89:     LD  1,0(1)	Adjust fp 
+ 90:    JMP  7,0(3)	Return 
+* END FUNCTION cat
+* TOFF: -2
+* FUNCTION main
+ 91:     ST  3,-1(1)	Store return address 
+* COMPOUND
+* TOFF:  -2
+* ASSIGNMENT EXPRESSION
+ 92:    LDC  3,3(6)	Load Integer constant 
+ 93:     ST  3,-2(1)	Push index 
+* TOFF: -3
+ 94:    LDC  3,12(6)	Load Integer constant 
+* TOFF: -2
+ 95:     LD  4,-2(1)	Pop index 
+ 96:    LDA  5,-1(0)	Load address of base of array 383 x
+ 97:    SUB  5,5,4	Compute offset of value 
+ 98:     ST  3,0(5)	Store variable x
+* CALL EXPRESSION
+* CALL cat
+ 99:     ST  1,-2(1)	1 Store fp in ghost frame for cat
+* Param 1
+100:    LDA  3,-1(0)	Load address of base of array 908 x
+* TOFF: -4
+* TOFF: -4
+101:     ST  3,-4(1)	Push parameter 
+* Param end cat
+102:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
+103:    LDA  3,1(7)	Return address in ac 
+104:    JMP  7,-66(7)	CALL OUTPUT cat
+105:    LDA  3,0(2)	Save the result in ac 
+* CALL end cat
+* TOFF: -2
+* Compound Body
+* TOFF:  -2
+* END COMPOUND
+* Add standard closing in case there is no return statement
+106:    LDC  2,0(6)	Set return value to 0 
+107:     LD  3,-1(1)	Load return address 
+108:     LD  1,0(1)	Adjust fp 
+109:    JMP  7,0(3)	Return 
+* END FUNCTION main
+* TOFF: -2
+  0:    JMP  7,109(7)	Jump to init [backpatch] 
+* INIT
+110:    LDA  1,-19(0)	set first frame at end of globals 
+111:     ST  1,0(1)	store old fp (point to self) 
+* INIT GLOBALS AND STATICS
+112:    LDC  3,18(6)	load size of array x
+113:     ST  3,0(0)	save size of array x
+* END INIT GLOBALS AND STATICS
+114:    LDA  3,1(7)	Return address in ac 
+115:    JMP  7,-25(7)	Jump to main 
+116:   HALT  0,0,0	DONE! 
+* END INIT

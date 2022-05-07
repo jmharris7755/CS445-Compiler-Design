@@ -204,10 +204,10 @@
 * CALL cat
 106:     ST  1,-2(1)	1 Store fp in ghost frame for cat
 * Param 1
-107:     LD  3,-1(0)	1 variable x
-* TOFF: -3
-* TOFF: -3
-108:     ST  3,-3(1)	Push parameter 
+107:    LDA  3,-1(0)	Load address of base of array 908 x
+* TOFF: -4
+* TOFF: -4
+108:     ST  3,-4(1)	Push parameter 
 * Param end cat
 109:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
 110:    LDA  3,1(7)	Return address in ac 

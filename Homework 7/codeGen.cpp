@@ -370,7 +370,8 @@ void emitExp(TreeNode *t){
                 if(!strcmp(t->child[0]->attr.name, "[")){
 
                     emitStart(leftSide->child[1]);
-                    emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index"));
+                    
+                    emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index 373"));
                     tempOffset--;
                     emitComment((char*)"TOFF:", tempOffset);
 
@@ -443,11 +444,13 @@ void emitExp(TreeNode *t){
                 if(!strcmp(leftSide->attr.name, "[")){
 
                    emitStart(leftSide->child[1]);
-                   emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index"));
+                   emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index 446"));
 
                    tempOffset--;
                    emitComment((char*)"TOFF:", tempOffset);
 
+                    //array index to array index assignment
+                   if(rightSide->child[1] != NULL){
                    emitRM((char *)"LDA", 3, rightSide->child[0]->mOffset, 0, (char *)("Load address of base of array 446"), (char *)rightSide->child[0]->attr.name);
                    emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
                    emitStart(rightSide->child[1]);
@@ -463,6 +466,18 @@ void emitExp(TreeNode *t){
                    emitRM((char *)"LDA", 5, leftSide->child[0]->mOffset, 0, (char *)("Load address of base of array 458"), (char *)leftSide->child[0]->attr.name);
                    emitRO((char *)"SUB", 5, 5, 4, (char *)"Compute offset of value");
                    emitRM((char *)"LD", 4, 0, 5, (char *) "Load LHS variable");
+                   }
+                   else{
+                       emitStart(rightSide);
+                       tempOffset++;
+                       emitComment((char*)"TOFF:", tempOffset);
+                       emitRM((char *)"LD", 4, tempOffset, 1, (char *)"Pop index");
+                       emitRM((char *)"LD", 5, leftSide->child[0]->mOffset, 1, (char *)("Load address of base of array 458"), (char *)leftSide->child[0]->attr.name);
+                       emitRO((char *)"SUB", 5, 5, 4, (char *)"Compute offset of value");
+                       emitRM((char *)"LD", 4, 0, 5, (char *) "Load LHS variable");
+                   }
+
+                   
                    
                     if(!strcmp(t->attr.name, "+=")){
 
@@ -477,7 +492,14 @@ void emitExp(TreeNode *t){
                         else if(!strcmp(t->attr.name, "/=")){
                         emitRO((char *)"DIV", 3, 4, 3, (char *)("Op"), (char *)t->attr.name);
                     }
-                            emitRM((char *)"ST", 3, leftSide->mOffset, 5, (char *)("Store variable"),(char *)leftSide->attr.name);
+                    //store
+                    if(leftSide->child[0] != NULL){
+                        emitRM((char *)"ST", 3, leftSide->mOffset, 5, (char *)("Store variable"),(char *)leftSide->child[0]->attr.name);
+                    }
+                    else{
+                        emitRM((char *)"ST", 3, leftSide->mOffset, 5, (char *)("Store variable"),(char *)leftSide->attr.name);
+                    }
+                    
                 }
                 else{
 
@@ -773,7 +795,7 @@ void emitExp(TreeNode *t){
                             emitComment((char*)"TOFF:", tempOffset);
                         }
                         else{
-                            emitRM((char *)"LD", 3, t->mOffset, 0, (char *)("1 Load variable"), t->attr.name);
+                            emitRM((char *)"LD", 3, t->mOffset, 0, (char *)("1 Load variable 797"), t->attr.name);
                         }
                     }
                     else{
@@ -791,7 +813,7 @@ void emitExp(TreeNode *t){
                             emitComment((char*)"TOFF:", tempOffset);
                         }
                         else{
-                            emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("2 Load variable"), t->attr.name);
+                            emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("2 Load variable 815"), t->attr.name);
                         }
                     }
                     else{
@@ -809,7 +831,7 @@ void emitExp(TreeNode *t){
                             emitComment((char*)"TOFF:", tempOffset);
                         }
                         else{
-                            emitRM((char *)"LD", 3, t->mOffset, 0, (char *)("3 Load variable"), t->attr.name);
+                            emitRM((char *)"LD", 3, t->mOffset, 0, (char *)("3 Load variable 833"), t->attr.name);
                         }
                     }
                     else{
@@ -827,7 +849,7 @@ void emitExp(TreeNode *t){
                             emitComment((char*)"TOFF:", tempOffset);
                         }
                         else{
-                            emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("4 Load variable"), t->attr.name);
+                            emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("4 Load variable 851"), t->attr.name);
                         }
                     }
                     else{
@@ -837,7 +859,7 @@ void emitExp(TreeNode *t){
                                  emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("load address of base of array 836"), t->attr.name);
                             }
                             else{
-                            emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("1 load variable"), t->attr.name);
+                            emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("1 load variable 861"), t->attr.name);
                             }
                         }
                         //emitRM((char *)"LD", 4, t->mOffset, 1, (char *)("4 load lhs variable"), t->attr.name);
@@ -903,8 +925,15 @@ void emitExp(TreeNode *t){
                         if(t->child[0]->subkind.exp == IdK && !t->child[0]->isInit){
 
                             if(t->child[0]->memT == Global){
+
+                                if(t->child[0]->isArray){
+                                    emitRM((char *)"LDA", 3, t->child[0]->mOffset, 0, (char *)("Load address of base of array 908"), t->child[0]->attr.name);
+                                    tempOffset--;
+                                }
+                                else{
+                                    emitRM((char *)"LD", 3, t->child[0]->mOffset, 0, (char *)("1 variable"), t->child[0]->attr.name);
+                                }
                             
-                            emitRM((char *)"LD", 3, t->child[0]->mOffset, 0, (char *)("1 variable"), t->child[0]->attr.name);
                             }
                             else if(t->child[0]->memT == Parameter){
                                 
