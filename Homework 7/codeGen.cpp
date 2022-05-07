@@ -369,7 +369,12 @@ void emitExp(TreeNode *t){
                 //check for arrays
                 if(!strcmp(t->child[0]->attr.name, "[")){
 
+                    if(leftSide->child[1]->subkind.exp == IdK){
+                        emitRM((char *)"LD", 3, leftSide->child[1]->mOffset, 1, (char *)("1 load variable 373"), leftSide->child[1]->attr.name);
+                    }
+                    else{
                     emitStart(leftSide->child[1]);
+                    }
                     
                     emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index 373"));
                     tempOffset--;
@@ -1027,7 +1032,7 @@ void emitExp(TreeNode *t){
                                 mpCall = true;
                                 tempOffset--;
                                 emitComment((char*)"TOFF:", tempOffset);
-                                emitComment((char *)("Param"), parmIterator);
+                                emitComment((char *)("1035 Param"), parmIterator);
 
                                 /*if(t->child[0]->child[0]->isArray){
                                     
@@ -1063,7 +1068,7 @@ void emitExp(TreeNode *t){
 
                             tempOffset--;
                             emitComment((char*)"TOFF:", tempOffset);
-                            emitComment((char *)("Param"), parmIterator);
+                            emitComment((char *)("1071 Param"), parmIterator);
 
                             //check for arrays
                             if(curChild->isArray){
@@ -1093,7 +1098,17 @@ void emitExp(TreeNode *t){
                                         emitRM((char *)"LDA", 3, curChild->mOffset, 1, (char *)("Load address of base of array"), (char *)curChild->attr.name);
                                     }*/                                    
                                 }
-                                emitRM((char *)"ST", 3, tempOffset, 1,(char *)("Push parameter"));
+                                emitRM((char *)"ST", 3, tempOffset, 1,(char *)("1101 Push parameter"));
+                            }
+
+                            else if(curChild->subkind.exp == OpK || curChild->subkind.exp == IdK){
+
+                                /*emitStart(curChild->child[0]);
+                                emitRM((char *)"ST", 3, tempOffset, 1,(char *)("Push left side"));
+                                emitStart(curChild->child[1]);
+                                */
+                                emitStart(curChild);
+                                emitRM((char *)"ST", 3, tempOffset, 1,(char *)("1111 Push parameter"));
                             }
                             
                             //not an array
