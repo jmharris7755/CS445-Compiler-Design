@@ -111,7 +111,7 @@
  59:    LDC  3,445(6)	Load Integer constant 
 * TOFF: -13
  60:     LD  4,-13(1)	Pop index 
- 61:    LDA  5,-3(1)	Load address of base of array z
+ 61:    LDA  5,-3(1)	Load address of base of array 390 z
  62:    SUB  5,5,4	Compute offset of value 
  63:     ST  3,0(5)	Store variable z
 * CALL EXPRESSION
@@ -124,8 +124,8 @@
 * CALL cat
  65:     ST  1,-15(1)	1 Store fp in ghost frame for cat
 * Param 1
-* TOFF: -16
- 66:    LDA  3,-3(1)	Load address of base of array 
+ 66:    LDA  3,-3(1)	load address of base of array 916 z
+* TOFF: -17
 * TOFF: -17
  67:     ST  3,-17(1)	Push parameter 
 * Param end cat
