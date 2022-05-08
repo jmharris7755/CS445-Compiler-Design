@@ -214,7 +214,7 @@
 110:     ST  3,-2(1)	Store variable i
 * TOFF: -16
 111:     LD  4,-16(1)	Pop index 
-112:     LD  5,-12(1)	Load address of base of array 401 s
+112:    LDA  5,-12(0)	Load address of base of array 383 s
 113:    SUB  5,5,4	Compute offset of value 
 114:     ST  3,0(5)	Store variable s
 * TOFF: -15

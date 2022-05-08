@@ -405,7 +405,7 @@ void emitExp(TreeNode *t){
                     emitComment((char*)"TOFF:", tempOffset);
                     emitRM((char *)"LD", 4, tempOffset, 1,(char *)("Pop index")); 
 
-                    if(leftSide->child[0]->memT == Global){
+                    if(leftSide->child[0]->memT == Global || leftSide->child[0]->memT == LocalStatic){
                         emitRM((char *)"LDA", 5, leftSide->child[0]->mOffset, 0, (char *)("Load address of base of array 383"), (char *)leftSide->child[0]->attr.name);
                     }
                     else{
@@ -560,7 +560,7 @@ void emitExp(TreeNode *t){
                 
 				
                     //check mem types
-                    if(leftSide->memT == Global){
+                    if(leftSide->memT == Global || leftSide->memT == LocalStatic){
 
                         emitRM((char *)"ST", 3, leftSide->mOffset, 0, (char *)("Store variable"), (char *)leftSide->attr.name);
                     }
@@ -593,7 +593,7 @@ void emitExp(TreeNode *t){
 
                 else if(!strcmp(t->attr.name, "*")){
 
-                    if(t->child[0]->memT == Global){
+                    if(t->child[0]->memT == Global || t->child[0]->memT == LocalStatic){
 
                         emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)("Load address of base of array 540"), (char *)leftSide->attr.name);
                     }
@@ -633,7 +633,7 @@ void emitExp(TreeNode *t){
                     if(isUnary == false){
                         if(leftSide->isArray){
 
-                            if(leftSide->memT == Global){
+                            if(leftSide->memT == Global || leftSide->memT == LocalStatic){
                                 emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)"1 Load address of base of array 578", (char*)leftSide->attr.name);
                             }
                             //might need to add this later
@@ -675,7 +675,7 @@ void emitExp(TreeNode *t){
                         tempOffset++;
                         emitComment((char*)"TOFF:", tempOffset);
 
-                        if(leftSide->memT == Global){
+                        if(leftSide->memT == Global || leftSide->memT == LocalStatic){
                              emitRM((char *)"LDA", 5, leftSide->mOffset, 0, (char *)"1 Load address of base of array 620", (char*)leftSide->attr.name);
                         }
                         else if(leftSide->memT == Parameter){
@@ -816,7 +816,7 @@ void emitExp(TreeNode *t){
             //load
             else{
 
-                if(t->memT == Global){
+                if(t->memT == Global || t->memT == LocalStatic){
 
                     if(isUnary){
                         
@@ -973,7 +973,7 @@ void emitExp(TreeNode *t){
 
                         if(t->child[0]->subkind.exp == IdK && !t->child[0]->isInit){
 
-                            if(t->child[0]->memT == Global){
+                            if(t->child[0]->memT == Global || t->child[0]->memT == LocalStatic){
 
                                 if(t->child[0]->isArray){
                                     emitRM((char *)"LDA", 3, t->child[0]->mOffset, 0, (char *)("Load address of base of array 908"), t->child[0]->attr.name);
@@ -1118,7 +1118,7 @@ void emitExp(TreeNode *t){
                             if(curChild->isArray){
 
                                 //check mem types
-                                if(curChild->memT == Global){
+                                if(curChild->memT == Global || curChild->memT == LocalStatic){
 
                                     //check first parameter
                                     //if(pCount == 1){
@@ -1226,7 +1226,7 @@ void emitGlobAndStats(TreeNode* t){
 
         if(t->nodekind == DeclK && t->subkind.decl == VarK){
 
-            if(t->memT == Global){
+            if(t->memT == Global || t->isStatic){
 
                 if(t->isArray){
 
