@@ -81,7 +81,7 @@
 * TOFF: -5
 * TOFF: -6
  41:     LD  3,-2(1)	1 load variable 861 x
- 42:     ST  3,-6(1)	Push parameter 
+ 42:     ST  3,-6(1)	Push parameter 1001 
 * Param end output
  43:    LDA  1,-4(1)	1 Ghost frame becomes new active frame 
  44:    LDA  3,1(7)	Return address in ac 
@@ -122,12 +122,12 @@
  62:    LDC  3,1(6)	Load Integer constant 
 * TOFF: -5
  63:     LD  4,-5(1)	Pop index 
- 64:    LDA  5,-3(1)	Load address of base of array 390 f
+ 64:     LD  5,-3(1)	Load address of base of array 401 f
  65:    SUB  5,5,4	Compute offset of value 
  66:     ST  3,0(5)	Store variable f
 * TOFF: -4
  67:     LD  4,-4(1)	Pop index 
- 68:     LD  5,-3(1)	Load address of base of array 387 f
+ 68:     LD  5,-3(1)	Load address of base of array 401 f
  69:    SUB  5,5,4	Compute offset of value 
  70:     ST  3,0(5)	Store variable f
 * RETURN
@@ -167,7 +167,7 @@
  87:     ST  3,-6(1)	1115 Push parameter 
 * TOFF: -7
 * 1071 Param 2
- 88:    LDA  3,-3(1)	Load address of base of array 1037 f
+ 88:     LD  3,-3(1)	Load address of base of array 1119 f
  89:     ST  3,-7(1)	1101 Push parameter 
 * Param end fib
  90:    LDA  1,-4(1)	Ghost frame becomes new active frame 
@@ -220,7 +220,7 @@
 118:    ADD  3,4,3	Op + +
 * TOFF: -4
 119:     LD  4,-4(1)	Pop index 
-120:     LD  5,-3(1)	Load address of base of array 387 f
+120:     LD  5,-3(1)	Load address of base of array 401 f
 121:    SUB  5,5,4	Compute offset of value 
 122:     ST  3,0(5)	Store variable f
 * RETURN
@@ -334,7 +334,7 @@
 191:     ST  3,-12(1)	3 Push parameter 
 * TOFF: -13
 * 1071 Param 2
-192:    LDA  3,-3(1)	Load address of base of array 1037 f
+192:    LDA  3,-3(1)	Load address of base of array 1123 f
 193:     ST  3,-13(1)	1101 Push parameter 
 * Param end fib
 194:    LDA  1,-10(1)	Ghost frame becomes new active frame 
@@ -358,7 +358,7 @@
 202:     LD  4,-12(1)	1 Pop left into ac1 
 203:    SUB  3,4,3	1 Compute location from index 
 204:     LD  3,0(3)	1 Load array element 
-205:     ST  3,-12(1)	Push parameter 
+205:     ST  3,-12(1)	Push parameter 1001 
 * Param end output
 206:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 207:    LDA  3,1(7)	Return address in ac 
@@ -381,7 +381,7 @@
 214:     LD  4,-12(1)	1 Pop left into ac1 
 215:    SUB  3,4,3	1 Compute location from index 
 216:     LD  3,0(3)	1 Load array element 
-217:     ST  3,-12(1)	Push parameter 
+217:     ST  3,-12(1)	Push parameter 1001 
 * Param end output
 218:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 219:    LDA  3,1(7)	Return address in ac 
@@ -404,7 +404,7 @@
 226:     LD  4,-12(1)	1 Pop left into ac1 
 227:    SUB  3,4,3	1 Compute location from index 
 228:     LD  3,0(3)	1 Load array element 
-229:     ST  3,-12(1)	Push parameter 
+229:     ST  3,-12(1)	Push parameter 1001 
 * Param end output
 230:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 231:    LDA  3,1(7)	Return address in ac 
@@ -427,7 +427,7 @@
 238:     LD  4,-12(1)	1 Pop left into ac1 
 239:    SUB  3,4,3	1 Compute location from index 
 240:     LD  3,0(3)	1 Load array element 
-241:     ST  3,-12(1)	Push parameter 
+241:     ST  3,-12(1)	Push parameter 1001 
 * Param end output
 242:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 243:    LDA  3,1(7)	Return address in ac 
@@ -450,7 +450,7 @@
 250:     LD  4,-12(1)	1 Pop left into ac1 
 251:    SUB  3,4,3	1 Compute location from index 
 252:     LD  3,0(3)	1 Load array element 
-253:     ST  3,-12(1)	Push parameter 
+253:     ST  3,-12(1)	Push parameter 1001 
 * Param end output
 254:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 255:    LDA  3,1(7)	Return address in ac 
@@ -473,7 +473,7 @@
 262:     LD  4,-12(1)	1 Pop left into ac1 
 263:    SUB  3,4,3	1 Compute location from index 
 264:     LD  3,0(3)	1 Load array element 
-265:     ST  3,-12(1)	Push parameter 
+265:     ST  3,-12(1)	Push parameter 1001 
 * Param end output
 266:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 267:    LDA  3,1(7)	Return address in ac 
@@ -496,7 +496,7 @@
 274:     LD  4,-12(1)	1 Pop left into ac1 
 275:    SUB  3,4,3	1 Compute location from index 
 276:     LD  3,0(3)	1 Load array element 
-277:     ST  3,-12(1)	Push parameter 
+277:     ST  3,-12(1)	Push parameter 1001 
 * Param end output
 278:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 279:    LDA  3,1(7)	Return address in ac 
