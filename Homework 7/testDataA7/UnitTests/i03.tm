@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  i03.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/i03.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,34 +71,33 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
-* EXPRESSION
+* TOFF:  -2
+* CALL EXPRESSION
 * CALL output
- 40:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 40:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 41:    LDA  3,-1(0)	Load address of base of array gc
+* TOFF: -3
+* TOFF: -4
+* OP EXPRESSION
+ 41:    LDA  3,-1(0)	Load address of base of array 540 gc
  42:     LD  3,1(3)	Load array size 
- 43:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+ 43:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 44:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 44:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  45:    LDA  3,1(7)	Return address in ac 
- 46:    JMP  7,-41(7)	CALL output
+ 46:    JMP  7,-41(7)	CALL OUTPUT output
  47:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
 * COMPOUND
-* TOFF set: -2
+* TOFF:  -2
 * Compound Body
-* TOFF set: -2
+* TOFF:  -2
 * END COMPOUND
-* TOFF set: -2
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
  48:    LDC  2,0(6)	Set return value to 0 
@@ -106,6 +105,7 @@
  50:     LD  1,0(1)	Adjust fp 
  51:    JMP  7,0(3)	Return 
 * END FUNCTION main
+* TOFF: -2
   0:    JMP  7,51(7)	Jump to init [backpatch] 
 * INIT
  52:    LDA  1,-14(0)	set first frame at end of globals 

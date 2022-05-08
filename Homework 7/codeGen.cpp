@@ -593,11 +593,11 @@ void emitExp(TreeNode *t){
 
                 else if(!strcmp(t->attr.name, "*")){
 
-                    if(t->memT == Global){
+                    if(t->child[0]->memT == Global){
 
                         emitRM((char *)"LDA", 3, leftSide->mOffset, 0, (char *)("Load address of base of array 540"), (char *)leftSide->attr.name);
                     }
-                    else if(t->memT == Parameter){
+                    else if(t->child[0]->memT == Parameter){
                         emitRM((char *)"LD", 3, leftSide->mOffset, 1, (char *)("Load address of base of array 543"), (char *)leftSide->attr.name);
                     }
                     else{

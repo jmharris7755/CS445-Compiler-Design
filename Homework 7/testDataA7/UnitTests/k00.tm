@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  k00.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/k00.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,80 +71,63 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
-* TOFF set: -5
+* TOFF:  -2
 * FOR
- 40:    LDC  3,300(6)	Load integer constant 
- 41:     ST  3,-2(1)	save starting value in index variable 
- 42:    LDC  3,313(6)	Load integer constant 
- 43:     ST  3,-3(1)	save stop value 
- 44:    LDC  3,1(6)	default increment by 1 
- 45:     ST  3,-4(1)	save step value 
- 46:     LD  4,-2(1)	loop index 
- 47:     LD  5,-3(1)	stop value 
- 48:     LD  3,-4(1)	step value 
- 49:    SLT  3,4,5	Op < 
- 50:    JNZ  3,1(7)	Jump to loop body 
 * COMPOUND
-* TOFF set: -5
-* Compound Body
-* EXPRESSION
+* TOFF:  -3
+* CALL EXPRESSION
 * CALL output
- 52:     ST  1,-5(1)	Store fp in ghost frame for output
-* TOFF dec: -6
-* TOFF dec: -7
+ 40:     ST  1,-3(1)	1 Store fp in ghost frame for output
 * Param 1
- 53:     LD  3,-2(1)	Load variable i
- 54:     ST  3,-7(1)	Push parameter 
-* TOFF dec: -8
+* TOFF: -4
+* TOFF: -5
+ 41:     LD  3,-2(1)	1 load variable 851 i
+ 42:     ST  3,-5(1)	Push parameter 1001 
 * Param end output
- 55:    LDA  1,-5(1)	Ghost frame becomes new active frame 
- 56:    LDA  3,1(7)	Return address in ac 
- 57:    JMP  7,-52(7)	CALL output
- 58:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -5
-* EXPRESSION
+ 43:    LDA  1,-3(1)	1 Ghost frame becomes new active frame 
+ 44:    LDA  3,1(7)	Return address in ac 
+ 45:    JMP  7,-40(7)	CALL OUTPUT output
+ 46:    LDA  3,0(2)	Save the result in ac 
+* CALL end output
+* TOFF: -3
+* CALL EXPRESSION
 * CALL outnl
- 59:     ST  1,-5(1)	Store fp in ghost frame for outnl
-* TOFF dec: -6
-* TOFF dec: -7
+ 47:     ST  1,-3(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
- 60:    LDA  1,-5(1)	Ghost frame becomes new active frame 
- 61:    LDA  3,1(7)	Return address in ac 
- 62:    JMP  7,-29(7)	CALL outnl
- 63:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -5
-* TOFF set: -5
+ 48:    LDA  1,-3(1)	Ghost frame becomes new active frame 
+ 49:    LDA  3,1(7)	Return address in ac 
+ 50:    JMP  7,-17(7)	CALL OUTPUT outnl
+ 51:    LDA  3,0(2)	Save the result in ac 
+* CALL end outnl
+* TOFF: -3
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
-* Bottom of loop increment and jump
- 64:     LD  3,-2(1)	Load index 
- 65:     LD  5,-4(1)	Load step 
- 66:    ADD  3,3,5	increment 
- 67:     ST  3,-2(1)	store back to index 
- 68:    JMP  7,-23(7)	go to beginning of loop 
- 51:    JMP  7,17(7)	Jump past loop [backpatch] 
-* END LOOP
-* TOFF set: -2
+* END FOR
+* RETURN
+ 52:    LDA  2,0(3)	Copy result to ret register 
+ 53:     LD  3,-1(1)	Load return address 
+ 54:     LD  1,0(1)	Adjust fp 
+ 55:    JMP  7,0(3)	Return 
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
- 69:    LDC  2,0(6)	Set return value to 0 
- 70:     LD  3,-1(1)	Load return address 
- 71:     LD  1,0(1)	Adjust fp 
- 72:    JMP  7,0(3)	Return 
+ 56:    LDC  2,0(6)	Set return value to 0 
+ 57:     LD  3,-1(1)	Load return address 
+ 58:     LD  1,0(1)	Adjust fp 
+ 59:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,72(7)	Jump to init [backpatch] 
+* TOFF: -2
+  0:    JMP  7,59(7)	Jump to init [backpatch] 
 * INIT
- 73:    LDA  1,0(0)	set first frame at end of globals 
- 74:     ST  1,0(1)	store old fp (point to self) 
+ 60:    LDA  1,0(0)	set first frame at end of globals 
+ 61:     ST  1,0(1)	store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
- 75:    LDA  3,1(7)	Return address in ac 
- 76:    JMP  7,-38(7)	Jump to main 
- 77:   HALT  0,0,0	DONE! 
+ 62:    LDA  3,1(7)	Return address in ac 
+ 63:    JMP  7,-25(7)	Jump to main 
+ 64:   HALT  0,0,0	DONE! 
 * END INIT

@@ -205,8 +205,8 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                //if rhs of initializer is an ID
                if(t->child[0]->subkind.exp == IdK || t->child[0]->subkind.exp == CallK){
                    //Error 32: "ERROR(%d): Initializer for variable '%s' is not a constant expression.\n"
-                   printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-                   //printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
+                   //printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                   printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
                }
                //check for simple expression -- may put into recursive function
                else if(t->child[0]->subkind.exp == OpK){
@@ -219,9 +219,11 @@ void checkDecl(TreeNode *t, int& nErrors, int& nWarnings){
                         //check for chSign, make sure isn't not used on an array
                         //might need to add add'l constantK check
                        if(strcmp(t->child[0]->attr.name, "-") && !t->isArray){
-                        //Error 32: "ERROR(%d): Initializer for variable '%s' is not a constant expression.\n"
-                        printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
-                        //printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
+                           if(strcmp(t->child[0]->attr.name, "not") && t->child[0]->child[0]->subkind.exp != ConstantK){
+                                //Error 32: "ERROR(%d): Initializer for variable '%s' is not a constant expression.\n"
+                                printError(32, t->linenum, 0, t->attr.name, NULL, NULL, 0);
+                                printf("VarK initializer checks: %s %d\n", t->child[0]->attr.name, t->linenum);
+                           }
                        }
                    }
 
@@ -565,7 +567,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                 else if(t->child[0]->child[0] != NULL){
                     if(t->child[0]->child[0]->isArray){
                         //look for indexed arrays or returns with sizeof op
-                        if(strcmp(t->child[0]->attr.name, "[") && strcmp(t->child[0]->attr.name, "*")){
+                        if(!strcmp(t->child[0]->attr.name, "[") && !strcmp(t->child[0]->attr.name, "*")){
                             //cannot return array error
                             //printf("Here %d\n", t->linenum);
                             printError(10, t->linenum, 0, NULL, NULL, NULL, 0);
