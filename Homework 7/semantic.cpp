@@ -668,6 +668,7 @@ void checkStmt(TreeNode *t, int& nErrors, int& nWarnings){
                     //}
 
                     analyze(t->child[i], nErrors, nWarnings);
+                    loffset--;
 
                     //check child 1 for being an int
                     /*if(t->child[1]){

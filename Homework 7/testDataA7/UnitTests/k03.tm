@@ -125,7 +125,7 @@
 * Param 1
 * TOFF: -9
 * TOFF: -10
- 72:     LD  3,-3(1)	1 load variable 851 j
+ 72:     LD  3,-5(1)	1 load variable 851 j
  73:     ST  3,-10(1)	Push parameter 1001 
 * Param end output
  74:    LDA  1,-8(1)	1 Ghost frame becomes new active frame 
