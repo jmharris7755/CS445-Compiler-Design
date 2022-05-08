@@ -116,13 +116,29 @@ void emitDecl(TreeNode *t){
 
         case VarK:
 
+        //printf("Here: %s, %d\n", t->attr.name, t->linenum);
+
             if((!t->isGlobal && !t->isStatic)){
 
                 //check for arrays
                 if(t->isArray){
 
-                    emitRM((char*)"LDC", 3, t->mSize - 1, 6, (char*)"load array size", (char*)t->attr.name);
+                    emitRM((char*)"LDC", 3, t->mSize - 1, 6, (char*)"load array size 124", (char*)t->attr.name);
                     emitRM((char*)"ST", 3, t->mOffset + 1, 1, (char*)"save array size", (char*)t->attr.name);
+
+                    //check for strings
+                    if(t->child[0] != NULL){
+                        emitStart(t->child[0]);
+                        emitRM((char *)"LDA", 3, t->child[0]->mOffset, 0, (char *)"Load address of char array");
+                        emitRM((char *)"LDA", 4, t->mOffset, 1, (char *)"address of lhs");
+
+                        emitRM((char *)"LD", 5, 1, 3, (char *)"size of rhs");
+                        emitRM((char *)"LD", 6, 1, 4, (char *)"size of lhs");
+
+                        emitRO((char *)"SWP", 5, 6, 6, (char *)"pick smallest size");
+
+                        emitRO((char *)"MOV", 4, 3, 5, (char *)"array op =");
+                    }
 
                 }
                 else{
@@ -488,6 +504,20 @@ void emitExp(TreeNode *t){
 					emitRM((char *)"ST", 3, 0, 5, (char *)("Store variable"), (char *)leftSide->child[0]->attr.name);
                     nestAsgn = false;
                 }
+                else if(leftSide->isArray && rightSide->isArray){
+
+                    if(leftSide->expType == Char && rightSide->expType == Char){
+                        emitRM((char *)"LDA", 3, rightSide->mOffset, 1, (char *)"Load address of char array", rightSide->attr.name);
+                        emitRM((char *)"LDA", 4, leftSide->mOffset, 1, (char *)"address of lhs");
+
+                        emitRM((char *)"LD", 5, 1, 3, (char *)"size of rhs");
+                        emitRM((char *)"LD", 6, 1, 4, (char *)"size of lhs");
+
+                        emitRO((char *)"SWP", 5, 6, 6, (char *)"pick smallest size");
+
+                        emitRO((char *)"MOV", 4, 3, 5, (char *)"array op =");
+                    }
+                }
                 //not an array
                 else{
                     emitStart(rightSide);
@@ -666,7 +696,7 @@ void emitExp(TreeNode *t){
                     else{
                         emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)("Load address of base of array 546"), (char *)leftSide->attr.name);
                     }
-                    emitRM((char *)"LD", 3, 1, 3, (char *)("Load array size"));
+                    emitRM((char *)"LD", 3, 1, 3, (char *)("Load array size 669"));
                 }
 
                 else if(!strcmp(t->attr.name, "?")){
@@ -846,10 +876,9 @@ void emitExp(TreeNode *t){
             else if(t->expType == Char){
                 emitRM((char *)"LDC", 3, t->attr.cvalue, 6,(char *)"Load Character constant");
             }
-            /*else if(t->expType == CharInt){
-                char strName = t->attr.string;
-                emitRM((char *)"LDC", 3, strName, 6,(char *)"Load string constant");
-            }*/
+            else if(t->expType == CharInt){
+                emitStrLit(t->mOffset, t->attr.name);
+            }
 
             break;
 
@@ -913,6 +942,7 @@ void emitExp(TreeNode *t){
                     else{
                         if(!t->isInit){
                             if(t->isArray){
+                                //printf("Here:%s %d\n", t->attr.name, t->linenum);
                                 //tempOffset--;
                                  //emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("load address of base of array 836"), t->attr.name);
                             }
