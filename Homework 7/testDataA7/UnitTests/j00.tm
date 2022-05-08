@@ -282,7 +282,7 @@
 * TOFF: -17
 145:    LDC  3,6(6)	Load Integer constant 
 * TOFF: -16
-146:    LDA  5,-12(1)	3 Load address of base of array 626 s
+146:    LDA  5,-12(0)	1 Load address of base of array 620 s
 147:    SUB  5,5,3	2 Compute location from index 
 148:     LD  3,0(5)	2 Load array element 
 149:     ST  3,-16(1)	Push parameter 1001 
@@ -383,7 +383,7 @@
 * TOFF: -17
 * TOFF: -18
 * 1071 Param 1
-190:    LDA  3,-12(1)	Load address of base of array 1123 s
+190:    LDA  3,-12(0)	Load address of base of array 1025 s
 191:     ST  3,-18(1)	1101 Push parameter 
 * TOFF: -19
 * 1071 Param 2
@@ -494,7 +494,7 @@
 * TOFF: -17
 * TOFF: -18
 * 1071 Param 1
-239:    LDA  3,-12(1)	Load address of base of array 1123 s
+239:    LDA  3,-12(0)	Load address of base of array 1025 s
 240:     ST  3,-18(1)	1101 Push parameter 
 * TOFF: -19
 * 1071 Param 2
@@ -605,7 +605,7 @@
 * TOFF: -17
 * TOFF: -18
 * 1071 Param 1
-288:    LDA  3,-12(1)	Load address of base of array 1123 s
+288:    LDA  3,-12(0)	Load address of base of array 1025 s
 289:     ST  3,-18(1)	1101 Push parameter 
 * TOFF: -19
 * 1071 Param 2
@@ -653,8 +653,10 @@
 * INIT GLOBALS AND STATICS
 312:    LDC  3,10(6)	load size of array g
 313:     ST  3,0(0)	save size of array g
+314:    LDC  3,10(6)	load size of array s
+315:     ST  3,-11(0)	save size of array s
 * END INIT GLOBALS AND STATICS
-314:    LDA  3,1(7)	Return address in ac 
-315:    JMP  7,-226(7)	Jump to main 
-316:   HALT  0,0,0	DONE! 
+316:    LDA  3,1(7)	Return address in ac 
+317:    JMP  7,-228(7)	Jump to main 
+318:   HALT  0,0,0	DONE! 
 * END INIT

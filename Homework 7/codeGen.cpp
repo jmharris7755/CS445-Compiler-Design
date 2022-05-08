@@ -26,6 +26,7 @@ int nestThen = 0;
 bool mpCall = false;
 bool nestCall = false;
 bool nestAsgn = false;
+int doingFor = false;
 
 
 void generateCode(TreeNode *t, char* infile){
@@ -194,7 +195,8 @@ void emitDecl(TreeNode *t){
 
 void emitStmt(TreeNode* t){
 
-    int whileLoc = 0, tmpBloc = 0, whileSkp = 0, ldaLoc = 0;
+    int whileLoc = 0, tmpBloc = 0, whileSkp = 0, ldaLoc = 0, forCdrn = 0;
+    int forOff = 0, forLoc = 0, forSkp = 0;
 
     switch(t->subkind.stmt){
 
@@ -276,14 +278,73 @@ void emitStmt(TreeNode* t){
         
         case ForK:
 
+            tempOffset -= 3;
+            doingFor = true;
+            emitComment((char*)("TOFF: "), tempOffset);
+
             emitComment((char*)("FOR"));
-            for(int i = 0; i < MAXCHILDREN; i++){
-                
-                if(t->child[i] != NULL){
-                    emitStart(t->child[i]);
-                }
-            }
+
+            forOff = tempOffset;
+
+            //emit index var
+            emitStart(t->child[0]);
+
+            //emit RangeK section
+            emitStart(t->child[1]);
+
+            forLoc = emitSkip(0);
+
+            //Check if the range has been exceeded.
+            emitRM((char *)"LD", 4, forOff + 3, 1, (char *)"loop index");
+            emitRM((char *)"LD", 5, forOff + 2, 1, (char *)"stop value");
+            emitRM((char *)"LD", 3, forOff + 1, 1, (char *)"step value");
+            emitRO((char *)"SLT", 3, 4, 5, (char *)"Op <");
+            emitRM((char *)"JNZ", 3, 1, 7, (char *)"Jump to loop body");
+            
+            forSkp = emitSkip(1);
+
+            //go through compound section for for loop
+            emitStart(t->child[2]);
+
+            emitRM((char *)"LD", 3, forOff + 3, 1, (char *)"Load index");
+            emitRM((char *)"LD", 5, forOff + 1, 1, (char *)"Load step");
+
+            emitRO((char *)"ADD", 3, 3, 5, (char *)"increment");
+
+            emitRM((char *)"ST", 3, forOff + 3, 1, (char *)"store back to index");
+            emitGotoAbs(forLoc, (char *)"go to beginning of loop");
+            backPatchAJumpToHere(forSkp, (char *)"Jump past loop [backpatch]");
+
             emitComment((char*)("END FOR"));
+            doingFor = false;
+            
+            break;
+
+        case RangeK:
+
+            //get first part of range
+            emitStart(t->child[0]);
+            emitRM((char *)"ST", 3, tempOffset + 3, 1, (char *)"save starting value in index variable");
+
+            //get second part of range
+            emitStart(t->child[1]);
+            emitRM((char *)"ST", 3, tempOffset + 2, 1, (char *)"save stop value");
+
+            //check if there is a 3rd child in the range
+            //go through 3rd child if so
+            if (t->child[2] != NULL)
+            {
+                emitStart(t->child[2]);
+                emitRM((char *)"ST", 3, tempOffset + 1, 1, (char *)"save step value");
+            }
+            //else default increment and save current step.
+            else
+            {
+                emitRM((char *)"LDC", 3, 1, 6, (char *)"default increment by 1");
+                emitRM((char *)"ST", 3, tempOffset + 1, 1, (char *)"save step value");
+            }
+
+            break;
 
 
         
@@ -313,7 +374,9 @@ void emitStmt(TreeNode* t){
 
             cpdSize = tempOffset;
             emitComment((char*)("COMPOUND"));
-            tempOffset = t->mSize;
+            if(!doingFor){
+                tempOffset = t->mSize;
+            }
             emitComment((char*)"TOFF: ", tempOffset);
             for(int i = 0; i < MAXCHILDREN; i++){
                 

@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  k03.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/k03.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,16 +71,14 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
-* TOFF set: -5
+* TOFF:  -2
+* TOFF:  -5
 * FOR
- 40:    LDC  3,0(6)	Load integer constant 
+ 40:    LDC  3,0(6)	Load Integer constant 
  41:     ST  3,-2(1)	save starting value in index variable 
- 42:    LDC  3,3(6)	Load integer constant 
+ 42:    LDC  3,3(6)	Load Integer constant 
  43:     ST  3,-3(1)	save stop value 
  44:    LDC  3,1(6)	default increment by 1 
  45:     ST  3,-4(1)	save step value 
@@ -90,13 +88,12 @@
  49:    SLT  3,4,5	Op < 
  50:    JNZ  3,1(7)	Jump to loop body 
 * COMPOUND
-* TOFF set: -5
-* Compound Body
-* TOFF set: -8
+* TOFF:  -5
+* TOFF:  -8
 * FOR
- 52:    LDC  3,0(6)	Load integer constant 
+ 52:    LDC  3,0(6)	Load Integer constant 
  53:     ST  3,-5(1)	save starting value in index variable 
- 54:    LDC  3,3(6)	Load integer constant 
+ 54:    LDC  3,3(6)	Load Integer constant 
  55:     ST  3,-6(1)	save stop value 
  56:    LDC  3,1(6)	default increment by 1 
  57:     ST  3,-7(1)	save step value 
@@ -106,73 +103,69 @@
  61:    SLT  3,4,5	Op < 
  62:    JNZ  3,1(7)	Jump to loop body 
 * COMPOUND
-* TOFF set: -8
-* Compound Body
-* EXPRESSION
+* TOFF:  -8
+* CALL EXPRESSION
 * CALL output
- 64:     ST  1,-8(1)	Store fp in ghost frame for output
-* TOFF dec: -9
-* TOFF dec: -10
+ 64:     ST  1,-8(1)	1 Store fp in ghost frame for output
 * Param 1
- 65:     LD  3,-2(1)	Load variable i
- 66:     ST  3,-10(1)	Push parameter 
-* TOFF dec: -11
+* TOFF: -9
+* TOFF: -10
+ 65:     LD  3,-2(1)	1 load variable 851 i
+ 66:     ST  3,-10(1)	Push parameter 1001 
 * Param end output
- 67:    LDA  1,-8(1)	Ghost frame becomes new active frame 
+ 67:    LDA  1,-8(1)	1 Ghost frame becomes new active frame 
  68:    LDA  3,1(7)	Return address in ac 
- 69:    JMP  7,-64(7)	CALL output
+ 69:    JMP  7,-64(7)	CALL OUTPUT output
  70:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -8
-* EXPRESSION
+* CALL end output
+* TOFF: -8
+* CALL EXPRESSION
 * CALL output
- 71:     ST  1,-8(1)	Store fp in ghost frame for output
-* TOFF dec: -9
-* TOFF dec: -10
+ 71:     ST  1,-8(1)	1 Store fp in ghost frame for output
 * Param 1
- 72:     LD  3,-5(1)	Load variable j
- 73:     ST  3,-10(1)	Push parameter 
-* TOFF dec: -11
+* TOFF: -9
+* TOFF: -10
+ 72:     LD  3,-3(1)	1 load variable 851 j
+ 73:     ST  3,-10(1)	Push parameter 1001 
 * Param end output
- 74:    LDA  1,-8(1)	Ghost frame becomes new active frame 
+ 74:    LDA  1,-8(1)	1 Ghost frame becomes new active frame 
  75:    LDA  3,1(7)	Return address in ac 
- 76:    JMP  7,-71(7)	CALL output
+ 76:    JMP  7,-71(7)	CALL OUTPUT output
  77:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -8
-* EXPRESSION
+* CALL end output
+* TOFF: -8
+* CALL EXPRESSION
 * CALL outnl
- 78:     ST  1,-8(1)	Store fp in ghost frame for outnl
-* TOFF dec: -9
-* TOFF dec: -10
+ 78:     ST  1,-8(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
  79:    LDA  1,-8(1)	Ghost frame becomes new active frame 
  80:    LDA  3,1(7)	Return address in ac 
- 81:    JMP  7,-48(7)	CALL outnl
+ 81:    JMP  7,-48(7)	CALL OUTPUT outnl
  82:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -8
-* TOFF set: -8
+* CALL end outnl
+* TOFF: -8
+* Compound Body
+* TOFF:  -8
 * END COMPOUND
-* Bottom of loop increment and jump
  83:     LD  3,-5(1)	Load index 
  84:     LD  5,-7(1)	Load step 
  85:    ADD  3,3,5	increment 
  86:     ST  3,-5(1)	store back to index 
  87:    JMP  7,-30(7)	go to beginning of loop 
  63:    JMP  7,24(7)	Jump past loop [backpatch] 
-* END LOOP
-* TOFF set: -5
+* END FOR
+* Compound Body
+* TOFF:  -8
 * END COMPOUND
-* Bottom of loop increment and jump
  88:     LD  3,-2(1)	Load index 
  89:     LD  5,-4(1)	Load step 
  90:    ADD  3,3,5	increment 
  91:     ST  3,-2(1)	store back to index 
  92:    JMP  7,-47(7)	go to beginning of loop 
  51:    JMP  7,41(7)	Jump past loop [backpatch] 
-* END LOOP
-* TOFF set: -2
+* END FOR
+* Compound Body
+* TOFF:  -8
 * END COMPOUND
 * Add standard closing in case there is no return statement
  93:    LDC  2,0(6)	Set return value to 0 
@@ -180,6 +173,7 @@
  95:     LD  1,0(1)	Adjust fp 
  96:    JMP  7,0(3)	Return 
 * END FUNCTION main
+* TOFF: -2
   0:    JMP  7,96(7)	Jump to init [backpatch] 
 * INIT
  97:    LDA  1,0(0)	set first frame at end of globals 
