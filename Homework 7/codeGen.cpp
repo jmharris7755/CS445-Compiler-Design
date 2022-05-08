@@ -369,18 +369,26 @@ void emitExp(TreeNode *t){
                 //check for arrays
                 if(!strcmp(t->child[0]->attr.name, "[")){
 
-                    if(leftSide->child[1]->subkind.exp == IdK){
+                    /*if(leftSide->child[1]->subkind.exp == IdK){
                         emitRM((char *)"LD", 3, leftSide->child[1]->mOffset, 1, (char *)("1 load variable 373"), leftSide->child[1]->attr.name);
                     }
-                    else{
-                    emitStart(leftSide->child[1]);
+                    else{*/
+                    /*if(leftSide->child[1]->subkind.exp == IdK){
+                        printf("Here: %s %d\n", leftSide->child[1]->attr.name, t->linenum);
                     }
+                    if(leftSide->child[0]->subkind.exp != ConstantK){
+                        printf("Here RS %s %d\n", leftSide->child[0]->attr.name, t->linenum);
+                    }*/
+                    emitStart(leftSide->child[1]);
+                    //}
                     
                     emitRM((char *)"ST", 3, tempOffset, 1, (char *)("Push index 373"));
                     tempOffset--;
                     emitComment((char*)"TOFF:", tempOffset);
 
+                    
                     emitStart(rightSide);
+                    
                     tempOffset++;
                     emitComment((char*)"TOFF:", tempOffset);
                     emitRM((char *)"LD", 4, tempOffset, 1,(char *)("Pop index")); 
@@ -674,7 +682,7 @@ void emitExp(TreeNode *t){
                     //save temp index from where we are
                     //tmpIdx = tempOffset;  
 
-                    emitRM((char*)"ST", 3, tempOffset, 1, (char*)("Push the left side"));
+                    emitRM((char*)"ST", 3, tempOffset, 1, (char*)("Push the left side 677"));
                     tempOffset--;
                     emitComment((char*)"TOFF:", tempOffset);
 
@@ -858,14 +866,19 @@ void emitExp(TreeNode *t){
                         }
                     }
                     else{
+                        //printf("Here IdK: %s %d\n", t->attr.name, t->linenum);
                         if(!t->isInit){
                             if(t->isArray){
                                 tempOffset--;
                                  emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("load address of base of array 836"), t->attr.name);
                             }
                             else{
+                                
                             emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("1 load variable 861"), t->attr.name);
                             }
+                        }
+                        else if(t->isInit && !t->isArray){
+                            emitRM((char *)"LD", 3, t->mOffset, 1, (char *)("1 load variable 861"), t->attr.name);
                         }
                         //emitRM((char *)"LD", 4, t->mOffset, 1, (char *)("4 load lhs variable"), t->attr.name);
                     }
@@ -943,7 +956,7 @@ void emitExp(TreeNode *t){
                             else if(t->child[0]->memT == Parameter){
                                 
                                 if(!t->child[0]->isArray){
-                                emitRM((char *)"LD", 3, t->child[0]->mOffset, 1, (char *)("2 variable"), t->child[0]->attr.name);
+                                //emitRM((char *)"LD", 3, t->child[0]->mOffset, 1, (char *)("2 variable"), t->child[0]->attr.name);
                                 }
                             }
                             /*else{
@@ -1107,8 +1120,13 @@ void emitExp(TreeNode *t){
                                 emitRM((char *)"ST", 3, tempOffset, 1,(char *)("Push left side"));
                                 emitStart(curChild->child[1]);
                                 */
+                                mpCall = true;
                                 emitStart(curChild);
-                                emitRM((char *)"ST", 3, tempOffset, 1,(char *)("1111 Push parameter"));
+                                
+                                
+                                emitRM((char *)"ST", 3, tempOffset, 1,(char *)("1115 Push parameter"));
+                                mpCall = false;
+                                
                             }
                             
                             //not an array

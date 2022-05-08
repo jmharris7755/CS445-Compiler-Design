@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  h08.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/h08.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,168 +71,174 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION fib
-* TOFF set: -4
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -4
-* Compound Body
-* EXPRESSION
+* TOFF:  -4
+* CALL EXPRESSION
 * CALL output
- 40:     ST  1,-4(1)	Store fp in ghost frame for output
-* TOFF dec: -5
-* TOFF dec: -6
+ 40:     ST  1,-4(1)	1 Store fp in ghost frame for output
 * Param 1
- 41:     LD  3,-2(1)	Load variable x
+* TOFF: -5
+* TOFF: -6
+ 41:     LD  3,-2(1)	1 load variable 861 x
  42:     ST  3,-6(1)	Push parameter 
-* TOFF dec: -7
 * Param end output
- 43:    LDA  1,-4(1)	Ghost frame becomes new active frame 
+ 43:    LDA  1,-4(1)	1 Ghost frame becomes new active frame 
  44:    LDA  3,1(7)	Return address in ac 
- 45:    JMP  7,-40(7)	CALL output
+ 45:    JMP  7,-40(7)	CALL OUTPUT output
  46:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -4
-* EXPRESSION
+* CALL end output
+* TOFF: -4
+* CALL EXPRESSION
 * CALL outnl
- 47:     ST  1,-4(1)	Store fp in ghost frame for outnl
-* TOFF dec: -5
-* TOFF dec: -6
+ 47:     ST  1,-4(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
  48:    LDA  1,-4(1)	Ghost frame becomes new active frame 
  49:    LDA  3,1(7)	Return address in ac 
- 50:    JMP  7,-17(7)	CALL outnl
+ 50:    JMP  7,-17(7)	CALL OUTPUT outnl
  51:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -4
+* CALL end outnl
+* TOFF: -4
 * IF
- 52:     LD  3,-2(1)	Load variable x
- 53:     ST  3,-4(1)	Push left side 
-* TOFF dec: -5
- 54:    LDC  3,2(6)	Load integer constant 
-* TOFF inc: -4
- 55:     LD  4,-4(1)	Pop left into ac1 
- 56:    TLT  3,4,3	Op < 
+* OP EXPRESSION
+ 52:     LD  3,-2(1)	1 load variable 861 x
+ 53:     ST  3,-4(1)	Push the left side 677 
+* TOFF: -5
+ 54:    LDC  3,2(6)	Load Integer constant 
+* TOFF: -4
+ 55:     LD  4,-4(1)	Load Left into 1 <
+ 56:    TLT  3,4,3	Op < <
 * THEN
 * COMPOUND
-* TOFF set: -4
-* Compound Body
-* EXPRESSION
- 58:    LDC  3,0(6)	Load integer constant 
- 59:     ST  3,-4(1)	Push index 
-* TOFF dec: -5
- 60:    LDC  3,1(6)	Load integer constant 
- 61:     ST  3,-5(1)	Push index 
-* TOFF dec: -6
- 62:    LDC  3,1(6)	Load integer constant 
-* TOFF inc: -5
+* TOFF:  -4
+* ASSIGNMENT EXPRESSION
+ 58:    LDC  3,0(6)	Load Integer constant 
+ 59:     ST  3,-4(1)	Push index 373 
+* TOFF: -5
+* ASSIGNMENT EXPRESSION
+ 60:    LDC  3,1(6)	Load Integer constant 
+ 61:     ST  3,-5(1)	Push index 373 
+* TOFF: -6
+ 62:    LDC  3,1(6)	Load Integer constant 
+* TOFF: -5
  63:     LD  4,-5(1)	Pop index 
- 64:     LD  5,-3(1)	Load address of base of array f
+ 64:    LDA  5,-3(1)	Load address of base of array 390 f
  65:    SUB  5,5,4	Compute offset of value 
  66:     ST  3,0(5)	Store variable f
-* TOFF inc: -4
+* TOFF: -4
  67:     LD  4,-4(1)	Pop index 
- 68:     LD  5,-3(1)	Load address of base of array f
+ 68:     LD  5,-3(1)	Load address of base of array 387 f
  69:    SUB  5,5,4	Compute offset of value 
  70:     ST  3,0(5)	Store variable f
 * RETURN
- 71:     LD  3,-3(1)	Load address of base of array f
+* OP EXPRESSION
+ 71:     LD  3,-3(1)	2 Load address of base of array 583 f
  72:     ST  3,-4(1)	Push left side 
-* TOFF dec: -5
- 73:     LD  3,-2(1)	Load variable x
-* TOFF inc: -4
- 74:     LD  4,-4(1)	Pop left into ac1 
- 75:    SUB  3,4,3	compute location from index 
- 76:     LD  3,0(3)	Load array element 
- 77:    LDA  2,0(3)	Copy result to return register 
+* TOFF: -5
+ 73:     LD  3,-2(1)	1 load variable 861 x
+* TOFF: -4
+ 74:     LD  4,-4(1)	1 Pop left into ac1 
+ 75:    SUB  3,4,3	1 Compute location from index 
+ 76:     LD  3,0(3)	1 Load array element 
+ 77:    LDA  2,0(3)	Copy result to ret register 
  78:     LD  3,-1(1)	Load return address 
  79:     LD  1,0(1)	Adjust fp 
  80:    JMP  7,0(3)	Return 
-* TOFF set: -4
+* Compound Body
+* TOFF:  -4
 * END COMPOUND
  57:    JZR  3,23(7)	Jump around the THEN if false [backpatch] 
 * END IF
-* EXPRESSION
+* CALL EXPRESSION
 * CALL fib
- 81:     ST  1,-4(1)	Store fp in ghost frame for fib
-* TOFF dec: -5
-* TOFF dec: -6
-* Param 1
- 82:     LD  3,-2(1)	Load variable x
- 83:     ST  3,-6(1)	Push left side 
-* TOFF dec: -7
- 84:    LDC  3,1(6)	Load integer constant 
-* TOFF inc: -6
- 85:     LD  4,-6(1)	Pop left into ac1 
- 86:    SUB  3,4,3	Op - 
- 87:     ST  3,-6(1)	Push parameter 
-* TOFF dec: -7
-* Param 2
- 88:     LD  3,-3(1)	Load address of base of array f
- 89:     ST  3,-7(1)	Push parameter 
-* TOFF dec: -8
+* TOFF: -4
+ 81:     ST  1,-4(1)	2 Store fp in ghost frame for fib
+* TOFF: -5
+* TOFF: -6
+* 1071 Param 1
+* OP EXPRESSION
+ 82:     LD  3,-2(1)	1 load variable 861 x
+ 83:     ST  3,-6(1)	Push the left side 677 
+* TOFF: -7
+ 84:    LDC  3,1(6)	Load Integer constant 
+* TOFF: -6
+ 85:     LD  4,-6(1)	Load Left into 1 -
+ 86:    SUB  3,4,3	Op - -
+ 87:     ST  3,-6(1)	1115 Push parameter 
+* TOFF: -7
+* 1071 Param 2
+ 88:    LDA  3,-3(1)	Load address of base of array 1037 f
+ 89:     ST  3,-7(1)	1101 Push parameter 
 * Param end fib
  90:    LDA  1,-4(1)	Ghost frame becomes new active frame 
  91:    LDA  3,1(7)	Return address in ac 
- 92:    JMP  7,-54(7)	CALL fib
+ 92:    JMP  7,-54(7)	CALL OUTPUT fib
  93:    LDA  3,0(2)	Save the result in ac 
-* Call end fib
-* TOFF set: -4
-* EXPRESSION
- 94:     LD  3,-2(1)	Load variable x
- 95:     ST  3,-4(1)	Push index 
-* TOFF dec: -5
- 96:     LD  3,-3(1)	Load address of base of array f
+* CALL end fib
+* TOFF: -4
+* ASSIGNMENT EXPRESSION
+ 94:     LD  3,-2(1)	1 load variable 861 x
+ 95:     ST  3,-4(1)	Push index 373 
+* TOFF: -5
+* OP EXPRESSION
+* OP EXPRESSION
+ 96:     LD  3,-3(1)	2 Load address of base of array 583 f
  97:     ST  3,-5(1)	Push left side 
-* TOFF dec: -6
- 98:     LD  3,-2(1)	Load variable x
- 99:     ST  3,-6(1)	Push left side 
-* TOFF dec: -7
-100:    LDC  3,1(6)	Load integer constant 
-* TOFF inc: -6
-101:     LD  4,-6(1)	Pop left into ac1 
-102:    SUB  3,4,3	Op - 
-* TOFF inc: -5
-103:     LD  4,-5(1)	Pop left into ac1 
-104:    SUB  3,4,3	compute location from index 
-105:     LD  3,0(3)	Load array element 
-106:     ST  3,-5(1)	Push left side 
-* TOFF dec: -6
-107:     LD  3,-3(1)	Load address of base of array f
+* TOFF: -6
+* OP EXPRESSION
+ 98:     LD  3,-2(1)	1 load variable 861 x
+ 99:     ST  3,-6(1)	Push the left side 677 
+* TOFF: -7
+100:    LDC  3,1(6)	Load Integer constant 
+* TOFF: -6
+101:     LD  4,-6(1)	Load Left into 1 -
+102:    SUB  3,4,3	Op - -
+* TOFF: -5
+103:     LD  4,-5(1)	1 Pop left into ac1 
+104:    SUB  3,4,3	1 Compute location from index 
+105:     LD  3,0(3)	1 Load array element 
+106:     ST  3,-5(1)	Push the left side 677 
+* TOFF: -6
+* OP EXPRESSION
+107:     LD  3,-3(1)	2 Load address of base of array 583 f
 108:     ST  3,-6(1)	Push left side 
-* TOFF dec: -7
-109:     LD  3,-2(1)	Load variable x
-110:     ST  3,-7(1)	Push left side 
-* TOFF dec: -8
-111:    LDC  3,2(6)	Load integer constant 
-* TOFF inc: -7
-112:     LD  4,-7(1)	Pop left into ac1 
-113:    SUB  3,4,3	Op - 
-* TOFF inc: -6
-114:     LD  4,-6(1)	Pop left into ac1 
-115:    SUB  3,4,3	compute location from index 
-116:     LD  3,0(3)	Load array element 
-* TOFF inc: -5
-117:     LD  4,-5(1)	Pop left into ac1 
-118:    ADD  3,4,3	Op + 
-* TOFF inc: -4
+* TOFF: -7
+* OP EXPRESSION
+109:     LD  3,-2(1)	1 load variable 861 x
+110:     ST  3,-7(1)	Push the left side 677 
+* TOFF: -8
+111:    LDC  3,2(6)	Load Integer constant 
+* TOFF: -7
+112:     LD  4,-7(1)	Load Left into 1 -
+113:    SUB  3,4,3	Op - -
+* TOFF: -6
+114:     LD  4,-6(1)	1 Pop left into ac1 
+115:    SUB  3,4,3	1 Compute location from index 
+116:     LD  3,0(3)	1 Load array element 
+* TOFF: -5
+117:     LD  4,-5(1)	Load Left into 1 +
+118:    ADD  3,4,3	Op + +
+* TOFF: -4
 119:     LD  4,-4(1)	Pop index 
-120:     LD  5,-3(1)	Load address of base of array f
+120:     LD  5,-3(1)	Load address of base of array 387 f
 121:    SUB  5,5,4	Compute offset of value 
 122:     ST  3,0(5)	Store variable f
 * RETURN
-123:     LD  3,-3(1)	Load address of base of array f
+* OP EXPRESSION
+123:     LD  3,-3(1)	2 Load address of base of array 583 f
 124:     ST  3,-4(1)	Push left side 
-* TOFF dec: -5
-125:     LD  3,-2(1)	Load variable x
-* TOFF inc: -4
-126:     LD  4,-4(1)	Pop left into ac1 
-127:    SUB  3,4,3	compute location from index 
-128:     LD  3,0(3)	Load array element 
-129:    LDA  2,0(3)	Copy result to return register 
+* TOFF: -5
+125:     LD  3,-2(1)	1 load variable 861 x
+* TOFF: -4
+126:     LD  4,-4(1)	1 Pop left into ac1 
+127:    SUB  3,4,3	1 Compute location from index 
+128:     LD  3,0(3)	1 Load array element 
+129:    LDA  2,0(3)	Copy result to ret register 
 130:     LD  3,-1(1)	Load return address 
 131:     LD  1,0(1)	Adjust fp 
 132:    JMP  7,0(3)	Return 
-* TOFF set: -4
+* Compound Body
+* TOFF:  -4
 * END COMPOUND
 * Add standard closing in case there is no return statement
 133:    LDC  2,0(6)	Set return value to 0 
@@ -240,280 +246,276 @@
 135:     LD  1,0(1)	Adjust fp 
 136:    JMP  7,0(3)	Return 
 * END FUNCTION fib
-* 
-* ** ** ** ** ** ** ** ** ** ** ** **
+* TOFF: -2
 * FUNCTION main
-* TOFF set: -2
 137:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -10
-138:    LDC  3,7(6)	load size of array f
-139:     ST  3,-2(1)	save size of array f
-* Compound Body
-* EXPRESSION
-140:    LDC  3,0(6)	Load integer constant 
-141:     ST  3,-10(1)	Push index 
-* TOFF dec: -11
-142:    LDC  3,0(6)	Load integer constant 
-* TOFF inc: -10
+* TOFF:  -10
+138:    LDC  3,7(6)	load array size f
+139:     ST  3,-2(1)	save array size f
+* ASSIGNMENT EXPRESSION
+140:    LDC  3,0(6)	Load Integer constant 
+141:     ST  3,-10(1)	Push index 373 
+* TOFF: -11
+142:    LDC  3,0(6)	Load Integer constant 
+* TOFF: -10
 143:     LD  4,-10(1)	Pop index 
-144:    LDA  5,-3(1)	Load address of base of array f
+144:    LDA  5,-3(1)	Load address of base of array 390 f
 145:    SUB  5,5,4	Compute offset of value 
 146:     ST  3,0(5)	Store variable f
-* EXPRESSION
-147:    LDC  3,1(6)	Load integer constant 
-148:     ST  3,-10(1)	Push index 
-* TOFF dec: -11
-149:    LDC  3,0(6)	Load integer constant 
-* TOFF inc: -10
+* ASSIGNMENT EXPRESSION
+147:    LDC  3,1(6)	Load Integer constant 
+148:     ST  3,-10(1)	Push index 373 
+* TOFF: -11
+149:    LDC  3,0(6)	Load Integer constant 
+* TOFF: -10
 150:     LD  4,-10(1)	Pop index 
-151:    LDA  5,-3(1)	Load address of base of array f
+151:    LDA  5,-3(1)	Load address of base of array 390 f
 152:    SUB  5,5,4	Compute offset of value 
 153:     ST  3,0(5)	Store variable f
-* EXPRESSION
-154:    LDC  3,2(6)	Load integer constant 
-155:     ST  3,-10(1)	Push index 
-* TOFF dec: -11
-156:    LDC  3,0(6)	Load integer constant 
-* TOFF inc: -10
+* ASSIGNMENT EXPRESSION
+154:    LDC  3,2(6)	Load Integer constant 
+155:     ST  3,-10(1)	Push index 373 
+* TOFF: -11
+156:    LDC  3,0(6)	Load Integer constant 
+* TOFF: -10
 157:     LD  4,-10(1)	Pop index 
-158:    LDA  5,-3(1)	Load address of base of array f
+158:    LDA  5,-3(1)	Load address of base of array 390 f
 159:    SUB  5,5,4	Compute offset of value 
 160:     ST  3,0(5)	Store variable f
-* EXPRESSION
-161:    LDC  3,3(6)	Load integer constant 
-162:     ST  3,-10(1)	Push index 
-* TOFF dec: -11
-163:    LDC  3,0(6)	Load integer constant 
-* TOFF inc: -10
+* ASSIGNMENT EXPRESSION
+161:    LDC  3,3(6)	Load Integer constant 
+162:     ST  3,-10(1)	Push index 373 
+* TOFF: -11
+163:    LDC  3,0(6)	Load Integer constant 
+* TOFF: -10
 164:     LD  4,-10(1)	Pop index 
-165:    LDA  5,-3(1)	Load address of base of array f
+165:    LDA  5,-3(1)	Load address of base of array 390 f
 166:    SUB  5,5,4	Compute offset of value 
 167:     ST  3,0(5)	Store variable f
-* EXPRESSION
-168:    LDC  3,4(6)	Load integer constant 
-169:     ST  3,-10(1)	Push index 
-* TOFF dec: -11
-170:    LDC  3,0(6)	Load integer constant 
-* TOFF inc: -10
+* ASSIGNMENT EXPRESSION
+168:    LDC  3,4(6)	Load Integer constant 
+169:     ST  3,-10(1)	Push index 373 
+* TOFF: -11
+170:    LDC  3,0(6)	Load Integer constant 
+* TOFF: -10
 171:     LD  4,-10(1)	Pop index 
-172:    LDA  5,-3(1)	Load address of base of array f
+172:    LDA  5,-3(1)	Load address of base of array 390 f
 173:    SUB  5,5,4	Compute offset of value 
 174:     ST  3,0(5)	Store variable f
-* EXPRESSION
-175:    LDC  3,5(6)	Load integer constant 
-176:     ST  3,-10(1)	Push index 
-* TOFF dec: -11
-177:    LDC  3,0(6)	Load integer constant 
-* TOFF inc: -10
+* ASSIGNMENT EXPRESSION
+175:    LDC  3,5(6)	Load Integer constant 
+176:     ST  3,-10(1)	Push index 373 
+* TOFF: -11
+177:    LDC  3,0(6)	Load Integer constant 
+* TOFF: -10
 178:     LD  4,-10(1)	Pop index 
-179:    LDA  5,-3(1)	Load address of base of array f
+179:    LDA  5,-3(1)	Load address of base of array 390 f
 180:    SUB  5,5,4	Compute offset of value 
 181:     ST  3,0(5)	Store variable f
-* EXPRESSION
-182:    LDC  3,6(6)	Load integer constant 
-183:     ST  3,-10(1)	Push index 
-* TOFF dec: -11
-184:    LDC  3,0(6)	Load integer constant 
-* TOFF inc: -10
+* ASSIGNMENT EXPRESSION
+182:    LDC  3,6(6)	Load Integer constant 
+183:     ST  3,-10(1)	Push index 373 
+* TOFF: -11
+184:    LDC  3,0(6)	Load Integer constant 
+* TOFF: -10
 185:     LD  4,-10(1)	Pop index 
-186:    LDA  5,-3(1)	Load address of base of array f
+186:    LDA  5,-3(1)	Load address of base of array 390 f
 187:    SUB  5,5,4	Compute offset of value 
 188:     ST  3,0(5)	Store variable f
-* EXPRESSION
+* CALL EXPRESSION
 * CALL fib
-189:     ST  1,-10(1)	Store fp in ghost frame for fib
-* TOFF dec: -11
-* TOFF dec: -12
-* Param 1
+* TOFF: -10
+189:     ST  1,-10(1)	2 Store fp in ghost frame for fib
+* TOFF: -11
+* TOFF: -12
+* 1071 Param 1
 190:    LDC  3,5(6)	Load integer constant 
-191:     ST  3,-12(1)	Push parameter 
-* TOFF dec: -13
-* Param 2
-192:    LDA  3,-3(1)	Load address of base of array f
-193:     ST  3,-13(1)	Push parameter 
-* TOFF dec: -14
+191:     ST  3,-12(1)	3 Push parameter 
+* TOFF: -13
+* 1071 Param 2
+192:    LDA  3,-3(1)	Load address of base of array 1037 f
+193:     ST  3,-13(1)	1101 Push parameter 
 * Param end fib
 194:    LDA  1,-10(1)	Ghost frame becomes new active frame 
 195:    LDA  3,1(7)	Return address in ac 
-196:    JMP  7,-158(7)	CALL fib
+196:    JMP  7,-158(7)	CALL OUTPUT fib
 197:    LDA  3,0(2)	Save the result in ac 
-* Call end fib
-* TOFF set: -10
-* EXPRESSION
+* CALL end fib
+* TOFF: -10
+* CALL EXPRESSION
 * CALL output
-198:     ST  1,-10(1)	Store fp in ghost frame for output
-* TOFF dec: -11
-* TOFF dec: -12
+198:     ST  1,-10(1)	1 Store fp in ghost frame for output
 * Param 1
-199:    LDA  3,-3(1)	Load address of base of array f
+* TOFF: -11
+* TOFF: -12
+* OP EXPRESSION
+199:    LDA  3,-3(1)	2 Load address of base of array 587 f
 200:     ST  3,-12(1)	Push left side 
-* TOFF dec: -13
-201:    LDC  3,0(6)	Load integer constant 
-* TOFF inc: -12
-202:     LD  4,-12(1)	Pop left into ac1 
-203:    SUB  3,4,3	compute location from index 
-204:     LD  3,0(3)	Load array element 
+* TOFF: -13
+201:    LDC  3,0(6)	Load Integer constant 
+* TOFF: -12
+202:     LD  4,-12(1)	1 Pop left into ac1 
+203:    SUB  3,4,3	1 Compute location from index 
+204:     LD  3,0(3)	1 Load array element 
 205:     ST  3,-12(1)	Push parameter 
-* TOFF dec: -13
 * Param end output
-206:    LDA  1,-10(1)	Ghost frame becomes new active frame 
+206:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 207:    LDA  3,1(7)	Return address in ac 
-208:    JMP  7,-203(7)	CALL output
+208:    JMP  7,-203(7)	CALL OUTPUT output
 209:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -10
-* EXPRESSION
+* CALL end output
+* TOFF: -10
+* CALL EXPRESSION
 * CALL output
-210:     ST  1,-10(1)	Store fp in ghost frame for output
-* TOFF dec: -11
-* TOFF dec: -12
+210:     ST  1,-10(1)	1 Store fp in ghost frame for output
 * Param 1
-211:    LDA  3,-3(1)	Load address of base of array f
+* TOFF: -11
+* TOFF: -12
+* OP EXPRESSION
+211:    LDA  3,-3(1)	2 Load address of base of array 587 f
 212:     ST  3,-12(1)	Push left side 
-* TOFF dec: -13
-213:    LDC  3,1(6)	Load integer constant 
-* TOFF inc: -12
-214:     LD  4,-12(1)	Pop left into ac1 
-215:    SUB  3,4,3	compute location from index 
-216:     LD  3,0(3)	Load array element 
+* TOFF: -13
+213:    LDC  3,1(6)	Load Integer constant 
+* TOFF: -12
+214:     LD  4,-12(1)	1 Pop left into ac1 
+215:    SUB  3,4,3	1 Compute location from index 
+216:     LD  3,0(3)	1 Load array element 
 217:     ST  3,-12(1)	Push parameter 
-* TOFF dec: -13
 * Param end output
-218:    LDA  1,-10(1)	Ghost frame becomes new active frame 
+218:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 219:    LDA  3,1(7)	Return address in ac 
-220:    JMP  7,-215(7)	CALL output
+220:    JMP  7,-215(7)	CALL OUTPUT output
 221:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -10
-* EXPRESSION
+* CALL end output
+* TOFF: -10
+* CALL EXPRESSION
 * CALL output
-222:     ST  1,-10(1)	Store fp in ghost frame for output
-* TOFF dec: -11
-* TOFF dec: -12
+222:     ST  1,-10(1)	1 Store fp in ghost frame for output
 * Param 1
-223:    LDA  3,-3(1)	Load address of base of array f
+* TOFF: -11
+* TOFF: -12
+* OP EXPRESSION
+223:    LDA  3,-3(1)	2 Load address of base of array 587 f
 224:     ST  3,-12(1)	Push left side 
-* TOFF dec: -13
-225:    LDC  3,2(6)	Load integer constant 
-* TOFF inc: -12
-226:     LD  4,-12(1)	Pop left into ac1 
-227:    SUB  3,4,3	compute location from index 
-228:     LD  3,0(3)	Load array element 
+* TOFF: -13
+225:    LDC  3,2(6)	Load Integer constant 
+* TOFF: -12
+226:     LD  4,-12(1)	1 Pop left into ac1 
+227:    SUB  3,4,3	1 Compute location from index 
+228:     LD  3,0(3)	1 Load array element 
 229:     ST  3,-12(1)	Push parameter 
-* TOFF dec: -13
 * Param end output
-230:    LDA  1,-10(1)	Ghost frame becomes new active frame 
+230:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 231:    LDA  3,1(7)	Return address in ac 
-232:    JMP  7,-227(7)	CALL output
+232:    JMP  7,-227(7)	CALL OUTPUT output
 233:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -10
-* EXPRESSION
+* CALL end output
+* TOFF: -10
+* CALL EXPRESSION
 * CALL output
-234:     ST  1,-10(1)	Store fp in ghost frame for output
-* TOFF dec: -11
-* TOFF dec: -12
+234:     ST  1,-10(1)	1 Store fp in ghost frame for output
 * Param 1
-235:    LDA  3,-3(1)	Load address of base of array f
+* TOFF: -11
+* TOFF: -12
+* OP EXPRESSION
+235:    LDA  3,-3(1)	2 Load address of base of array 587 f
 236:     ST  3,-12(1)	Push left side 
-* TOFF dec: -13
-237:    LDC  3,3(6)	Load integer constant 
-* TOFF inc: -12
-238:     LD  4,-12(1)	Pop left into ac1 
-239:    SUB  3,4,3	compute location from index 
-240:     LD  3,0(3)	Load array element 
+* TOFF: -13
+237:    LDC  3,3(6)	Load Integer constant 
+* TOFF: -12
+238:     LD  4,-12(1)	1 Pop left into ac1 
+239:    SUB  3,4,3	1 Compute location from index 
+240:     LD  3,0(3)	1 Load array element 
 241:     ST  3,-12(1)	Push parameter 
-* TOFF dec: -13
 * Param end output
-242:    LDA  1,-10(1)	Ghost frame becomes new active frame 
+242:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 243:    LDA  3,1(7)	Return address in ac 
-244:    JMP  7,-239(7)	CALL output
+244:    JMP  7,-239(7)	CALL OUTPUT output
 245:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -10
-* EXPRESSION
+* CALL end output
+* TOFF: -10
+* CALL EXPRESSION
 * CALL output
-246:     ST  1,-10(1)	Store fp in ghost frame for output
-* TOFF dec: -11
-* TOFF dec: -12
+246:     ST  1,-10(1)	1 Store fp in ghost frame for output
 * Param 1
-247:    LDA  3,-3(1)	Load address of base of array f
+* TOFF: -11
+* TOFF: -12
+* OP EXPRESSION
+247:    LDA  3,-3(1)	2 Load address of base of array 587 f
 248:     ST  3,-12(1)	Push left side 
-* TOFF dec: -13
-249:    LDC  3,4(6)	Load integer constant 
-* TOFF inc: -12
-250:     LD  4,-12(1)	Pop left into ac1 
-251:    SUB  3,4,3	compute location from index 
-252:     LD  3,0(3)	Load array element 
+* TOFF: -13
+249:    LDC  3,4(6)	Load Integer constant 
+* TOFF: -12
+250:     LD  4,-12(1)	1 Pop left into ac1 
+251:    SUB  3,4,3	1 Compute location from index 
+252:     LD  3,0(3)	1 Load array element 
 253:     ST  3,-12(1)	Push parameter 
-* TOFF dec: -13
 * Param end output
-254:    LDA  1,-10(1)	Ghost frame becomes new active frame 
+254:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 255:    LDA  3,1(7)	Return address in ac 
-256:    JMP  7,-251(7)	CALL output
+256:    JMP  7,-251(7)	CALL OUTPUT output
 257:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -10
-* EXPRESSION
+* CALL end output
+* TOFF: -10
+* CALL EXPRESSION
 * CALL output
-258:     ST  1,-10(1)	Store fp in ghost frame for output
-* TOFF dec: -11
-* TOFF dec: -12
+258:     ST  1,-10(1)	1 Store fp in ghost frame for output
 * Param 1
-259:    LDA  3,-3(1)	Load address of base of array f
+* TOFF: -11
+* TOFF: -12
+* OP EXPRESSION
+259:    LDA  3,-3(1)	2 Load address of base of array 587 f
 260:     ST  3,-12(1)	Push left side 
-* TOFF dec: -13
-261:    LDC  3,5(6)	Load integer constant 
-* TOFF inc: -12
-262:     LD  4,-12(1)	Pop left into ac1 
-263:    SUB  3,4,3	compute location from index 
-264:     LD  3,0(3)	Load array element 
+* TOFF: -13
+261:    LDC  3,5(6)	Load Integer constant 
+* TOFF: -12
+262:     LD  4,-12(1)	1 Pop left into ac1 
+263:    SUB  3,4,3	1 Compute location from index 
+264:     LD  3,0(3)	1 Load array element 
 265:     ST  3,-12(1)	Push parameter 
-* TOFF dec: -13
 * Param end output
-266:    LDA  1,-10(1)	Ghost frame becomes new active frame 
+266:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 267:    LDA  3,1(7)	Return address in ac 
-268:    JMP  7,-263(7)	CALL output
+268:    JMP  7,-263(7)	CALL OUTPUT output
 269:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -10
-* EXPRESSION
+* CALL end output
+* TOFF: -10
+* CALL EXPRESSION
 * CALL output
-270:     ST  1,-10(1)	Store fp in ghost frame for output
-* TOFF dec: -11
-* TOFF dec: -12
+270:     ST  1,-10(1)	1 Store fp in ghost frame for output
 * Param 1
-271:    LDA  3,-3(1)	Load address of base of array f
+* TOFF: -11
+* TOFF: -12
+* OP EXPRESSION
+271:    LDA  3,-3(1)	2 Load address of base of array 587 f
 272:     ST  3,-12(1)	Push left side 
-* TOFF dec: -13
-273:    LDC  3,6(6)	Load integer constant 
-* TOFF inc: -12
-274:     LD  4,-12(1)	Pop left into ac1 
-275:    SUB  3,4,3	compute location from index 
-276:     LD  3,0(3)	Load array element 
+* TOFF: -13
+273:    LDC  3,6(6)	Load Integer constant 
+* TOFF: -12
+274:     LD  4,-12(1)	1 Pop left into ac1 
+275:    SUB  3,4,3	1 Compute location from index 
+276:     LD  3,0(3)	1 Load array element 
 277:     ST  3,-12(1)	Push parameter 
-* TOFF dec: -13
 * Param end output
-278:    LDA  1,-10(1)	Ghost frame becomes new active frame 
+278:    LDA  1,-10(1)	1 Ghost frame becomes new active frame 
 279:    LDA  3,1(7)	Return address in ac 
-280:    JMP  7,-275(7)	CALL output
+280:    JMP  7,-275(7)	CALL OUTPUT output
 281:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -10
-* EXPRESSION
+* CALL end output
+* TOFF: -10
+* CALL EXPRESSION
 * CALL outnl
-282:     ST  1,-10(1)	Store fp in ghost frame for outnl
-* TOFF dec: -11
-* TOFF dec: -12
+282:     ST  1,-10(1)	3 Store fp in ghost frame for outnl
 * Param end outnl
 283:    LDA  1,-10(1)	Ghost frame becomes new active frame 
 284:    LDA  3,1(7)	Return address in ac 
-285:    JMP  7,-252(7)	CALL outnl
+285:    JMP  7,-252(7)	CALL OUTPUT outnl
 286:    LDA  3,0(2)	Save the result in ac 
-* Call end outnl
-* TOFF set: -10
-* TOFF set: -2
+* CALL end outnl
+* TOFF: -10
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
 287:    LDC  2,0(6)	Set return value to 0 
@@ -521,6 +523,7 @@
 289:     LD  1,0(1)	Adjust fp 
 290:    JMP  7,0(3)	Return 
 * END FUNCTION main
+* TOFF: -2
   0:    JMP  7,290(7)	Jump to init [backpatch] 
 * INIT
 291:    LDA  1,0(0)	set first frame at end of globals 
