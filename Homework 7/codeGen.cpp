@@ -1297,7 +1297,7 @@ void emitExp(TreeNode *t){
                                     
                                     int boolVal;
 
-                                    if(!strcmp(t->attr.name, "true")){
+                                    if(!strcmp(curChild->attr.name, "true")){
                                         boolVal = 1;
                                     }
                                     else{

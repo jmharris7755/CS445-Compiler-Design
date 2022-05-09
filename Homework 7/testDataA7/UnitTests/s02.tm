@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  s02.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/s02.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,31 +71,30 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION sum
-* TOFF set: -4
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -6
-* Compound Body
+* TOFF:  -6
 * IF
- 40:     LD  3,-2(1)	Load variable init
+ 40:     LD  3,-2(1)	1 load variable 861 init
 * THEN
-* EXPRESSION
- 42:    LDC  3,0(6)	Load integer constant 
+* ASSIGNMENT EXPRESSION
+ 42:    LDC  3,0(6)	Load Integer constant 
  43:     ST  3,-1(0)	Store variable runningSum
  41:    JZR  3,2(7)	Jump around the THEN if false [backpatch] 
 * END IF
-* EXPRESSION
- 44:     LD  3,-3(1)	Load variable x
- 45:     LD  4,-1(0)	load lhs variable runningSum
- 46:    ADD  3,4,3	op += 
+* ASSIGNMENT EXPRESSION
+ 44:     LD  3,-3(1)	4 Load variable 851 x
+ 45:     LD  4,-1(0)	Load LHS var 
+ 46:    ADD  3,4,3	Op +=
  47:     ST  3,-1(0)	Store variable runningSum
 * RETURN
- 48:     LD  3,-1(0)	Load variable runningSum
- 49:    LDA  2,0(3)	Copy result to return register 
+ 48:     LD  3,-1(0)	1 Load variable 797 runningSum
+ 49:    LDA  2,0(3)	Copy result to ret register 
  50:     LD  3,-1(1)	Load return address 
  51:     LD  1,0(1)	Adjust fp 
  52:    JMP  7,0(3)	Return 
-* TOFF set: -4
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
  53:    LDC  2,0(6)	Set return value to 0 
@@ -103,138 +102,137 @@
  55:     LD  1,0(1)	Adjust fp 
  56:    JMP  7,0(3)	Return 
 * END FUNCTION sum
-* 
-* ** ** ** ** ** ** ** ** ** ** ** **
+* TOFF: -2
 * FUNCTION main
-* TOFF set: -2
  57:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
-* EXPRESSION
- 58:    LDC  3,7000(6)	Load integer constant 
+* TOFF:  -2
+* ASSIGNMENT EXPRESSION
+ 58:    LDC  3,7000(6)	Load Integer constant 
  59:     ST  3,0(0)	Store variable runningSum
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 60:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 60:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 61:     LD  3,0(0)	Load variable runningSum
- 62:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+ 61:     LD  3,0(0)	1 variable runningSum
+* TOFF: -3
+* TOFF: -4
+ 62:     LD  3,0(0)	1 Load variable 797 runningSum
+ 63:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 63:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 64:    LDA  3,1(7)	Return address in ac 
- 65:    JMP  7,-60(7)	CALL output
- 66:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
-* EXPRESSION
+ 64:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
+ 65:    LDA  3,1(7)	Return address in ac 
+ 66:    JMP  7,-61(7)	CALL OUTPUT output
+ 67:    LDA  3,0(2)	Save the result in ac 
+* CALL end output
+* TOFF: -2
+* CALL EXPRESSION
 * CALL sum
- 67:     ST  1,-2(1)	Store fp in ghost frame for sum
-* TOFF dec: -3
-* TOFF dec: -4
-* Param 1
- 68:    LDC  3,1(6)	Load Boolean constant 
- 69:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
-* Param 2
- 70:    LDC  3,666(6)	Load integer constant 
- 71:     ST  3,-5(1)	Push parameter 
-* TOFF dec: -6
+* TOFF: -2
+ 68:     ST  1,-2(1)	2 Store fp in ghost frame for sum
+* TOFF: -3
+* TOFF: -4
+* 1071 Param 1
+ 69:    LDC  3,0(6)	Load Boolean constant 
+ 70:     ST  3,-4(1)	3 Push parameter 
+* TOFF: -5
+* 1071 Param 2
+ 71:    LDC  3,666(6)	Load integer constant 
+ 72:     ST  3,-5(1)	3 Push parameter 
 * Param end sum
- 72:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 73:    LDA  3,1(7)	Return address in ac 
- 74:    JMP  7,-36(7)	CALL sum
- 75:    LDA  3,0(2)	Save the result in ac 
-* Call end sum
-* TOFF set: -2
-* EXPRESSION
+ 73:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 74:    LDA  3,1(7)	Return address in ac 
+ 75:    JMP  7,-37(7)	CALL OUTPUT sum
+ 76:    LDA  3,0(2)	Save the result in ac 
+* CALL end sum
+* TOFF: -2
+* CALL EXPRESSION
 * CALL sum
- 76:     ST  1,-2(1)	Store fp in ghost frame for sum
-* TOFF dec: -3
-* TOFF dec: -4
-* Param 1
- 77:    LDC  3,0(6)	Load Boolean constant 
- 78:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
-* Param 2
- 79:    LDC  3,3(6)	Load integer constant 
- 80:     ST  3,-5(1)	Push parameter 
-* TOFF dec: -6
+* TOFF: -2
+ 77:     ST  1,-2(1)	2 Store fp in ghost frame for sum
+* TOFF: -3
+* TOFF: -4
+* 1071 Param 1
+ 78:    LDC  3,0(6)	Load Boolean constant 
+ 79:     ST  3,-4(1)	3 Push parameter 
+* TOFF: -5
+* 1071 Param 2
+ 80:    LDC  3,3(6)	Load integer constant 
+ 81:     ST  3,-5(1)	3 Push parameter 
 * Param end sum
- 81:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 82:    LDA  3,1(7)	Return address in ac 
- 83:    JMP  7,-45(7)	CALL sum
- 84:    LDA  3,0(2)	Save the result in ac 
-* Call end sum
-* TOFF set: -2
-* EXPRESSION
+ 82:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 83:    LDA  3,1(7)	Return address in ac 
+ 84:    JMP  7,-46(7)	CALL OUTPUT sum
+ 85:    LDA  3,0(2)	Save the result in ac 
+* CALL end sum
+* TOFF: -2
+* CALL EXPRESSION
 * CALL output
- 85:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 86:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
+* TOFF: -3
+* TOFF: -4
+* CALL EXPRESSION
 * CALL sum
- 86:     ST  1,-4(1)	Store fp in ghost frame for sum
-* TOFF dec: -5
-* TOFF dec: -6
-* Param 1
- 87:    LDC  3,0(6)	Load Boolean constant 
- 88:     ST  3,-6(1)	Push parameter 
-* TOFF dec: -7
-* Param 2
- 89:    LDC  3,0(6)	Load integer constant 
- 90:     ST  3,-7(1)	Push parameter 
-* TOFF dec: -8
+* TOFF: -4
+ 87:     ST  1,-4(1)	2 Store fp in ghost frame for sum
+* TOFF: -5
+* TOFF: -6
+* 1071 Param 1
+ 88:    LDC  3,0(6)	Load Boolean constant 
+ 89:     ST  3,-6(1)	3 Push parameter 
+* TOFF: -7
+* 1071 Param 2
+ 90:    LDC  3,0(6)	Load integer constant 
+ 91:     ST  3,-7(1)	3 Push parameter 
 * Param end sum
- 91:    LDA  1,-4(1)	Ghost frame becomes new active frame 
- 92:    LDA  3,1(7)	Return address in ac 
- 93:    JMP  7,-55(7)	CALL sum
- 94:    LDA  3,0(2)	Save the result in ac 
-* Call end sum
-* TOFF set: -4
- 95:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+ 92:    LDA  1,-4(1)	Ghost frame becomes new active frame 
+ 93:    LDA  3,1(7)	Return address in ac 
+ 94:    JMP  7,-56(7)	CALL OUTPUT sum
+ 95:    LDA  3,0(2)	Save the result in ac 
+* CALL end sum
+* TOFF: -4
+ 96:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 96:    LDA  1,-2(1)	Ghost frame becomes new active frame 
- 97:    LDA  3,1(7)	Return address in ac 
- 98:    JMP  7,-93(7)	CALL output
- 99:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
-* EXPRESSION
+ 97:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
+ 98:    LDA  3,1(7)	Return address in ac 
+ 99:    JMP  7,-94(7)	CALL OUTPUT output
+100:    LDA  3,0(2)	Save the result in ac 
+* CALL end output
+* TOFF: -2
+* CALL EXPRESSION
 * CALL output
-100:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+101:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
-101:     LD  3,0(0)	Load variable runningSum
-102:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+102:     LD  3,0(0)	1 variable runningSum
+* TOFF: -3
+* TOFF: -4
+103:     LD  3,0(0)	1 Load variable 797 runningSum
+104:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
-103:    LDA  1,-2(1)	Ghost frame becomes new active frame 
-104:    LDA  3,1(7)	Return address in ac 
-105:    JMP  7,-100(7)	CALL output
-106:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
-* TOFF set: -2
+105:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
+106:    LDA  3,1(7)	Return address in ac 
+107:    JMP  7,-102(7)	CALL OUTPUT output
+108:    LDA  3,0(2)	Save the result in ac 
+* CALL end output
+* TOFF: -2
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
-107:    LDC  2,0(6)	Set return value to 0 
-108:     LD  3,-1(1)	Load return address 
-109:     LD  1,0(1)	Adjust fp 
-110:    JMP  7,0(3)	Return 
+109:    LDC  2,0(6)	Set return value to 0 
+110:     LD  3,-1(1)	Load return address 
+111:     LD  1,0(1)	Adjust fp 
+112:    JMP  7,0(3)	Return 
 * END FUNCTION main
-  0:    JMP  7,110(7)	Jump to init [backpatch] 
+* TOFF: -2
+  0:    JMP  7,112(7)	Jump to init [backpatch] 
 * INIT
-111:    LDA  1,-2(0)	set first frame at end of globals 
-112:     ST  1,0(1)	store old fp (point to self) 
+113:    LDA  1,-2(0)	set first frame at end of globals 
+114:     ST  1,0(1)	store old fp (point to self) 
 * INIT GLOBALS AND STATICS
 * END INIT GLOBALS AND STATICS
-113:    LDA  3,1(7)	Return address in ac 
-114:    JMP  7,-58(7)	Jump to main 
-115:   HALT  0,0,0	DONE! 
+115:    LDA  3,1(7)	Return address in ac 
+116:    JMP  7,-60(7)	Jump to main 
+117:   HALT  0,0,0	DONE! 
 * END INIT
