@@ -417,6 +417,7 @@ void emitExp(TreeNode *t){
     //shorthands for checking child 0 and child1 in AssignK and OpK
     TreeNode *leftSide;
     TreeNode *rightSide;
+    TreeNode *callLookup;
 
     //setup leftSide and rightSide of AssignKs and OpKs
     if(t->child[0] != NULL){
@@ -1133,6 +1134,18 @@ void emitExp(TreeNode *t){
                         
 
                         //printf("%d\n", isUnary);
+                        //check for string lit's taken as args in a call
+                        if(t->child[0]->expType == CharInt){
+                            callLookup = (TreeNode*)symbolTable.lookup(t->attr.name);
+                            if(callLookup != NULL){
+                                //printf("Here: %s\n", callLookup->attr.name);
+                                if(callLookup->child[0]->isArray){
+                                    //printf("Here: %s\n", callLookup->attr.name);
+                                    emitRM((char *)"LDA", 3, t->child[0]->mOffset, 0, (char *)"Load address of char array");
+                                    tempOffset--;
+                                }
+                            }
+                        }
 
                         emitRM((char *)"ST", 3, tempOffset, 1,(char *)"Push parameter 1001");
                         emitComment((char *)("Param end"), t->attr.name);
