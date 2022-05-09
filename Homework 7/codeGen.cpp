@@ -809,6 +809,23 @@ void emitExp(TreeNode *t){
 
                     }
                 }
+                //string literal compare checks
+                else if(leftSide->isArray && rightSide->isArray){
+                    emitRM((char *)"LDA", 3, leftSide->mOffset, 1, (char *)"2 Load address of base of array 814", (char*)leftSide->attr.name);
+                    emitRM((char *)"ST", 3, tempOffset, 1, (char *)"Push left side");
+                    emitRM((char *)"LDA", 3, rightSide->mOffset, 1, (char *)"2 Load address of base of array 814", (char*)rightSide->attr.name);
+                    emitRM((char*)"LD", 4, tempOffset, 1, (char*)("Load Left into ac1"), (char*)t->attr.name);
+                    emitRM((char*)"LD", 5, 1, 3, (char*)("AC2 <- |RHS|"));
+                    emitRM((char*)"LD", 6, 1, 4, (char*)("AC3 <- |LHS|"));
+                    emitRM((char*)"LDA", 2, 0, 5, (char*)("R2 <- |RHS|"));
+                    emitRO((char *)"SWP", 5, 6, 6, (char *)"pick smallest size");
+                    emitRM((char*)"LD", 6, 1, 4, (char*)("AC3 <- |LHS|"));
+                    emitRO((char*)"CO", 4, 3, 5, (char*)("setup array compare LHS vs RHS"));
+                    emitRO((char*)"TNE", 5, 4, 3, (char*)("if not equal then test"));
+                    emitRO((char*)"JNZ", 5, 2, 7, (char*)("jump not equal"));
+                    emitRM((char*)"LDA", 3, 0, 2, (char*)("AC1 <- |RHS|"));
+                    emitRM((char*)"LDA", 4, 0, 6, (char*)("AC <- |LHS|"));
+                }
                 else{
 
                     emitStart(t->child[0]);
