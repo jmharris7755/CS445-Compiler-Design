@@ -131,7 +131,7 @@
 * TOFF: -2
  59:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
- 59:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
+ 49:    JMP  7,17(7)	Jump around the ELSE [backpatch] 
 * END IF
 * IF
  67:    LDC  3,0(6)	Load Boolean constant 
@@ -190,7 +190,7 @@
 * TOFF: -2
  86:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
- 86:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
+ 76:    JMP  7,17(7)	Jump around the ELSE [backpatch] 
 * END IF
 * IF
  94:    LDC  3,1(6)	Load Boolean constant 
@@ -249,7 +249,7 @@
 * TOFF: -2
 113:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
-113:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
+103:    JMP  7,17(7)	Jump around the ELSE [backpatch] 
 * END IF
 * IF
 121:    LDC  3,1(6)	Load Boolean constant 
@@ -308,7 +308,7 @@
 * TOFF: -2
 140:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
-140:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
+130:    JMP  7,17(7)	Jump around the ELSE [backpatch] 
 * END IF
 * Compound Body
 * TOFF:  -2

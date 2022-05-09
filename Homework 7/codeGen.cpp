@@ -21,7 +21,7 @@ bool isUnary = false;
 int cpdSize = 0;
 int tmpIdx;
 bool opKarr;
-int thenLoc = 0, elseLoc = 0, breakLoc = 0;
+int thenLoc = 0, breakLoc = 0;
 int nestThen = 0;
 bool mpCall = false;
 bool nestCall = false;
@@ -212,7 +212,7 @@ void emitDecl(TreeNode *t){
 
 void emitStmt(TreeNode* t){
 
-    int whileLoc = 0, tmpBloc = 0, whileSkp = 0, ldaLoc = 0, forCdrn = 0;
+    int whileLoc = 0, tmpBloc = 0, whileSkp = 0, ldaLoc = 0, forCdrn = 0, elseLoc = 0;
     int forOff = 0, forLoc = 0, forSkp = 0;
 
     switch(t->subkind.stmt){
@@ -260,7 +260,6 @@ void emitStmt(TreeNode* t){
                 emitComment((char*)"ELSE");
                 emitStart(t->child[2]);
                 backPatchAJumpToHere((char*)"JMP", 7, elseLoc, (char *)("Jump around the ELSE [backpatch]"));
-                
 
             }
 
