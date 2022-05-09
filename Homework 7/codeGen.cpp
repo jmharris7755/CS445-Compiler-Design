@@ -27,6 +27,7 @@ bool mpCall = false;
 bool nestCall = false;
 bool nestAsgn = false;
 int doingFor = false;
+bool inIF = false;
 
 
 void generateCode(TreeNode *t, char* infile){
@@ -221,6 +222,7 @@ void emitStmt(TreeNode* t){
             //start if statement
             emitComment((char*)("IF"));
             stFlag = false;
+            inIF = true;
 
             //analyze child0
             emitStart(t->child[0]);
@@ -264,6 +266,7 @@ void emitStmt(TreeNode* t){
 
             //done
             emitComment((char*)"END IF");
+            inIF = false;
 
             break;
 
@@ -490,11 +493,15 @@ void emitExp(TreeNode *t){
                     }
                     else{
                         if(t->child[1]->child[1] != NULL){
-                            emitRM((char *)"LD", 5, leftSide->child[0]->mOffset, 1, (char *)("Load address of base of array 401"), (char *)leftSide->child[0]->attr.name);
+                            emitRM((char *)"LD", 5, leftSide->child[0]->mOffset, 1, (char *)("Load address of base of array 493"), (char *)leftSide->child[0]->attr.name);
 
                         }
                         else if(nestAsgn){
-                            emitRM((char *)"LD", 5, leftSide->child[0]->mOffset, 1, (char *)("Load address of base of array 401"), (char *)leftSide->child[0]->attr.name);
+                            emitRM((char *)"LD", 5, leftSide->child[0]->mOffset, 1, (char *)("Load address of base of array 497"), (char *)leftSide->child[0]->attr.name);
+                        }
+                        //might need to remove
+                        else if(t->child[0]->child[1]->subkind.exp == IdK && t->child[1]->subkind.exp == ConstantK && inIF){
+                             emitRM((char *)"LD", 5, leftSide->child[0]->mOffset, 1, (char *)("Load address of base of array 500"), (char *)leftSide->child[0]->attr.name);
                         }
                         
                         else{

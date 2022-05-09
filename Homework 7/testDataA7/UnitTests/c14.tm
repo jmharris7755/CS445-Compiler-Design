@@ -74,9 +74,9 @@
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
 * TOFF:  -13
- 40:    LDC  3,3(6)	load array size x
+ 40:    LDC  3,3(6)	load array size 124 x
  41:     ST  3,-2(1)	save array size x
- 42:    LDC  3,4(6)	load array size y
+ 42:    LDC  3,4(6)	load array size 124 y
  43:     ST  3,-6(1)	save array size y
 * ASSIGNMENT EXPRESSION
  44:    LDC  3,1(6)	Load Integer constant 
@@ -85,47 +85,59 @@
  46:    LDC  3,2(6)	Load Integer constant 
  47:     ST  3,-12(1)	Store variable zz
 * ASSIGNMENT EXPRESSION
- 48:     LD  3,-12(1)	2 Load variable zz
- 49:     ST  3,-13(1)	Push index 
+ 48:     LD  3,-12(1)	2 Load variable 815 zz
+ 49:     ST  3,-13(1)	Push index 373 
+* TOFF: -14
  50:    LDC  3,73(6)	Load Integer constant 
+* TOFF: -13
  51:     LD  4,-13(1)	Pop index 
- 52:    LDA  5,-3(1)	Load address of base of array x
+ 52:    LDA  5,-3(1)	Load address of base of array 390 x
  53:    SUB  5,5,4	Compute offset of value 
  54:     ST  3,0(5)	Store variable x
 * ASSIGNMENT EXPRESSION
- 55:     LD  3,-11(1)	2 Load variable z
- 56:     ST  3,-13(1)	Push index 
+ 55:     LD  3,-11(1)	2 Load variable 815 z
+ 56:     ST  3,-13(1)	Push index 373 
+* TOFF: -14
  57:    LDC  3,211(6)	Load Integer constant 
+* TOFF: -13
  58:     LD  4,-13(1)	Pop index 
- 59:    LDA  5,-7(1)	Load address of base of array y
+ 59:    LDA  5,-7(1)	Load address of base of array 390 y
  60:    SUB  5,5,4	Compute offset of value 
  61:     ST  3,0(5)	Store variable y
 * CALL EXPRESSION
 * CALL output
  62:     ST  1,-13(1)	1 Store fp in ghost frame for output
 * Param 1
+* TOFF: -14
 * TOFF: -15
 * OP EXPRESSION
 * OP EXPRESSION
- 63:     LD  3,-12(1)	2 Load variable zz
- 64:    LDA  5,-3(1)	3 Load address of base of array 543 x
- 65:    SUB  5,5,3	Compute location from index 
- 66:     LD  3,0(5)	Load array element 
- 67:     ST  3,-15(1)	Push the left side 
+* TOFF: -16
+ 63:     LD  3,-12(1)	2 Load variable 815 zz
+* TOFF: -15
+ 64:    LDA  5,-3(1)	3 Load address of base of array 626 x
+ 65:    SUB  5,5,3	2 Compute location from index 
+ 66:     LD  3,0(5)	2 Load array element 
+ 67:     ST  3,-15(1)	Push the left side 677 
+* TOFF: -16
 * OP EXPRESSION
- 68:     LD  3,-11(1)	2 Load variable z
- 69:    LDA  5,-7(1)	3 Load address of base of array 543 y
- 70:    SUB  5,5,3	Compute location from index 
- 71:     LD  3,0(5)	Load array element 
- 72:     LD  4,-15(1)	Load Left into 1 
+* TOFF: -17
+ 68:     LD  3,-11(1)	2 Load variable 815 z
+* TOFF: -16
+ 69:    LDA  5,-7(1)	3 Load address of base of array 626 y
+ 70:    SUB  5,5,3	2 Compute location from index 
+ 71:     LD  3,0(5)	2 Load array element 
+* TOFF: -15
+ 72:     LD  4,-15(1)	Load Left into 1 +
  73:    ADD  3,4,3	Op + +
- 74:     ST  3,-15(1)	Push parameter 
+ 74:     ST  3,-15(1)	Push parameter 1001 
 * Param end output
  75:    LDA  1,-13(1)	1 Ghost frame becomes new active frame 
  76:    LDA  3,1(7)	Return address in ac 
  77:    JMP  7,-72(7)	CALL OUTPUT output
  78:    LDA  3,0(2)	Save the result in ac 
 * CALL end output
+* TOFF: -13
 * CALL EXPRESSION
 * CALL outnl
  79:     ST  1,-13(1)	3 Store fp in ghost frame for outnl
@@ -135,6 +147,7 @@
  82:    JMP  7,-49(7)	CALL OUTPUT outnl
  83:    LDA  3,0(2)	Save the result in ac 
 * CALL end outnl
+* TOFF: -13
 * Compound Body
 * TOFF:  -2
 * END COMPOUND
@@ -144,6 +157,7 @@
  86:     LD  1,0(1)	Adjust fp 
  87:    JMP  7,0(3)	Return 
 * END FUNCTION main
+* TOFF: -2
   0:    JMP  7,87(7)	Jump to init [backpatch] 
 * INIT
  88:    LDA  1,0(0)	set first frame at end of globals 

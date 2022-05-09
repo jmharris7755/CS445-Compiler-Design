@@ -1,7 +1,7 @@
 * C- compiler version C-S21
-* Built: Apr 18, 2021 (toffset telemetry)
-* Author: Robert B. Heckendorn
-* File compiled:  u00.c-
+* Built: 4-22 - 5-22
+* Author: Justin Harris
+* File compiled:  ./testDataA7/UnitTests/u00.tm
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION input
@@ -71,260 +71,247 @@
 * 
 * ** ** ** ** ** ** ** ** ** ** ** **
 * FUNCTION main
-* TOFF set: -2
  39:     ST  3,-1(1)	Store return address 
 * COMPOUND
-* TOFF set: -2
-* Compound Body
+* TOFF:  -2
 * IF
  40:    LDC  3,0(6)	Load Boolean constant 
 * THEN
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 42:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 42:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 43:    LDC  3,101(6)	Load integer constant 
- 44:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+ 43:    LDC  3,101(6)	Load Integer constant 
+ 44:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 45:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 45:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  46:    LDA  3,1(7)	Return address in ac 
- 47:    JMP  7,-42(7)	CALL output
+ 47:    JMP  7,-42(7)	CALL OUTPUT output
  48:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
  41:    JZR  3,8(7)	Jump around the THEN if false [backpatch] 
 * ELSE
 * IF
  50:    LDC  3,0(6)	Load Boolean constant 
 * THEN
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 52:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 52:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 53:    LDC  3,103(6)	Load integer constant 
- 54:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+ 53:    LDC  3,103(6)	Load Integer constant 
+ 54:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 55:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 55:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  56:    LDA  3,1(7)	Return address in ac 
- 57:    JMP  7,-52(7)	CALL output
+ 57:    JMP  7,-52(7)	CALL OUTPUT output
  58:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
  51:    JZR  3,8(7)	Jump around the THEN if false [backpatch] 
 * ELSE
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 60:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 60:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 61:    LDC  3,105(6)	Load integer constant 
- 62:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+ 61:    LDC  3,105(6)	Load Integer constant 
+ 62:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 63:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 63:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  64:    LDA  3,1(7)	Return address in ac 
- 65:    JMP  7,-60(7)	CALL output
+ 65:    JMP  7,-60(7)	CALL OUTPUT output
  66:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
  59:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
- 49:    JMP  7,17(7)	Jump around the ELSE [backpatch] 
+ 59:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
 * IF
  67:    LDC  3,0(6)	Load Boolean constant 
 * THEN
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 69:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 69:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 70:    LDC  3,101(6)	Load integer constant 
- 71:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+ 70:    LDC  3,101(6)	Load Integer constant 
+ 71:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 72:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 72:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  73:    LDA  3,1(7)	Return address in ac 
- 74:    JMP  7,-69(7)	CALL output
+ 74:    JMP  7,-69(7)	CALL OUTPUT output
  75:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
  68:    JZR  3,8(7)	Jump around the THEN if false [backpatch] 
 * ELSE
 * IF
  77:    LDC  3,1(6)	Load Boolean constant 
 * THEN
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 79:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 79:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 80:    LDC  3,103(6)	Load integer constant 
- 81:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+ 80:    LDC  3,103(6)	Load Integer constant 
+ 81:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 82:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 82:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  83:    LDA  3,1(7)	Return address in ac 
- 84:    JMP  7,-79(7)	CALL output
+ 84:    JMP  7,-79(7)	CALL OUTPUT output
  85:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
  78:    JZR  3,8(7)	Jump around the THEN if false [backpatch] 
 * ELSE
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 87:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 87:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 88:    LDC  3,105(6)	Load integer constant 
- 89:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+ 88:    LDC  3,105(6)	Load Integer constant 
+ 89:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 90:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 90:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
  91:    LDA  3,1(7)	Return address in ac 
- 92:    JMP  7,-87(7)	CALL output
+ 92:    JMP  7,-87(7)	CALL OUTPUT output
  93:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
  86:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
- 76:    JMP  7,17(7)	Jump around the ELSE [backpatch] 
+ 86:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
 * IF
  94:    LDC  3,1(6)	Load Boolean constant 
 * THEN
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
- 96:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+ 96:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
- 97:    LDC  3,101(6)	Load integer constant 
- 98:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+ 97:    LDC  3,101(6)	Load Integer constant 
+ 98:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
- 99:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+ 99:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
 100:    LDA  3,1(7)	Return address in ac 
-101:    JMP  7,-96(7)	CALL output
+101:    JMP  7,-96(7)	CALL OUTPUT output
 102:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
  95:    JZR  3,8(7)	Jump around the THEN if false [backpatch] 
 * ELSE
 * IF
 104:    LDC  3,0(6)	Load Boolean constant 
 * THEN
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
-106:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+106:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
-107:    LDC  3,103(6)	Load integer constant 
-108:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+107:    LDC  3,103(6)	Load Integer constant 
+108:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
-109:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+109:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
 110:    LDA  3,1(7)	Return address in ac 
-111:    JMP  7,-106(7)	CALL output
+111:    JMP  7,-106(7)	CALL OUTPUT output
 112:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
 105:    JZR  3,8(7)	Jump around the THEN if false [backpatch] 
 * ELSE
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
-114:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+114:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
-115:    LDC  3,105(6)	Load integer constant 
-116:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+115:    LDC  3,105(6)	Load Integer constant 
+116:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
-117:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+117:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
 118:    LDA  3,1(7)	Return address in ac 
-119:    JMP  7,-114(7)	CALL output
+119:    JMP  7,-114(7)	CALL OUTPUT output
 120:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
 113:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
-103:    JMP  7,17(7)	Jump around the ELSE [backpatch] 
+113:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
 * IF
 121:    LDC  3,1(6)	Load Boolean constant 
 * THEN
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
-123:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+123:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
-124:    LDC  3,101(6)	Load integer constant 
-125:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+124:    LDC  3,101(6)	Load Integer constant 
+125:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
-126:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+126:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
 127:    LDA  3,1(7)	Return address in ac 
-128:    JMP  7,-123(7)	CALL output
+128:    JMP  7,-123(7)	CALL OUTPUT output
 129:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
 122:    JZR  3,8(7)	Jump around the THEN if false [backpatch] 
 * ELSE
 * IF
 131:    LDC  3,1(6)	Load Boolean constant 
 * THEN
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
-133:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+133:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
-134:    LDC  3,103(6)	Load integer constant 
-135:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+134:    LDC  3,103(6)	Load Integer constant 
+135:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
-136:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+136:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
 137:    LDA  3,1(7)	Return address in ac 
-138:    JMP  7,-133(7)	CALL output
+138:    JMP  7,-133(7)	CALL OUTPUT output
 139:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
 132:    JZR  3,8(7)	Jump around the THEN if false [backpatch] 
 * ELSE
-* EXPRESSION
+* CALL EXPRESSION
 * CALL output
-141:     ST  1,-2(1)	Store fp in ghost frame for output
-* TOFF dec: -3
-* TOFF dec: -4
+141:     ST  1,-2(1)	1 Store fp in ghost frame for output
 * Param 1
-142:    LDC  3,105(6)	Load integer constant 
-143:     ST  3,-4(1)	Push parameter 
-* TOFF dec: -5
+* TOFF: -3
+* TOFF: -4
+142:    LDC  3,105(6)	Load Integer constant 
+143:     ST  3,-4(1)	Push parameter 1001 
 * Param end output
-144:    LDA  1,-2(1)	Ghost frame becomes new active frame 
+144:    LDA  1,-2(1)	1 Ghost frame becomes new active frame 
 145:    LDA  3,1(7)	Return address in ac 
-146:    JMP  7,-141(7)	CALL output
+146:    JMP  7,-141(7)	CALL OUTPUT output
 147:    LDA  3,0(2)	Save the result in ac 
-* Call end output
-* TOFF set: -2
+* CALL end output
+* TOFF: -2
 140:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
-130:    JMP  7,17(7)	Jump around the ELSE [backpatch] 
+140:    JMP  7,7(7)	Jump around the ELSE [backpatch] 
 * END IF
-* TOFF set: -2
+* Compound Body
+* TOFF:  -2
 * END COMPOUND
 * Add standard closing in case there is no return statement
 148:    LDC  2,0(6)	Set return value to 0 
@@ -332,6 +319,7 @@
 150:     LD  1,0(1)	Adjust fp 
 151:    JMP  7,0(3)	Return 
 * END FUNCTION main
+* TOFF: -2
   0:    JMP  7,151(7)	Jump to init [backpatch] 
 * INIT
 152:    LDA  1,0(0)	set first frame at end of globals 
