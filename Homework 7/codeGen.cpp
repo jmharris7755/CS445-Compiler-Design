@@ -519,6 +519,15 @@ void emitExp(TreeNode *t){
                         emitRO((char *)"MOV", 4, 3, 5, (char *)"array op =");
                     }
                 }
+                //having issues in IdK with localStatics, writing a manual check 
+                //here to manually load the right side
+                else if(leftSide->memT == LocalStatic && rightSide->memT == LocalStatic){
+                    emitRM((char *)"LD", 3, t->child[1]->mOffset, 0, (char *)("1 Load variable 797"), t->child[1]->attr.name);
+                    stFlag = true;
+                    isUnary = true;
+                    emitStart(leftSide);
+
+                }
                 //not an array
                 else{
                     emitStart(rightSide);
