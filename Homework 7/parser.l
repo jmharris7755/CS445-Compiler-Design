@@ -36,8 +36,14 @@ void cleanString(char *str, char backSlash)
     strLen = strlen(str);
 
     //remove beginning and ending quotes in place
-    memmove(str, str+1, strLen-2);
-    str[strLen-2] = 0;
+    if(backSlash == '0'){
+        memmove(str, str, strLen);
+        str[strLen-1] = 0;
+    }
+    else{
+        memmove(str, str+1, strLen-2);
+        str[strLen-2] = 0;
+    }
 
 
     //set all pointers equivalent and loop through until end of string
@@ -155,6 +161,13 @@ static int setValue(int linenum, int tokenClass, char *svalue)
 
             //remove escape character \ from string
             cleanString(svalue, '\\');
+
+            //remove left over '0's from end of string
+            strLen = strlen(svalue);
+            if(svalue[strLen - 1] == '0'){
+            cleanString(svalue, '0');
+            }
+            
 
             //get string length - 2 for double quotes at beginning and end.
             strLen = strlen(svalue);
