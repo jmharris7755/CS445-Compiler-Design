@@ -1,2 +1,2 @@
 # CS445-Compiler-Design
-Backup for Compiler Design Project
+Semester long project for the C- language presented in University of Idaho Compiler Design Class.
